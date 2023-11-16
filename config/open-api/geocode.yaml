@@ -885,7 +885,7 @@ components:
       maxLength: 5
       minLength: 5
       type: string
-      description: "Code postale"
+      description: "Code postal"
 
     InseeCode:
       maxLength: 5
