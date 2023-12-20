@@ -52,74 +52,17 @@ spec:
                 name: {{ .Values.secretEnvName }}
           {{- end }}
           livenessProbe:
-            exec:
-              command:
-                - /bin/bash
-                - -c
-                - echo "OK"
-            failureThreshold: 2
-            periodSeconds: 10
+            {{- toYaml .Values.livenessProbe | nindent 12 }}
           readinessProbe:
-            httpGet:
-              path: /ping
-              port: http
-            periodSeconds: 5
+            {{- toYaml .Values.readinessProbe | nindent 12 }}
           startupProbe:
-            httpGet:
-              path: /ping
-              port: http
-            failureThreshold: 60
-            periodSeconds: 10
+            {{- toYaml .Values.startupProbe | nindent 12 }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
           {{- if .Values.additionalVolumeMounts }}
             {{- toYaml .Values.additionalVolumeMounts | nindent 12 }}
           {{- end }}
-        {{- if .Values.sideContainer.enabled }}
-        - name: {{ .Values.sideContainer.name}}
-          image: "{{ .Values.sideContainer.image.path }}:{{ .Values.sideContainer.image.tag }}"
-          imagePullPolicy: {{ .Values.sideContainer.image.pullPolicy }}
-          command:
-          {{- range .Values.sideContainer.command }}
-            - {{ . | quote }}
-          {{- end }}
-          livenessProbe:
-            exec:
-              command:
-                - /bin/bash
-                - -c
-                - echo "OK"
-            initialDelaySeconds: 10
-            periodSeconds: 5
-          startupProbe:
-            httpGet:
-              path: /ping
-              port: http
-            failureThreshold: 9
-            periodSeconds: 10
-          readinessProbe:
-            httpGet:
-              path: /ping
-              port: http
-            initialDelaySeconds: 10
-            periodSeconds: 30
-          resources:
-            {{- toYaml .Values.sideContainer.resources | nindent 12 }}
-          volumeMounts:
-            {{- if .Values.additionalVolumeMounts }}
-              {{- toYaml .Values.additionalVolumeMounts | nindent 12 }}
-            {{- end }}
-          {{- if .Values.sideContainer.serverEnvs }}
-          env:
-            {{- .Values.sideContainer.serverEnvs | toYaml | nindent 12 }}
-          {{- end }}
-          {{- if .Values.sideContainer.secretEnvName }}
-          envFrom:
-            - secretRef:
-                name: {{ .Values.sideContainer.secretEnvName }}
-          {{- end }}
-        {{- end }}
       initContainers:
       {{- if .Values.initContainers }}
         {{- toYaml .Values.initContainers | nindent 8 }}

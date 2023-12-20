@@ -73,5 +73,24 @@ tolerations: []
 
 affinity: {}
 
-sideContainer:
-  enabled: false
+livenessProbe:
+  exec:
+    command:
+      - /bin/bash
+      - -c
+      - echo "OK"
+  failureThreshold: 2
+  periodSeconds: 10
+
+readinessProbe:
+  httpGet:
+    path: /ping
+    port: http
+  periodSeconds: 5
+
+startupProbe:
+  httpGet:
+    path: /ping
+    port: http
+  failureThreshold: 60
+  periodSeconds: 10
