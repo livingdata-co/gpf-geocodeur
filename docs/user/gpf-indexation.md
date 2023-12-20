@@ -1,7 +1,5 @@
 # Lancer une réindexation sur la géoplateforme
 
-**NOTE:**  Les processings ne prennent pas de paramètre pour le moment.
-
 ## Pré requis
 
 Il faut avoir un datastore configuré dans l'entrepôt.
@@ -54,11 +52,50 @@ En utilisant les apis entrepôts de l'environnement souhaité :
     },
 ```
 
-* Déclencher le traitement par l'appel `/datastores/{{DATASTORE_ID}}/processings/{{PROCESSING_ID}}/launch`
+* Créer une exécution de traitement par l'appel `/datastores/{{DATASTORE_ID}}/processings/executions`
+
+```json
+{
+    "processing": "{{PROCESSING_ID}}",
+    "inputs": {},
+    "output": {},
+    "parameters": {
+        "{{PARAMETER_NAME}}": "{{PARAMETER_VALUE}}"
+    }
+}
+```
+
+* Déclencher le traitement par l'appel `/datastores/{{DATASTORE_ID}}/processings/executions/{{PROCESSING_EXECUTION_ID}}/launch`
 
 ## Paramètrages
 
-Les paramètres des procédures sont actuellement en dur. Il n'est pas prévu dans l'immédiat des les rendre paramétrables.
+Chaque traitement est paramétrable. Pour obtenir la liste des paramètres liés à chaque traitement :
+
+* Faire un appel `/datastores/{{DATASTORE_ID}}/processings/{{PROCESSING_ID}}` pour récupérer la liste des `parameters`
+
+```json
+{
+    "name": "Géocodeur Adresse",
+    "description": "Géocodeur Adresse",
+    "priority": "PREMIUM",
+    "input_types": {
+        "upload": [],
+        "stored_data": []
+    },
+    "parameters": [
+        {
+            "name": "ban_addok_url",
+            "description": "Structure d'URL du millésime BAN Addok",
+            "mandatory": true,
+            "constraints": {
+                "type": "string"
+            }
+        }
+    ],
+    "_id": "{{PROCESSING_ID}}",
+    "required_checks": []
+}
+```
 
 ### POI
 
