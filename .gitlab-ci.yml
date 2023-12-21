@@ -1,4 +1,4 @@
-image: nikolaik/python-nodejs:python3.10-nodejs18
+image: nikolaik/python-nodejs:python3.10-nodejs20
 
 include:
   - project: geoplateforme/templates

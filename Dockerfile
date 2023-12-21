@@ -1,5 +1,5 @@
 # Stage 1
-FROM --platform=linux/amd64 9555v10x.gra7.container-registry.ovh.net/gpf-dockerhub/nikolaik/python-nodejs:python3.10-nodejs18-slim AS build
+FROM --platform=linux/amd64 9555v10x.gra7.container-registry.ovh.net/gpf-dockerhub/nikolaik/python-nodejs:python3.10-nodejs20-slim AS build
 WORKDIR /app
 
 RUN apt-get update && apt-get install -y build-essential gcc
@@ -14,7 +14,7 @@ RUN pip install --user -r requirements.txt
 FROM --platform=linux/amd64 redis:7.0 AS redis
 
 # Stage 3
-FROM --platform=linux/amd64 9555v10x.gra7.container-registry.ovh.net/gpf-dockerhub/nikolaik/python-nodejs:python3.10-nodejs18-slim
+FROM --platform=linux/amd64 9555v10x.gra7.container-registry.ovh.net/gpf-dockerhub/nikolaik/python-nodejs:python3.10-nodejs20-slim
 WORKDIR /app
 
 COPY --from=redis /usr/local/bin/redis-server /usr/local/bin/redis-server
