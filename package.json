@@ -44,7 +44,7 @@
     "fast-glob": "^3.3.2",
     "flatbush": "^4.2.0",
     "flexsearch": "^0.7.31",
-    "gdal-async": "^3.7.1",
+    "gdal-async": "^3.8.1",
     "geobuf": "^3.0.2",
     "got": "^13.0.0",
     "http-errors": "^2.0.0",
