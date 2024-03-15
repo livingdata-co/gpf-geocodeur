@@ -1,3 +1,4 @@
+/* eslint-disable unicorn/no-process-exit */
 import process from 'node:process'
 
 import gdal from 'gdal-async'
@@ -14,7 +15,18 @@ export function featureToBbox(feature) {
 
 export async function createCommunesIndex(adminExpressUrl) {
   adminExpressUrl = adminExpressUrl || ADMIN_EXPRESS_URL
-  const adminExpressArchive = await downloadAndExtract(adminExpressUrl)
+
+  console.log('Downloading and extracting ADMIN-EXPRESS archive')
+  let adminExpressArchive
+
+  try {
+    adminExpressArchive = await downloadAndExtract(adminExpressUrl)
+  } catch (error) {
+    console.error(error.message)
+    process.exit(1)
+  }
+
+  console.log('Building administrative units index')
 
   const communesPath = await adminExpressArchive.getPath('COMMUNE.SHP')
   const arrondissementsPath = await adminExpressArchive.getPath('ARRONDISSEMENT_MUNICIPAL.SHP')

@@ -4,7 +4,25 @@ import {parse} from 'ndjson'
 import {omit} from 'lodash-es'
 
 export async function * extractFeatures(fileUrl) {
-  const inputStream = got.stream(fileUrl)
+  const downloadStream = got.stream(fileUrl)
+
+  await new Promise((resolve, reject) => {
+    function onError(errorMessage) {
+      reject(new Error(`Failed to download file at URL: ${fileUrl} => ${errorMessage}`))
+    }
+
+    downloadStream.once('response', response => {
+      if (response.statusCode === 200) {
+        resolve()
+      } else {
+        onError()
+      }
+    })
+
+    downloadStream.once('error', error => onError(error.message))
+  })
+
+  const inputStream = downloadStream
     .pipe(createGunzip())
     .pipe(parse())
 

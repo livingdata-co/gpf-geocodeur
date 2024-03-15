@@ -21,18 +21,27 @@ const addokImporter = await createImporter(ADDRESS_INDEX_PATH, './indexes/addres
 const indexer = await createIndexer(ADDRESS_INDEX_MDB_BASE_PATH, {geometryType: 'Point'})
 
 for (const codeDepartement of computeDepartements('address')) {
-  console.log(codeDepartement)
+  console.log(`Index address data for departement ${codeDepartement}`)
 
   const fileUrl = getFileUrl(codeDepartement)
 
-  await indexer.writeFeatures(extractFeatures(fileUrl))
+  console.log('Indexing into LMDB')
+  try {
+    await indexer.writeFeatures(extractFeatures(fileUrl))
+  } catch (error) {
+    console.error(error.message)
+    process.exit(1)
+  }
 
-  // Importing into addok
+  console.log('Indexing into addok')
   await addokImporter.batchImport(
     got.stream(fileUrl)
       .pipe(createGunzip())
   )
 }
 
+console.log('Finishing spatial indexation computation')
 await indexer.finish()
+
+console.log('Finishing addok importation')
 await addokImporter.finish()
