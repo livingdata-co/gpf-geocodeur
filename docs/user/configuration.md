@@ -70,3 +70,9 @@ Les variables suivantes n'ont en principe pas besoin d'être modifiées. Utilise
 | --- | --- | --- |
 | `TMP_PATH` | Répertoire temporaire pour les archives téléchargées | `./tmp` |
 | `DATA_PATH` | Répertoire contenant les données produites ou utilisées | `./data` |
+
+## Géoplateforme
+
+| Nom de la variable | Description | Valeur par défaut |
+| --- | --- | --- |
+| `GPF_LOGGER_ENABLED` | Active le logger GPF (formattage spécifique) | `0` |
