@@ -5,6 +5,9 @@ import process from 'node:process'
 
 import express from 'express'
 import morgan from 'morgan'
+
+import logger from '../../../lib/logger.js'
+
 import {createRouter} from './router.js'
 
 const PORT = process.env.PARCEL_SERVICE_PORT || process.env.PORT || 3002
@@ -23,5 +26,5 @@ server.get('/ping', (req, res) => {
 server.use('/', await createRouter())
 
 server.listen(PORT, () => {
-  console.log(`Start listening on port ${PORT}`)
+  logger.log(`Start listening on port ${PORT}`)
 })

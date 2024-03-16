@@ -3,6 +3,7 @@ import gdal from 'gdal-async'
 import truncate from '@turf/truncate'
 import centroid from '@turf/centroid'
 
+import logger from '../../../../lib/logger.js'
 import {getCommune, isPLM} from '../../../../lib/cog.js'
 
 export function computeFields(originalProperties, fieldsDefinition, computedFieldsSchema) {
@@ -40,7 +41,7 @@ export function * extractFeatures({datasetPath, layersDefinitions, cleabsUniqInd
       continue
     }
 
-    console.log(` * ${layerName}`)
+    logger.log(` * ${layerName}`)
 
     const transformation = new gdal.CoordinateTransformation(layer.srs, wgs84)
 

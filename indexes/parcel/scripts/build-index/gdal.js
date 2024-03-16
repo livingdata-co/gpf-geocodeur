@@ -1,5 +1,7 @@
 import gdal from 'gdal-async'
 
+import logger from '../../../../lib/logger.js'
+
 const wgs84 = gdal.SpatialReference.fromProj4('+init=epsg:4326')
 
 export async function * readFeatures(datasetPath, transformFn = f => f) {
@@ -12,7 +14,7 @@ export async function * readFeatures(datasetPath, transformFn = f => f) {
     const geometry = feature.getGeometry()
 
     if (!geometry) {
-      console.log('Missing geometry')
+      logger.log('Missing geometry')
       continue
     }
 

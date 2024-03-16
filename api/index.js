@@ -7,6 +7,8 @@ import express from 'express'
 import cors from 'cors'
 import morgan from 'morgan'
 
+import logger from '../lib/logger.js'
+
 import createRouter from './router.js'
 
 const PORT = process.env.API_PORT || process.env.PORT || 3000
@@ -30,5 +32,5 @@ app.get('/ping', (req, res) => {
 app.use('/', createRouter())
 
 app.listen(PORT, () => {
-  console.log(`Start listening on port ${PORT}`)
+  logger.log(`Start listening on port ${PORT}`)
 })

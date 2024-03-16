@@ -4,6 +4,7 @@ import process from 'node:process'
 import gdal from 'gdal-async'
 import Flatbush from 'flatbush'
 
+import logger from '../../../../lib/logger.js'
 import {downloadAndExtract} from '../../../../lib/geoservices.js'
 
 const {ADMIN_EXPRESS_URL} = process.env
@@ -16,17 +17,17 @@ export function featureToBbox(feature) {
 export async function createCommunesIndex(adminExpressUrl) {
   adminExpressUrl = adminExpressUrl || ADMIN_EXPRESS_URL
 
-  console.log('Downloading and extracting ADMIN-EXPRESS archive')
+  logger.log('Downloading and extracting ADMIN-EXPRESS archive')
   let adminExpressArchive
 
   try {
     adminExpressArchive = await downloadAndExtract(adminExpressUrl)
   } catch (error) {
-    console.error(error.message)
+    logger.error(error.message)
     process.exit(1)
   }
 
-  console.log('Building administrative units index')
+  logger.log('Building administrative units index')
 
   const communesPath = await adminExpressArchive.getPath('COMMUNE.SHP')
   const arrondissementsPath = await adminExpressArchive.getPath('ARRONDISSEMENT_MUNICIPAL.SHP')

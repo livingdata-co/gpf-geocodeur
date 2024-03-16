@@ -9,6 +9,7 @@ import {Readable} from 'node:stream'
 import {createWriteStream} from 'node:fs'
 import {mkdir, writeFile} from 'node:fs/promises'
 
+import logger from '../../../../lib/logger.js'
 import {downloadAndExtract, getArchiveURL} from '../../../../lib/geoservices.js'
 import {computeDepartements} from '../../../../lib/cli.js'
 
@@ -29,22 +30,22 @@ await mkdir(POI_DATA_PATH, {recursive: true})
 const outputFile = createWriteStream(path.join(POI_DATA_PATH, 'poi.ndjson'), {encoding: 'utf8'})
 
 for (const codeDepartement of computeDepartements('poi')) {
-  console.log(`Index POI data for departement ${codeDepartement}`)
+  logger.log(`Index POI data for departement ${codeDepartement}`)
 
   const archiveUrl = getArchiveURL(BDTOPO_URL, codeDepartement)
-  console.log('Downloading and extracting archive')
+  logger.log('Downloading and extracting archive')
   let bdtopoArchive
 
   try {
     bdtopoArchive = await downloadAndExtract(archiveUrl)
   } catch (error) {
-    console.error(error.message)
+    logger.error(error.message)
     process.exit(1)
   }
 
   const datasetPath = await bdtopoArchive.getPath('BDT_3-3_GPKG_*.gpkg')
 
-  console.log('Extracting features from dataset')
+  logger.log('Extracting features from dataset')
 
   const featureStream = Readable.from(extractFeatures({
     datasetPath,

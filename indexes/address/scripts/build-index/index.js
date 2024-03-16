@@ -5,6 +5,7 @@ import 'dotenv/config.js'
 import process from 'node:process'
 import {createGunzip} from 'node:zlib'
 import got from 'got'
+import logger from '../../../../lib/logger.js'
 import {createIndexer} from '../../../../lib/spatial-index/indexer.js'
 import {createImporter} from '../../../../lib/addok/importer.js'
 import {computeDepartements} from '../../../../lib/cli.js'
@@ -21,27 +22,27 @@ const addokImporter = await createImporter(ADDRESS_INDEX_PATH, './indexes/addres
 const indexer = await createIndexer(ADDRESS_INDEX_MDB_BASE_PATH, {geometryType: 'Point'})
 
 for (const codeDepartement of computeDepartements('address')) {
-  console.log(`Index address data for departement ${codeDepartement}`)
+  logger.log(`Index address data for departement ${codeDepartement}`)
 
   const fileUrl = getFileUrl(codeDepartement)
 
-  console.log('Indexing into LMDB')
+  logger.log('Indexing into LMDB')
   try {
     await indexer.writeFeatures(extractFeatures(fileUrl))
   } catch (error) {
-    console.error(error.message)
+    logger.error(error.message)
     process.exit(1)
   }
 
-  console.log('Indexing into addok')
+  logger.log('Indexing into addok')
   await addokImporter.batchImport(
     got.stream(fileUrl)
       .pipe(createGunzip())
   )
 }
 
-console.log('Finishing spatial indexation computation')
+logger.log('Finishing spatial indexation computation')
 await indexer.finish()
 
-console.log('Finishing addok importation')
+logger.log('Finishing addok importation')
 await addokImporter.finish()
