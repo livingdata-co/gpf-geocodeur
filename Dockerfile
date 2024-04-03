@@ -4,6 +4,8 @@ WORKDIR /app
 
 RUN apt-get update && apt-get install -y build-essential gcc
 
+RUN corepack disable && npm install -g yarn
+
 COPY package.json yarn.lock ./
 RUN yarn install --prod --frozen-lockfile
 
@@ -26,6 +28,8 @@ RUN apt-get update && \
     wget -q https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq && \
     chmod +x /usr/bin/yq && \
     rm -rf /var/lib/apt/lists/*
+
+RUN corepack disable && npm install -g yarn
 
 COPY . .
 
