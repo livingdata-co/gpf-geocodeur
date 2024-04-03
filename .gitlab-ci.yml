@@ -19,15 +19,18 @@ cache:
     - node_modules/
 
 lint:
-  script:
+  before_script:
+    - corepack disable && npm install -g yarn
     - yarn --frozen-lockfile
+  script:
     - yarn lint
 
 test:
   before_script:
     - apt-get update && apt-get install -y p7zip-full
-  script:
+    - corepack disable && npm install -g yarn
     - yarn --frozen-lockfile
+  script:
     - yarn test-lcov
   artifacts:
     paths:
@@ -35,8 +38,10 @@ test:
     expire_in: 1 week
 
 test:recette:
-  script:
+  before_script:
+    - corepack disable && npm install -g yarn
     - yarn --frozen-lockfile
+  script:
     - yarn test-recette
   when: manual
 
