@@ -70,6 +70,7 @@ Les variables suivantes n'ont en principe pas besoin d'être modifiées. Utilise
 | --- | --- | --- |
 | `TMP_PATH` | Répertoire temporaire pour les archives téléchargées | `./tmp` |
 | `DATA_PATH` | Répertoire contenant les données produites ou utilisées | `./data` |
+| `GEOSERVICES_DOWNLOAD_RETRIES` | Nombre de tentatives supplémentaires en cas d’échec pour récupérer un fichier provenant des Géoservices | `1` |
 
 ## Géoplateforme
 
