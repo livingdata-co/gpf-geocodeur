@@ -33,7 +33,7 @@ for (const codeDepartement of computeDepartements('poi')) {
   logger.log(`Index POI data for departement ${codeDepartement}`)
 
   const archiveUrl = getArchiveURL(BDTOPO_URL, codeDepartement)
-  logger.log('Downloading and extracting archive')
+  logger.log(`Downloading and extracting archive ${archiveUrl}`)
   let bdtopoArchive
 
   try {
