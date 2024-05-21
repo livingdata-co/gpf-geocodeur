@@ -1,7 +1,12 @@
 {
   "info": {
-    "name": "Autocompletion",
-    "description": "Service d'autocompletion"
+    "name": "Service d'Autocompletion de la Géoplateforme",
+    "title": "Service d'Autocompletion de la Géoplateforme",
+    "description": "Géoplateforme - Service d'Autocompletion de la Géoplateforme",
+    "language": "Français",
+    "contact": {
+      "email": "geoplateforme@ign.fr"
+    }
   },
   "api": {
     "name": "rest",

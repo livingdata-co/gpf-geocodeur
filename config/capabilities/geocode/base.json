@@ -1,7 +1,12 @@
 {
   "info": {
-    "name": "Géocodage",
-    "description": "Service de géocodage et géocodage inverse."
+    "name": "Service de Géocodage de la Géoplateforme",
+    "title": "Service de Géocodage de la Géoplateforme",
+    "description": "Géoplateforme - Service de Géocodage de la Geoplateforme.",
+    "language": "Français",
+    "contact": {
+      "email": "geoplateforme@ign.fr"
+    }
   },
   "api": {
     "name": "rest",
