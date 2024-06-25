@@ -54,7 +54,7 @@
     "lmdb": "^2.9.2",
     "lodash-es": "^4.17.21",
     "morgan": "^1.10.0",
-    "msgpackr": "^1.10.0",
+    "msgpackr": "^1.10.2",
     "nanoid": "^5.0.7",
     "natural": "^6.10.4",
     "ndjson": "^2.0.0",
