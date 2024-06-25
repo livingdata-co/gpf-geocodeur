@@ -3622,10 +3622,10 @@ flat-cache@^3.0.4:
     flatted "^3.1.0"
     rimraf "^3.0.2"
 
-flatbush@^4.2.0:
-  version "4.2.0"
-  resolved "https://registry.yarnpkg.com/flatbush/-/flatbush-4.2.0.tgz#e7b1de2548a9db2c03f8c4217a06131ed80212f8"
-  integrity sha512-LllsEiXrD3oMkuUea3lrPhRXHaUz2on3ekcqBjYoMdvqicK7tXNEsTNADVF10h/mE4fJlHAu26BpHMFiXaSmtg==
+flatbush@^4.4.0:
+  version "4.4.0"
+  resolved "https://registry.yarnpkg.com/flatbush/-/flatbush-4.4.0.tgz#4412745461ef83ee44ae5fda272cc3c00bb32a07"
+  integrity sha512-cf6G+sfy/+/FLH7Ls1URQ5GCRlXgwgqUZiEsMNrMZqb3Us3EkKmzUlKbnyoBy/4wI4oLJ+8cyCQoKJIVm92Fmg==
   dependencies:
     flatqueue "^2.0.3"
 

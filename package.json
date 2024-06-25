@@ -43,7 +43,7 @@
     "execa": "^8.0.1",
     "express": "^4.19.2",
     "fast-glob": "^3.3.2",
-    "flatbush": "^4.2.0",
+    "flatbush": "^4.4.0",
     "flexsearch": "^0.7.31",
     "gdal-async": "^3.9.0",
     "geobuf": "^3.0.2",
