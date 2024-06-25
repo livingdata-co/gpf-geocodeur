@@ -15,7 +15,7 @@ export function featureToBbox(feature) {
 }
 
 export async function createCommunesIndex(adminExpressUrl) {
-  adminExpressUrl = adminExpressUrl || ADMIN_EXPRESS_URL
+  adminExpressUrl ||= ADMIN_EXPRESS_URL
 
   logger.log('Downloading and extracting ADMIN-EXPRESS archive')
   let adminExpressArchive

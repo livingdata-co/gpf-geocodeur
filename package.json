@@ -90,7 +90,8 @@
       ],
       "unicorn/prevent-abbreviations": "off",
       "import/no-unassigned-import": "off",
-      "import/order": "off"
+      "import/order": "off",
+      "object-curly-newline": "off"
     }
   },
   "engines": {
