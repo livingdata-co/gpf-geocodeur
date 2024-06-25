@@ -134,7 +134,7 @@ test('extractFeatures', async t => {
   t.true(cleabsUniqIndex.has('ABCDEF'))
 
   t.deepEqual(features, [
-    '{"name":["prefix|gymnase"],"classification":7,"category":["cat1","subcat1"],"importance":0.4,"extrafields":{"foo":"bar","cleabs":"ABCDEF"},"citycode":["57463","57"],"city":["Metz"],"postcode":["57050","57070","57000"],"truegeometry":"{\\"type\\":\\"Point\\",\\"coordinates\\":[6.174285,49.121918]}","lon":6.174285,"lat":49.121918,"territory":"METROPOLE"}\n'
+    '{"name":["prefix|gymnase"],"classification":7,"category":["cat1","subcat1"],"importance":0.4,"extrafields":{"foo":"bar","cleabs":"ABCDEF"},"citycode":["57463","57"],"city":["Metz"],"postcode":["57000","57050","57070"],"truegeometry":"{\\"type\\":\\"Point\\",\\"coordinates\\":[6.174285,49.121918]}","lon":6.174285,"lat":49.121918,"territory":"METROPOLE"}\n'
   ])
 })
 
