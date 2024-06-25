@@ -5384,10 +5384,10 @@ p-event@^5.0.1:
   dependencies:
     p-timeout "^5.0.2"
 
-p-event@^6.0.0:
-  version "6.0.0"
-  resolved "https://registry.yarnpkg.com/p-event/-/p-event-6.0.0.tgz#ebb53ff3563268849219d660f8eae1055cb51051"
-  integrity sha512-Xbfxd0CfZmHLGKXH32k1JKjQYX6Rkv0UtQdaFJ8OyNcf+c0oWCeXHc1C4CX/IESZLmcvfPa5aFIO/vCr5gqtag==
+p-event@^6.0.1:
+  version "6.0.1"
+  resolved "https://registry.yarnpkg.com/p-event/-/p-event-6.0.1.tgz#8f62a1e3616d4bc01fce3abda127e0383ef4715b"
+  integrity sha512-Q6Bekk5wpzW5qIyUP4gdMEujObYstZl6DMMOSenwBvV0BlE5LkDwkjs5yHbZmdCEq2o4RJx4tE1vwxFVf2FG1w==
   dependencies:
     p-timeout "^6.1.2"
 
