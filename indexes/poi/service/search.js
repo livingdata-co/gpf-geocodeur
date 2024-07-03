@@ -13,8 +13,8 @@ const POI_FIELDS = [
   'territory'
 ]
 
-export async function search(params, {db, addokCluster}) {
-  const results = await addokCluster.geocode(prepareParams(params))
+export async function search(params, {db, addokCluster, priority, signal}) {
+  const results = await addokCluster.geocode(prepareParams(params), {priority, signal})
 
   return results.map(result => {
     const {id} = result.properties
