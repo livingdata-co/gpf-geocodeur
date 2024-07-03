@@ -39,7 +39,7 @@ export async function createRouter() {
   }))
 
   router.post('/reverse', w((req, res) => {
-    res.send(reverse({...req.body, db, rtreeIndex}))
+    res.send(reverse(req.body, {db, rtreeIndex}))
   }))
 
   router.get('/categories', (req, res) => {

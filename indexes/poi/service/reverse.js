@@ -5,12 +5,12 @@ import {computeScore} from '../../../lib/spatial-index/util.js'
 
 import {reverse as reverseBase} from '../../../lib/spatial-index/reverse.js'
 
-export function reverse(options) {
+export function reverse(params, options) {
   if (!options.db) {
     throw new Error('db is required')
   }
 
-  return reverseBase({
+  return reverseBase(params, {
     ...options,
     formatResult,
     getFeatureByIdx: idx => options.db.getFeatureByIdx(idx),

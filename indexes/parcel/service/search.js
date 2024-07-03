@@ -147,12 +147,12 @@ export function search(options) {
   throw createError(400, 'Parcel search requires filters or center')
 }
 
-export function reverse(options) {
+export function reverse(params, options) {
   if (!options.db) {
     throw new Error('db is required')
   }
 
-  return reverseBase({
+  return reverseBase(params, {
     ...options,
     formatResult: (feature, options) => formatResult(feature, {...options, forceDistance: true}),
     getFeatureByIdx: idx => options.db.getFeatureByIdx(idx)

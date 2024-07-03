@@ -3,28 +3,22 @@ import {reverse, formatResult, computeDistance} from '../reverse.js'
 
 test('reverse / no limit', t => {
   t.throws(() => reverse({
-    rtreeIndex: 'foo',
-    db: 'bar',
     center: 'center',
     filters: 'filters',
     returntruegeometry: false
-  }), {message: 'limit is a required param'})
+  }, {rtreeIndex: 'foo', db: 'bar'}), {message: 'limit is a required param'})
 })
 
 test('reverse / no center', t => {
   t.throws(() => reverse({
-    rtreeIndex: 'foo',
-    db: 'bar',
     limit: 2,
     filters: 'filters',
     returntruegeometry: false
-  }), {message: 'search must be called with at least geometry or center param'})
+  }, {rtreeIndex: 'foo', db: 'bar'}), {message: 'search must be called with at least geometry or center param'})
 })
 
 test('reverse / huge bbox', t => {
   t.throws(() => reverse({
-    rtreeIndex: 'foo',
-    db: 'bar',
     center: 'center',
     limit: 2,
     filters: 'filters',
@@ -56,7 +50,7 @@ test('reverse / huge bbox', t => {
         ]
       ]
     }
-  }), {message: 'geometry bbox height/width must be less than 1km'})
+  }, {rtreeIndex: 'foo', db: 'bar'}), {message: 'geometry bbox height/width must be less than 1km'})
 })
 
 test('formatResult', t => {

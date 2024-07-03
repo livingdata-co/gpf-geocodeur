@@ -2,7 +2,7 @@ import test from 'ava'
 import {reverse, formatResult, computeDistance} from '../reverse.js'
 
 test('reverse / no db', t => {
-  t.throws(() => reverse({
+  t.throws(() => reverse({}, {
     database: 'no'
   }), {message: 'db is required'})
 })

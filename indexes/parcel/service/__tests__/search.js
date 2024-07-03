@@ -347,18 +347,16 @@ test('search / filters', t => {
 })
 
 test('reverse / no db', t => {
-  t.throws(() => reverse({options: 'sans'}), {
+  t.throws(() => reverse({}, {options: 'sans'}), {
     message: 'db is required'
   })
 })
 
 test('reverse', t => {
-  const result = reverse({
-    db: 'database',
-    rtreeIndex: 'index',
-    limit: 1,
-    center: [2, 3]
-  })
+  const result = reverse(
+    {limit: 1, center: [2, 3]},
+    {db: 'database', rtreeIndex: 'index'}
+  )
 
   t.truthy(result)
 })
