@@ -6,11 +6,11 @@ import w from '../../../lib/w.js'
 import errorHandler from '../../../lib/error-handler.js'
 import {createRtree} from '../../../lib/spatial-index/rtree.js'
 import {createInstance as createRedisServer} from '../../../lib/addok/redis.js'
-import {prepareParams} from '../../../lib/addok/prepare-params.js'
 
 import {ADDRESS_INDEX_RTREE_PATH, ADDRESS_INDEX_PATH} from '../util/paths.js'
 
 import {createDatabase} from './db.js'
+import {search} from './search.js'
 import {reverse} from './reverse.js'
 
 export async function createRouter() {
@@ -27,23 +27,11 @@ export async function createRouter() {
   router.use(json())
 
   router.post('/search', w(async (req, res) => {
-    const results = await addokCluster.geocode(prepareParams(req.body))
-
-    if (!req.body.returntruegeometry) {
-      return res.send(results)
-    }
-
-    res.send(results.map(feature => {
-      const truegeometry = JSON.stringify(feature.geometry)
-      return {
-        ...feature,
-        properties: {...feature.properties, truegeometry}
-      }
-    }))
+    res.send(await search(req.body, {addokCluster}))
   }))
 
-  router.post('/reverse', w((req, res) => {
-    res.send(reverse(req.body, {db, rtreeIndex}))
+  router.post('/reverse', w(async (req, res) => {
+    res.send(await reverse(req.body, {db, rtreeIndex}))
   }))
 
   router.use(errorHandler)
