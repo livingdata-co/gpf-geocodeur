@@ -6,6 +6,7 @@ import w from '../../../lib/w.js'
 import errorHandler from '../../../lib/error-handler.js'
 import {createRtree} from '../../../lib/spatial-index/rtree.js'
 import {createInstance as createRedisServer} from '../../../lib/addok/redis.js'
+import {batch} from '../../../lib/indexes/batch.js'
 
 import {ADDRESS_INDEX_RTREE_PATH, ADDRESS_INDEX_PATH} from '../util/paths.js'
 
@@ -33,6 +34,13 @@ export async function createRouter() {
   router.post('/reverse', w(async (req, res) => {
     res.send(await reverse(req.body, {db, rtreeIndex}))
   }))
+
+  router.post('/batch', w(batch({
+    operations: {
+      search: (params, options) => search(params, {...options, priority: 'low'}),
+      reverse
+    }
+  })))
 
   router.use(errorHandler)
 
