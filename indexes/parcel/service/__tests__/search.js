@@ -8,6 +8,12 @@ test('checkConfig / no db', t => {
 })
 
 test('getById', t => {
+  const params = {
+    id: 1,
+    center: [2, 4],
+    returntruegeometry: true
+  }
+
   const options = {
     db: {
       getFeatureById() {
@@ -24,13 +30,10 @@ test('getById', t => {
         }
       }
     },
-    rtreeIndex: 'index',
-    id: 1,
-    center: [2, 4],
-    returntruegeometry: true
+    rtreeIndex: 'index'
   }
 
-  const result = getById(options)
+  const result = getById(params, options)
 
   t.deepEqual(result, {
     type: 'Feature',
@@ -48,7 +51,7 @@ test('getById', t => {
 })
 
 test('getById / no db', t => {
-  t.throws(() => getById({options: null}), {
+  t.throws(() => getById({}, {options: null}), {
     message: 'db is required'
   })
 })
@@ -62,14 +65,17 @@ test('asArray', t => {
 })
 
 test('search / no limit', t => {
-  const options = {
-    rtreeIndex: 'index',
-    db: 'database',
+  const params = {
     center: [2, 3],
     returntruegeometry: true
   }
 
-  t.throws(() => search(options), {
+  const options = {
+    rtreeIndex: 'index',
+    db: 'database'
+  }
+
+  t.throws(() => search(params, options), {
     message: 'limit is a required param'
   })
 })
@@ -143,14 +149,13 @@ test('structuredSearch', t => {
   }
 
   t.deepEqual(structuredSearch({
-    db,
     limit: 5,
     filters: {
       departmentcode: '54',
       municipalitycode: '084',
       section: '0A'
     }
-  }), [
+  }, {db}), [
     {
       type: 'Feature',
       properties: {
@@ -182,7 +187,6 @@ test('structuredSearch', t => {
   ])
 
   t.deepEqual(structuredSearch({
-    db,
     limit: 5,
     filters: {
       departmentcode: '54',
@@ -190,7 +194,7 @@ test('structuredSearch', t => {
       section: '0A',
       sheet: '02'
     }
-  }), [
+  }, {db}), [
     {
       type: 'Feature',
       properties: {
@@ -208,7 +212,6 @@ test('structuredSearch', t => {
   ])
 
   t.deepEqual(structuredSearch({
-    db,
     limit: 5,
     filters: {
       departmentcode: '54',
@@ -218,18 +221,21 @@ test('structuredSearch', t => {
       number: '1234',
       sheet: '02'
     }
-  }), [])
+  }, {db}), [])
 })
 
 test('search / no center', t => {
-  const options = {
-    rtreeIndex: 'index',
-    db: 'database',
+  const params = {
     returntruegeometry: true,
     limit: 2
   }
 
-  t.throws(() => search(options), {
+  const options = {
+    rtreeIndex: 'index',
+    db: 'database'
+  }
+
+  t.throws(() => search(params, options), {
     message: 'Parcel search requires filters or center'
   })
 })
@@ -251,12 +257,15 @@ test('search / q', t => {
         }
       }
     },
-    q: 'oh !',
     rtreeIndex: {
       neighbors() {
         return 'ok'
       }
-    },
+    }
+  }
+
+  const params = {
+    q: 'oh !',
     id: 1,
     center: [2, 4],
     limit: 1,
@@ -264,7 +273,7 @@ test('search / q', t => {
     returntruegeometry: true
   }
 
-  const result = search(options)
+  const result = search(params, options)
 
   t.truthy(result)
 })
@@ -290,14 +299,17 @@ test('search / center', t => {
       neighbors() {
         return 'ok'
       }
-    },
+    }
+  }
+
+  const params = {
     center: [2, 4],
     limit: 1,
     filters: {un: 'filtre'},
     returntruegeometry: true
   }
 
-  const result = search(options)
+  const result = search(params, options)
 
   t.truthy(result)
 })
@@ -332,7 +344,10 @@ test('search / filters', t => {
       neighbors() {
         return 'ok'
       }
-    },
+    }
+  }
+
+  const params = {
     limit: 1,
     filters: {
       departmentcode: 55,
@@ -341,7 +356,7 @@ test('search / filters', t => {
     returntruegeometry: true
   }
 
-  const result = search(options)
+  const result = search(params, options)
 
   t.truthy(result)
 })

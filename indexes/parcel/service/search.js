@@ -17,12 +17,13 @@ export function checkConfig({rtreeIndex, db}) {
   }
 }
 
-export function getById(options) {
+export function getById(params, options) {
   if (!options.db) {
     throw new Error('db is required')
   }
 
-  const {q, center, returntruegeometry, db} = options
+  const {q, center, returntruegeometry} = params
+  const {db} = options
 
   const feature = db.getFeatureById(q)
 
@@ -55,13 +56,14 @@ export function buildSearchPattern({departmentcode, municipalitycode, oldmunicip
   return `${citycode}${oldmunicipalitycode || '000'}${section || '**'}${number || '****'}`
 }
 
-export function structuredSearch(options) {
-  const {filters, limit, returntruegeometry, db} = options
+export function structuredSearch(params, options) {
+  const {filters, limit, returntruegeometry} = params
+  const {db} = options
 
   const searchPattern = buildSearchPattern(filters)
 
   if (!searchPattern.includes('*')) {
-    return asArray(getById({q: searchPattern, returntruegeometry, db}))
+    return asArray(getById({q: searchPattern, returntruegeometry}, {db}))
       .filter(f => featureMatches(f, null, filters))
   }
 
@@ -93,8 +95,9 @@ export function structuredSearch(options) {
   return parcels.map(parcelFeature => formatResult(parcelFeature, {returntruegeometry}))
 }
 
-export function geoSearch(options) {
-  const {center, filters, limit, returntruegeometry, rtreeIndex, db} = options
+export function geoSearch(params, options) {
+  const {center, filters, limit, returntruegeometry} = params
+  const {rtreeIndex, db} = options
 
   const [lon, lat] = center
   const matchingFeatures = []
@@ -125,23 +128,23 @@ export function geoSearch(options) {
   )
 }
 
-export function search(options) {
+export function search(params, options) {
   checkConfig(options)
 
-  if (!options.limit) {
+  if (!params.limit) {
     throw createError(400, 'limit is a required param')
   }
 
-  if (options.q) {
-    return asArray(getById(options))
+  if (params.q) {
+    return asArray(getById(params, options))
   }
 
-  if (options.center) {
-    return geoSearch(options)
+  if (params.center) {
+    return geoSearch(params, options)
   }
 
-  if (options.filters) {
-    return structuredSearch(options)
+  if (params.filters) {
+    return structuredSearch(params, options)
   }
 
   throw createError(400, 'Parcel search requires filters or center')

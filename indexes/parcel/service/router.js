@@ -23,7 +23,7 @@ export async function createRouter() {
   router.use(json())
 
   router.post('/search', w((req, res) => {
-    res.send(search({...req.body, db, rtreeIndex}))
+    res.send(search(req.body, {db, rtreeIndex}))
   }))
 
   router.post('/reverse', w((req, res) => {
