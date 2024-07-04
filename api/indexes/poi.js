@@ -50,8 +50,8 @@ export default function createPoiIndex(options = {}) {
       return client.execRequest('search', requestBody)
     },
 
-    async batch(requests) {
-      return requests.map(r => ({id: r.id, status: 'error', error: 'Index not available'}))
+    async batch(params) {
+      return params.requests.map(r => ({id: r.id, status: 'error', error: 'Index not available'}))
     }
   }
 }

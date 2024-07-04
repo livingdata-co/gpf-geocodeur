@@ -46,7 +46,7 @@ export default function createRouter(options = {}) {
     })
   }))
 
-  router.post('/batch', w(async (req, res) => {
+  router.post('/batch', express.json(), w(async (req, res) => {
     // TODO: validate and prepare params/requests
     const results = await batch(req.body, {indexes})
     res.send({results})
