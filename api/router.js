@@ -4,6 +4,7 @@ import express from 'express'
 
 import w from '../lib/w.js'
 import errorHandler from '../lib/error-handler.js'
+import {validateBatchPayload} from '../lib/batch.js'
 
 import {createIndexes} from './indexes/index.js'
 import search from './operations/search.js'
@@ -47,8 +48,11 @@ export default function createRouter(options = {}) {
   }))
 
   router.post('/batch', express.json(), w(async (req, res) => {
-    // TODO: validate and prepare params/requests
-    const results = await batch(req.body, {indexes})
+    const payload = req.body
+
+    validateBatchPayload(payload, new Set(['search', 'reverse']))
+
+    const results = await batch(payload, {indexes})
     res.send({results})
   }))
 

@@ -1,7 +1,7 @@
-export default async function batch(params, options = {}) {
+export default async function batch(payload, options = {}) {
   const {indexes} = options
-  const results = await indexes.dispatchRequest({...params, indexes: ['address']}, 'batch')
-  return mergeResults(results, params)
+  const results = await indexes.dispatchRequest({...payload, indexes: ['address']}, 'batch')
+  return mergeResults(results, payload)
 }
 
 export function mergeResults(indexesResults) {
