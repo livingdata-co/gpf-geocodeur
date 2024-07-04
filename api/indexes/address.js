@@ -48,6 +48,15 @@ export default function createAddressIndex(options = {}) {
     async autocomplete(params) {
       const requestBody = prepareRequest(params)
       return client.execRequest('search', requestBody)
+    },
+
+    async batch(requests) {
+      const preparedRequests = requests.map(r => ({
+        operation: r.operation,
+        params: prepareRequest(r.params)
+      }))
+
+      return client.execRequest('batch', preparedRequests)
     }
   }
 }

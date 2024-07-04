@@ -48,6 +48,10 @@ export default function createPoiIndex(options = {}) {
     async autocomplete(params) {
       const requestBody = prepareRequest(params)
       return client.execRequest('search', requestBody)
+    },
+
+    async batch(requests) {
+      return requests.map(r => ({id: r.id, status: 'error', error: 'Index not available'}))
     }
   }
 }

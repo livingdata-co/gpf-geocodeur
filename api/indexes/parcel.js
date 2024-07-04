@@ -46,6 +46,10 @@ export default function createParcelIndex(options = {}) {
     async reverse(params) {
       const requestBody = prepareRequest(params)
       return client.execRequest('reverse', requestBody)
+    },
+
+    async batch(requests) {
+      return requests.map(r => ({id: r.id, status: 'error', error: 'Index not available'}))
     }
   }
 }

@@ -8,6 +8,7 @@ import errorHandler from '../lib/error-handler.js'
 import {createIndexes} from './indexes/index.js'
 import search from './operations/search.js'
 import reverse from './operations/reverse.js'
+import batch from './operations/batch.js'
 import autocomplete from './operations/autocomplete.js'
 import {extractSearchParams, extractReverseParams} from './params/base.js'
 import {extractParams as extractAutocompleteParams} from './params/autocomplete.js'
@@ -43,6 +44,12 @@ export default function createRouter(options = {}) {
       type: 'FeatureCollection',
       features: results
     })
+  }))
+
+  router.post('/batch', w(async (req, res) => {
+    // TODO: validate and prepare params/requests
+    const results = await batch(req.body, {indexes})
+    res.send({results})
   }))
 
   router.get('/completion', w(async (req, res) => {
