@@ -22,7 +22,7 @@ test('search / address index', async t => {
     }
   }
 
-  const router = createRouter({customIndexes})
+  const router = await createRouter({customIndexes})
   app.use('/', router)
 
   const response = await request(app)
@@ -47,7 +47,7 @@ test('reverse / address index', async t => {
     }
   }
 
-  const router = createRouter({customIndexes})
+  const router = await createRouter({customIndexes})
   app.use('/', router)
 
   const response = await request(app)
@@ -70,7 +70,7 @@ test('search / empty response', async t => {
     }
   }
 
-  const router = createRouter({customIndexes})
+  const router = await createRouter({customIndexes})
   app.use('/', router)
 
   const response = await request(app)
@@ -95,7 +95,7 @@ test('search / invalid query parameters', async t => {
     }
   }
 
-  const router = createRouter({customIndexes})
+  const router = await createRouter({customIndexes})
   app.use('/', router)
 
   const response = await request(app)
@@ -116,7 +116,7 @@ test('search / server error', async t => {
     }
   }
 
-  const router = createRouter({customIndexes})
+  const router = await createRouter({customIndexes})
   app.use('/', router)
 
   const response = await request(app)
@@ -136,7 +136,7 @@ test('completion', async t => {
     }
   }
 
-  const router = createRouter({customIndexes})
+  const router = await createRouter({customIndexes})
   app.use('/', router)
 
   const response = await request(app)
@@ -159,7 +159,7 @@ test('completion / with error', async t => {
     }
   }
 
-  const router = createRouter({customIndexes})
+  const router = await createRouter({customIndexes})
   app.use('/', router)
 
   const response = await request(app)
@@ -183,7 +183,7 @@ test('getCapabilities / geocodage', async t => {
       construction: ['pont', 'croix']
     })
 
-  const router = createRouter()
+  const router = await createRouter()
   app.use('/', router)
 
   const response = await request(app)
@@ -206,7 +206,7 @@ test('getCapabilities / autocomplete', async t => {
       construction: ['pont', 'croix']
     })
 
-  const router = createRouter()
+  const router = await createRouter()
   app.use('/', router)
 
   const response = await request(app)
@@ -221,7 +221,7 @@ test('getCapabilities / autocomplete', async t => {
 
 test('openAPI / geocode.yaml', async t => {
   const app = express()
-  const router = createRouter()
+  const router = await createRouter()
   app.use('/', router)
 
   const response = await request(app)
@@ -233,7 +233,7 @@ test('openAPI / geocode.yaml', async t => {
 
 test('openAPI / completion.yaml', async t => {
   const app = express()
-  const router = createRouter()
+  const router = await createRouter()
   app.use('/', router)
 
   const response = await request(app)

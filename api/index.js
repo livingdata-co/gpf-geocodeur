@@ -29,7 +29,7 @@ app.get('/ping', (req, res) => {
   res.send('PONG!')
 })
 
-app.use('/', createRouter())
+app.use('/', await createRouter())
 
 app.listen(PORT, () => {
   logger.log(`Start listening on port ${PORT}`)
