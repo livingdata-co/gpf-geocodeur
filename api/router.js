@@ -1,10 +1,15 @@
 import process from 'node:process'
 import path from 'node:path'
+import {mkdir, rm} from 'node:fs/promises'
 import express from 'express'
+import multer from 'multer'
+import onFinished from 'on-finished'
+import createHttpError from 'http-errors'
 
 import w from '../lib/w.js'
 import errorHandler from '../lib/error-handler.js'
 import {validateBatchPayload} from '../lib/batch.js'
+import logger from '../lib/logger.js'
 
 import {createIndexes} from './indexes/index.js'
 import search from './operations/search.js'
@@ -22,10 +27,16 @@ const GEOCODE_INDEXES = process.env.GEOCODE_INDEXES
   ? process.env.GEOCODE_INDEXES.split(',')
   : ['address', 'poi', 'parcel']
 
+const DEFAULT_UPLOAD_DIR = 'uploads/'
+
 const {API_ROOT_REDIRECTION} = process.env
 
-export default function createRouter(options = {}) {
+export default async function createRouter(options = {}) {
+  const uploadDir = options.uploadDir || DEFAULT_UPLOAD_DIR
+  await mkdir(uploadDir, {recursive: true})
+
   const router = new express.Router()
+  const upload = multer({dest: uploadDir, limits: {fileSize: 50 * 1024 * 1024}}) // 50MB
 
   const indexes = options.customIndexes || createIndexes(options.indexes || GEOCODE_INDEXES)
 
@@ -54,6 +65,25 @@ export default function createRouter(options = {}) {
 
     const results = await batch(payload, {indexes})
     res.send({results})
+  }))
+
+  router.post('/search/csv', upload.single('data'), w(async (req, res) => {
+    if (!req.file) {
+      throw createHttpError(400, 'A CSV file must be provided in data field')
+    }
+
+    res.sendStatus(200)
+
+    // Cleanup file after response is sent
+    onFinished(res, async () => {
+      try {
+        if (req.file) {
+          await rm(req.file.path, {force: true})
+        }
+      } catch (error) {
+        logger.error(error)
+      }
+    })
   }))
 
   router.get('/completion', w(async (req, res) => {
