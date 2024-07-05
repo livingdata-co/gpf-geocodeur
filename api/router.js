@@ -1,10 +1,13 @@
 import process from 'node:process'
 import path from 'node:path'
+import {createReadStream} from 'node:fs'
 import {mkdir, rm} from 'node:fs/promises'
 import express from 'express'
 import multer from 'multer'
 import onFinished from 'on-finished'
 import createHttpError from 'http-errors'
+import contentDisposition from 'content-disposition'
+import {previewCsvFromStream, validateCsvFromStream} from '@livingdata/tabular-data-helpers'
 
 import w from '../lib/w.js'
 import errorHandler from '../lib/error-handler.js'
@@ -72,9 +75,7 @@ export default async function createRouter(options = {}) {
       throw createHttpError(400, 'A CSV file must be provided in data field')
     }
 
-    res.sendStatus(200)
-
-    // Cleanup file after response is sent
+    // Register file cleanup routine
     onFinished(res, async () => {
       try {
         if (req.file) {
@@ -84,6 +85,30 @@ export default async function createRouter(options = {}) {
         logger.error(error)
       }
     })
+
+    const {
+      parseErrors,
+      columns: columnsInFile,
+      formatOptions
+    } = await previewCsvFromStream(createReadStream(req.file.path))
+
+    if (parseErrors) {
+      throw createHttpError(400, 'Errors in CSV file: ' + parseErrors.join(', '))
+    }
+
+    await new Promise((resolve, reject) => {
+      validateCsvFromStream(createReadStream(req.file.path), {formatOptions})
+        .on('error', error => reject(createHttpError(400, error.message)))
+        .on('complete', () => resolve())
+    })
+
+    const filename = req.file.originalname ? 'geocoded-' + req.file.originalname : 'geocoded.csv'
+
+    res
+      .set('content-type', 'text/csv')
+      .set('content-disposition', contentDisposition(filename))
+
+    createReadStream(req.file.path).pipe(res)
   }))
 
   router.get('/completion', w(async (req, res) => {
