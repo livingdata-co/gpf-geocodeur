@@ -102,6 +102,16 @@ export default async function createRouter(options = {}) {
         .on('complete', () => resolve())
     })
 
+    const geocodeOptions = {}
+
+    if (req.body.columns) {
+      geocodeOptions.columns = ensureArray(req.body.columns)
+
+      if (geocodeOptions.columns.some(c => !columnsInFile.includes(c))) {
+        throw createHttpError(400, 'At least one given column name is unknown')
+      }
+    }
+
     const filename = req.file.originalname ? 'geocoded-' + req.file.originalname : 'geocoded.csv'
 
     res
@@ -178,4 +188,12 @@ export default async function createRouter(options = {}) {
   router.use(errorHandler)
 
   return router
+}
+
+function ensureArray(value) {
+  if (value) {
+    return Array.isArray(value) ? value : [value]
+  }
+
+  return []
 }
