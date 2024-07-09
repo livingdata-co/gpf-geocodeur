@@ -1,18 +1,12 @@
 import process from 'node:process'
 import path from 'node:path'
-import {createReadStream} from 'node:fs'
-import {mkdir, rm} from 'node:fs/promises'
+import {mkdir} from 'node:fs/promises'
 import express from 'express'
 import multer from 'multer'
-import onFinished from 'on-finished'
-import createHttpError from 'http-errors'
-import contentDisposition from 'content-disposition'
-import {previewCsvFromStream, validateCsvFromStream} from '@livingdata/tabular-data-helpers'
 
 import w from '../lib/w.js'
 import errorHandler from '../lib/error-handler.js'
 import {validateBatchPayload} from '../lib/batch.js'
-import logger from '../lib/logger.js'
 
 import {createIndexes} from './indexes/index.js'
 import search from './operations/search.js'
@@ -25,6 +19,8 @@ import computeGeocodeCapabilities from './capabilities/geocode.js'
 import computeAutocompleteCapabilities from './capabilities/autocomplete.js'
 import {editConfig} from './open-api/edit-config.js'
 import {computeHtmlPage} from './open-api/swagger-ui.js'
+
+import {csv} from './csv.js'
 
 const GEOCODE_INDEXES = process.env.GEOCODE_INDEXES
   ? process.env.GEOCODE_INDEXES.split(',')
@@ -70,56 +66,7 @@ export default async function createRouter(options = {}) {
     res.send({results})
   }))
 
-  router.post('/search/csv', upload.single('data'), w(async (req, res) => {
-    if (!req.file) {
-      throw createHttpError(400, 'A CSV file must be provided in data field')
-    }
-
-    // Register file cleanup routine
-    onFinished(res, async () => {
-      try {
-        if (req.file) {
-          await rm(req.file.path, {force: true})
-        }
-      } catch (error) {
-        logger.error(error)
-      }
-    })
-
-    const {
-      parseErrors,
-      columns: columnsInFile,
-      formatOptions
-    } = await previewCsvFromStream(createReadStream(req.file.path))
-
-    if (parseErrors) {
-      throw createHttpError(400, 'Errors in CSV file: ' + parseErrors.join(', '))
-    }
-
-    await new Promise((resolve, reject) => {
-      validateCsvFromStream(createReadStream(req.file.path), {formatOptions})
-        .on('error', error => reject(createHttpError(400, error.message)))
-        .on('complete', () => resolve())
-    })
-
-    const geocodeOptions = {}
-
-    if (req.body.columns) {
-      geocodeOptions.columns = ensureArray(req.body.columns)
-
-      if (geocodeOptions.columns.some(c => !columnsInFile.includes(c))) {
-        throw createHttpError(400, 'At least one given column name is unknown')
-      }
-    }
-
-    const filename = req.file.originalname ? 'geocoded-' + req.file.originalname : 'geocoded.csv'
-
-    res
-      .set('content-type', 'text/csv')
-      .set('content-disposition', contentDisposition(filename))
-
-    createReadStream(req.file.path).pipe(res)
-  }))
+  router.post('/search/csv', upload.single('data'), w(csv()))
 
   router.get('/completion', w(async (req, res) => {
     const params = extractAutocompleteParams(req.query)
@@ -188,12 +135,4 @@ export default async function createRouter(options = {}) {
   router.use(errorHandler)
 
   return router
-}
-
-function ensureArray(value) {
-  if (value) {
-    return Array.isArray(value) ? value : [value]
-  }
-
-  return []
 }
