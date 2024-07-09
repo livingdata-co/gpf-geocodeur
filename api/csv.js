@@ -1,10 +1,13 @@
 import {createReadStream} from 'node:fs'
 import {rm} from 'node:fs/promises'
+import {pipeline} from 'node:stream/promises'
 
 import onFinished from 'on-finished'
 import createHttpError from 'http-errors'
 import contentDisposition from 'content-disposition'
-import {previewCsvFromStream, validateCsvFromStream} from '@livingdata/tabular-data-helpers'
+import stringify from 'csv-write-stream'
+import iconv from 'iconv-lite'
+import {previewCsvFromStream, validateCsvFromStream, createCsvReadStream} from '@livingdata/tabular-data-helpers'
 
 import logger from '../lib/logger.js'
 
@@ -81,7 +84,13 @@ export function csv() {
       .set('content-type', 'text/csv')
       .set('content-disposition', contentDisposition(filename))
 
-    createReadStream(req.file.path).pipe(res)
+    await pipeline(
+      createReadStream(req.file.path),
+      createCsvReadStream({formatOptions}),
+      stringify({separator: formatOptions.delimiter, newline: formatOptions.linebreak}),
+      iconv.encodeStream('utf8'),
+      res
+    )
   }
 }
 
