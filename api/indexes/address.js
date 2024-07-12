@@ -50,14 +50,14 @@ export default function createAddressIndex(options = {}) {
       return client.execRequest('search', requestBody)
     },
 
-    async batch(params) {
+    async batch(params, options = {}) {
       const preparedRequests = params.requests.map(r => ({
         id: r.id,
         operation: r.operation,
         params: prepareRequest(r.params)
       }))
 
-      const {results} = await client.execRequest('batch', {requests: preparedRequests})
+      const {results} = await client.execRequest('batch', {requests: preparedRequests}, options)
       return results
     }
   }

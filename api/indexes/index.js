@@ -8,7 +8,7 @@ const INDEX_CONSTRUCTORS = {
   parcel: createParcelIndex
 }
 
-export async function dispatchRequestToIndexes(params, operation, indexes) {
+export async function dispatchRequestToIndexes(params, operation, indexes, options = {}) {
   const results = {}
 
   await Promise.all(params.indexes.map(async indexName => {
@@ -20,7 +20,7 @@ export async function dispatchRequestToIndexes(params, operation, indexes) {
       throw new Error(`Unsupported operation: ${operation} with the index: ${indexName}`)
     }
 
-    const indexResult = await indexes[indexName][operation](params)
+    const indexResult = await indexes[indexName][operation](params, options)
     results[indexName] = indexResult
   }))
 
@@ -39,8 +39,8 @@ export function createIndexes(indexes) {
   }
 
   return {
-    async dispatchRequest(params, operation) {
-      return dispatchRequestToIndexes(params, operation, instances)
+    async dispatchRequest(params, operation, options = {}) {
+      return dispatchRequestToIndexes(params, operation, instances, options)
     }
   }
 }
