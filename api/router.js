@@ -66,7 +66,8 @@ export default async function createRouter(options = {}) {
     res.send({results})
   }))
 
-  router.post('/search/csv', upload.single('data'), w(csv()))
+  router.post('/search/csv', upload.single('data'), w(csv({indexes, operation: 'search'})))
+  router.post('/reverse/csv', upload.single('data'), w(csv({indexes, operation: 'reverse'})))
 
   router.get('/completion', w(async (req, res) => {
     const params = extractAutocompleteParams(req.query)
