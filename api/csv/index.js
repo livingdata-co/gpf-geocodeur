@@ -1,9 +1,7 @@
-/* eslint-disable camelcase */
 import {createReadStream} from 'node:fs'
 import {rm} from 'node:fs/promises'
 import {pipeline} from 'node:stream/promises'
 
-import {fromPairs, mapKeys, pick} from 'lodash-es'
 import onFinished from 'on-finished'
 import createHttpError from 'http-errors'
 import contentDisposition from 'content-disposition'
@@ -16,48 +14,8 @@ import logger from '../../lib/logger.js'
 import batchTransform from '../util/batch-transform-stream.js'
 import batch from '../operations/batch.js'
 
-export const DEFAULT_RESULT_COLUMNS = {
-  search: [
-    'latitude',
-    'longitude',
-    'result_label',
-    'result_score',
-    'result_score_next',
-    'result_type',
-    'result_id',
-    'result_housenumber',
-    'result_name',
-    'result_street',
-    'result_postcode',
-    'result_city',
-    'result_context',
-    'result_citycode',
-    'result_oldcitycode',
-    'result_oldcity',
-    'result_district',
-    'result_status'
-  ],
-
-  reverse: [
-    'result_latitude',
-    'result_longitude',
-    'result_distance',
-    'result_label',
-    'result_type',
-    'result_id',
-    'result_housenumber',
-    'result_name',
-    'result_street',
-    'result_postcode',
-    'result_city',
-    'result_context',
-    'result_citycode',
-    'result_oldcitycode',
-    'result_oldcity',
-    'result_district',
-    'result_status'
-  ]
-}
+import {getLon, getLat} from './params.js'
+import {createEmptyResultItem, expandItemWithResult} from './results.js'
 
 export function csv({operation, indexes}) {
   return async (req, res) => {
@@ -159,42 +117,6 @@ function ensureArray(value) {
   return []
 }
 
-function getLon(item, fieldName) {
-  if (fieldName) {
-    return Number.parseFloat(item[fieldName])
-  }
-
-  if (item.longitude) {
-    return Number.parseFloat(item.longitude)
-  }
-
-  if (item.lon) {
-    return Number.parseFloat(item.lon)
-  }
-
-  if (item.lng) {
-    return Number.parseFloat(item.lng)
-  }
-
-  if (item.long) {
-    return Number.parseFloat(item.long)
-  }
-}
-
-function getLat(item, fieldName) {
-  if (fieldName) {
-    return Number.parseFloat(item[fieldName])
-  }
-
-  if (item.latitude) {
-    return Number.parseFloat(item.latitude)
-  }
-
-  if (item.lat) {
-    return Number.parseFloat(item.lat)
-  }
-}
-
 function prepareParams(item, {reverse, columns, citycode, postcode, lat, lon}) {
   const params = {
     filters: {}
@@ -251,42 +173,6 @@ function prepareRequest(item, options) {
   return {
     operation: options.reverse ? 'reverse' : 'search',
     params
-  }
-}
-
-function createEmptyResultItem(operation) {
-  return fromPairs(DEFAULT_RESULT_COLUMNS[operation].map(resultColumn => [resultColumn, '']))
-}
-
-function convertResultItem(resultItem, emptyResultItem) {
-  const {status, result} = resultItem
-
-  return {
-    ...emptyResultItem,
-    ...mapKeys(result, (value, key) => {
-      if (key === 'lon') {
-        return 'longitude'
-      }
-
-      if (key === 'lat') {
-        return 'latitude'
-      }
-
-      return `result_${key}`
-    }),
-    result_status: status
-  }
-}
-
-function expandItemWithResult(item, resultItem, emptyResultItem, resultColumns) {
-  const mergedResultItem = convertResultItem(resultItem, emptyResultItem)
-  const finalResultItem = resultColumns
-    ? pick(mergedResultItem, resultColumns)
-    : mergedResultItem
-
-  return {
-    ...item,
-    ...finalResultItem
   }
 }
 
