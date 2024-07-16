@@ -20,7 +20,7 @@ import computeAutocompleteCapabilities from './capabilities/autocomplete.js'
 import {editConfig} from './open-api/edit-config.js'
 import {computeHtmlPage} from './open-api/swagger-ui.js'
 
-import {csv} from './csv.js'
+import {csv} from './csv/index.js'
 
 const GEOCODE_INDEXES = process.env.GEOCODE_INDEXES
   ? process.env.GEOCODE_INDEXES.split(',')

@@ -11,10 +11,10 @@ import stringify from 'csv-write-stream'
 import iconv from 'iconv-lite'
 import {previewCsvFromStream, validateCsvFromStream, createCsvReadStream} from '@livingdata/tabular-data-helpers'
 
-import logger from '../lib/logger.js'
+import logger from '../../lib/logger.js'
 
-import batchTransform from './util/batch-transform-stream.js'
-import batch from './operations/batch.js'
+import batchTransform from '../util/batch-transform-stream.js'
+import batch from '../operations/batch.js'
 
 export const DEFAULT_RESULT_COLUMNS = {
   search: [
