@@ -1,6 +1,11 @@
-import test from 'ava'
+/* eslint-disable camelcase */
+import {Readable} from 'node:stream'
+import {setTimeout} from 'node:timers/promises'
 
-import {prepareRequest} from '../stream.js'
+import test from 'ava'
+import {getStreamAsArray} from 'get-stream'
+
+import {prepareRequest, createGeocodeStream} from '../stream.js'
 
 test('prepareRequest / empty address columns', t => {
   const item = {id: 1}
@@ -47,6 +52,7 @@ test('prepareRequest / valid search', t => {
   const result = prepareRequest(item, options)
 
   t.deepEqual(result, {
+    id: 1,
     operation: 'search',
     params: {
       q: 'test',
@@ -68,6 +74,7 @@ test('prepareRequest / valid reverse', t => {
   const result = prepareRequest(item, options)
 
   t.deepEqual(result, {
+    id: 1,
     operation: 'reverse',
     params: {
       lon: 0.1,
@@ -75,4 +82,66 @@ test('prepareRequest / valid reverse', t => {
       filters: {}
     }
   })
+})
+
+function executeInBatch(items, operation, geocodeOptions, resultsByIdOrError) {
+  const readable = Readable.from(items)
+
+  async function batch({requests}) {
+    if (resultsByIdOrError instanceof Error) {
+      throw resultsByIdOrError
+    }
+
+    return Promise.all(requests.map(async ({id}) => {
+      await setTimeout(10)
+      return resultsByIdOrError[id]
+    }))
+  }
+
+  return getStreamAsArray(readable.pipe(createGeocodeStream(geocodeOptions, {operation, batch})))
+}
+
+test('createGeocodeStream / search', async t => {
+  const items = [{id: 1, column1: 'test'}]
+  const operation = 'search'
+  const geocodeOptions = {
+    columns: ['column1'],
+    resultColumns: ['result_status', 'result_error', 'result_result1']
+  }
+  const resultsById = {
+    1: {status: 'ok', result: {result1: 'test'}}
+  }
+
+  const results = await executeInBatch(items, operation, geocodeOptions, resultsById)
+
+  t.deepEqual(results, [{id: 1, column1: 'test', result_result1: 'test', result_status: 'ok'}])
+})
+
+test('createGeocodeStream / skipped', async t => {
+  const items = [{id: 1, column1: ''}]
+  const operation = 'search'
+  const geocodeOptions = {
+    columns: ['column1'],
+    resultColumns: ['result_status', 'result_error', 'result_result1']
+  }
+  const resultsById = {
+    1: {status: 'ok', result: {result1: 'test'}}
+  }
+
+  const results = await executeInBatch(items, operation, geocodeOptions, resultsById)
+
+  t.deepEqual(results, [{id: 1, column1: '', result_status: 'skipped'}])
+})
+
+test('createGeocodeStream / batch error', async t => {
+  const items = [{id: 1, column1: ''}]
+  const operation = 'search'
+  const geocodeOptions = {
+    columns: ['column1'],
+    resultColumns: ['result_status', 'result_error', 'result_result1', 'result_error']
+  }
+
+  const results = await executeInBatch(items, operation, geocodeOptions, new Error('Boom'))
+
+  t.deepEqual(results, [{id: 1, column1: '', result_status: 'error'}])
 })
