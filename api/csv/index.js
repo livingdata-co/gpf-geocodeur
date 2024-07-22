@@ -79,7 +79,7 @@ export function extractGeocodeOptions(req) {
   }
 
   if (req.body.lon) {
-    geocodeOptions.lon = req.body.type
+    geocodeOptions.lon = req.body.lon
   }
 
   if (req.body.lat) {
@@ -93,7 +93,7 @@ export function extractGeocodeOptions(req) {
   return geocodeOptions
 }
 
-function ensureArray(value) {
+export function ensureArray(value) {
   if (value) {
     return Array.isArray(value) ? value : [value]
   }

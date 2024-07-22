@@ -41,7 +41,7 @@ export function createGeocodeStream(geocodeOptions, {operation, indexes, signal}
   return batchTransform(handler, 100, {concurrency: 2, signal})
 }
 
-function prepareRequest(item, options) {
+export function prepareRequest(item, options) {
   const params = prepareParams(item, options)
 
   if (!params) {
