@@ -11,6 +11,8 @@ import {createCsvReadStream} from '@livingdata/tabular-data-helpers'
 
 import logger from '../../lib/logger.js'
 
+import batch from '../operations/batch.js'
+
 import {createGeocodeStream} from './stream.js'
 
 export {parseAndValidate} from './parse.js'
@@ -41,7 +43,7 @@ export function csv({operation, indexes}) {
     await pipeline(
       createReadStream(req.file.path),
       createCsvReadStream({formatOptions: req.formatOptions}),
-      createGeocodeStream(geocodeOptions, {operation, indexes, signal}),
+      createGeocodeStream(geocodeOptions, {operation, indexes, signal, batch}),
       stringify({separator: req.formatOptions.delimiter, newline: req.formatOptions.linebreak}),
       iconv.encodeStream('utf8'),
       res,

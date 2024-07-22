@@ -1,12 +1,11 @@
 import logger from '../../lib/logger.js'
 
 import batchTransform from '../util/batch-transform-stream.js'
-import batch from '../operations/batch.js'
 
 import {createEmptyResultItem, expandItemWithResult} from './results.js'
 import {prepareParams} from './params.js'
 
-export function createGeocodeStream(geocodeOptions, {operation, indexes, signal}) {
+export function createGeocodeStream(geocodeOptions, {operation, indexes, signal, batch}) {
   async function handler(items) {
     const preparedRequests = items.map(item => prepareRequest(item, {
       reverse: operation === 'reverse',
@@ -49,6 +48,7 @@ export function prepareRequest(item, options) {
   }
 
   return {
+    id: item.id,
     operation: options.reverse ? 'reverse' : 'search',
     params
   }
