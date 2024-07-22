@@ -51,7 +51,20 @@ export function csv({operation, indexes}) {
 }
 
 export function computeResultFilename(originalFilename) {
-  return originalFilename ? 'geocoded-' + originalFilename : 'geocoded.csv'
+  if (!originalFilename) {
+    return 'geocoded.csv'
+  }
+
+  const pointPos = originalFilename.lastIndexOf('.')
+
+  if (pointPos === -1) {
+    return `${originalFilename}-geocoded.csv`
+  }
+
+  const extension = originalFilename.slice(pointPos)
+  const basename = originalFilename.slice(0, pointPos)
+
+  return `${basename}-geocoded${extension}`
 }
 
 export function extractGeocodeOptions(req) {
