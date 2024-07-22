@@ -70,7 +70,7 @@ export function csv({operation, indexes}) {
       geocodeOptions.resultColumns = ensureArray(req.body.result_columns)
     }
 
-    const filename = req.file.originalname ? 'geocoded-' + req.file.originalname : 'geocoded.csv'
+    const filename = computeResultFilename(req.file.originalname)
 
     res
       .set('content-type', 'text/csv')
@@ -142,4 +142,8 @@ function createGeocodeStream(geocodeOptions, {operation, indexes, signal}) {
   }
 
   return batchTransform(handler, 100, {concurrency: 2, signal})
+}
+
+export function computeResultFilename(originalFilename) {
+  return originalFilename ? 'geocoded-' + originalFilename : 'geocoded.csv'
 }
