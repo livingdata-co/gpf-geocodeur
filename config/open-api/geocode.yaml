@@ -1,7 +1,7 @@
 openapi: 3.0.1
 info:
   title: Service de géocodage
-  description: Description de l'API du service de géocodage unitaire 2.0 de l'IGN. Chaque appel à l’API ne peut traiter qu’une seule adresse.
+  description: API du service de géocodage 2.0 de l'IGN.
   contact:
     email: contact.geoservices@ign.fr
   version: 2.0.0
@@ -14,6 +14,8 @@ tags:
     description: Géocodage direct
   - name: reverse
     description: Géocodage inverse
+  - name: batch
+    description: Géocodage par lot
 paths:
   /getCapabilities:
     get:
@@ -332,6 +334,177 @@ paths:
           description: "Parse query failed"
           content:
             application/json: {}
+
+  /search/csv:
+    post:
+      tags:
+        - search
+        - batch
+      summary: Géocodage direct en masse d’un fichier CSV
+      operationId: searchCsv
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - data
+              properties:
+                data:
+                  type: string
+                  format: binary
+                  description: "Fichier CSV contenant les lignes à géocoder"
+                columns:
+                  type: array
+                  items:
+                    type: string
+                  description: "Liste des colonnes du fichier CSV à utiliser pour le géocodage"
+                type:
+                  type: string
+                  description: "Colonne contenant le type d’objet accepté pour le géocodage de la ligne"
+                citycode:
+                  type: string
+                  description: "Colonne contenant le code INSEE de la commune à utiliser comme filtre"
+                postcode:
+                  type: string
+                  description: "Colonne contenant le code postal à utiliser comme filtre"
+                lon:
+                  type: string
+                  description: "Colonne contenant la longitude du point de recherche"
+                lat:
+                  type: string
+                  description: "Colonne contenant la latitude du point de recherche"
+                result_columns:
+                  type: array
+                  items:
+                    type: string
+                  description: "Liste des colonnes de type résultat à conserver dans le fichier CSV de sortie"
+      responses:
+        "200":
+          description: Géocodage réussi
+          content:
+            text/csv:
+              schema:
+                type: string
+                format: binary
+                description: |
+                  Fichier CSV contenant les lignes géocodées. Les colonnes ajoutées sont :<br>
+                  - latitude<br>
+                  - longitude<br>
+                  - result_label<br>
+                  - result_score<br>
+                  - result_score_next<br>
+                  - result_type<br>
+                  - result_id<br>
+                  - result_housenumber<br>
+                  - result_name<br>
+                  - result_street<br>
+                  - result_postcode<br>
+                  - result_city<br>
+                  - result_context<br>
+                  - result_citycode<br>
+                  - result_oldcitycode<br>
+                  - result_oldcity<br>
+                  - result_district<br>
+                  - result_status
+
+        "400":
+          description: "Échec du géocodage suite à une erreur dans la requête"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: "Message d'erreur"
+                    example: "Erreur lors de la lecture du fichier CSV"
+
+  /reverse/csv:
+    post:
+      tags:
+        - reverse
+        - batch
+      summary: Géocodage inversé en masse d’un fichier CSV
+      operationId: reverseCsv
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - data
+              properties:
+                data:
+                  type: string
+                  format: binary
+                  description: "Fichier CSV contenant les lignes à géocoder"
+                columns:
+                  type: array
+                  items:
+                    type: string
+                  description: "Liste des colonnes du fichier CSV à utiliser pour le géocodage"
+                type:
+                  type: string
+                  description: "Colonne contenant le type d’objet accepté pour le géocodage de la ligne"
+                citycode:
+                  type: string
+                  description: "Colonne contenant le code INSEE de la commune à utiliser comme filtre"
+                postcode:
+                  type: string
+                  description: "Colonne contenant le code postal à utiliser comme filtre"
+                lon:
+                  type: string
+                  description: "Colonne contenant la longitude du point de recherche"
+                lat:
+                  type: string
+                  description: "Colonne contenant la latitude du point de recherche"
+                result_columns:
+                  type: array
+                  items:
+                    type: string
+                  description: "Liste des colonnes de type résultat à conserver dans le fichier CSV de sortie"
+      responses:
+        "200":
+          description: Géocodage réussi
+          content:
+            text/csv:
+              schema:
+                type: string
+                format: binary
+                description: |
+                  Fichier CSV contenant les lignes géocodées. Les colonnes ajoutées sont :<br>
+                  - result_label<br>
+                  - result_latitude<br>
+                  - result_longitude<br>
+                  - result_distance<br>
+                  - result_type<br>
+                  - result_id<br>
+                  - result_housenumber<br>
+                  - result_name<br>
+                  - result_street<br>
+                  - result_postcode<br>
+                  - result_city<br>
+                  - result_context<br>
+                  - result_citycode<br>
+                  - result_oldcitycode<br>
+                  - result_oldcity<br>
+                  - result_district<br>
+                  - result_status
+
+        "400":
+          description: "Échec du géocodage suite à une erreur dans la requête"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: "Message d'erreur"
+                    example: "Erreur lors de la lecture du fichier CSV"
 
 components:
   schemas:
