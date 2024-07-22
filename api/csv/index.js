@@ -36,6 +36,7 @@ export function csv({operation, indexes}) {
     res
       .set('content-type', 'text/csv')
       .set('content-disposition', contentDisposition(filename))
+      .set('x-rows-count', req.readRows)
 
     await pipeline(
       createReadStream(req.file.path),

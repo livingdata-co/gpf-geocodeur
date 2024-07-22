@@ -9,7 +9,8 @@ test.before(() => {
       'valid-default.csv': 'column1,column2\nvalue1,value2',
       'valid-utf8.csv': 'column1,column2\nécole,value2',
       'columns.csv': 'column1,column2\nvalue1,value2,value3',
-      'delimiter.csv': 'column1\nvalue1'
+      'delimiter.csv': 'column1\nvalue1',
+      'too-many-rows.csv': 'column1,column2\nvalue1,value2\nvalue1,value2\nvalue1,value2\nvalue1,value2'
     },
     node_modules: mockFs.load('node_modules') // eslint-disable-line camelcase
   })
@@ -25,7 +26,7 @@ test('parseAndValidate / no file provided', async t => {
   const next = () => {}
 
   await t.throwsAsync(async () => {
-    await parseAndValidate(req, res, next)
+    await parseAndValidate()(req, res, next)
   }, {message: 'A CSV file must be provided in data field'})
 })
 
@@ -35,7 +36,7 @@ test('parseAndValidate / delimiter error', async t => {
   const next = () => {}
 
   await t.throwsAsync(async () => {
-    await parseAndValidate(req, res, next)
+    await parseAndValidate()(req, res, next)
   }, {message: 'Errors in CSV file: UndetectableDelimiter'})
 })
 
@@ -45,8 +46,18 @@ test('parseAndValidate / columns error', async t => {
   const next = () => {}
 
   await t.throwsAsync(async () => {
-    await parseAndValidate(req, res, next)
+    await parseAndValidate()(req, res, next)
   }, {message: 'Errors in CSV file: TooManyFields'})
+})
+
+test('parseAndValidate / too many rows', async t => {
+  const req = {file: {path: 'path/to/csv/too-many-rows.csv'}}
+  const res = {}
+  const next = () => {}
+
+  await t.throwsAsync(async () => {
+    await parseAndValidate({maxRows: 2})(req, res, next)
+  }, {message: 'Too many rows in CSV file'})
 })
 
 test('parseAndValidate / default', async t => {
@@ -54,7 +65,7 @@ test('parseAndValidate / default', async t => {
   const res = {}
   const next = () => {}
 
-  await parseAndValidate(req, res, next)
+  await parseAndValidate()(req, res, next)
 
   t.deepEqual(req.columnsInFile, ['column1', 'column2'])
   t.deepEqual(req.formatOptions, {
@@ -70,7 +81,7 @@ test('parseAndValidate / UTF-8', async t => {
   const res = {}
   const next = () => {}
 
-  await parseAndValidate(req, res, next)
+  await parseAndValidate()(req, res, next)
 
   t.deepEqual(req.columnsInFile, ['column1', 'column2'])
   t.deepEqual(req.formatOptions, {

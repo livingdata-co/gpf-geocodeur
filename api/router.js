@@ -69,14 +69,14 @@ export default async function createRouter(options = {}) {
   router.post(
     '/search/csv',
     upload.single('data'),
-    w(parseAndValidate),
+    w(parseAndValidate()),
     w(csv({indexes, operation: 'search'}))
   )
 
   router.post(
     '/reverse/csv',
     upload.single('data'),
-    w(parseAndValidate),
+    w(parseAndValidate()),
     w(csv({indexes, operation: 'reverse'}))
   )
 
