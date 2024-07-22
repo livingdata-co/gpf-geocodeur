@@ -36,15 +36,17 @@ flowchart TB
 
 Chaque typologie de données ne dispose pas des mêmes fonctionnalités.
 
-| Index | Recherche textuelle | Recherche spatiale | Recherche structurée |
-| --- | --- | --- | --- |
-| `address` | ✅ | ✅ | ❌ |
-| `poi` | ✅ | ✅ | ❌ |
-| `parcel` | ❌ | ✅ | ✅ |
+| Index | Recherche textuelle | Recherche spatiale | Recherche structurée | Traitement en masse |
+| --- | --- | --- | --- | --- |
+| `address` | ✅ | ✅ | ❌ | ✅ |
+| `poi` | ✅ | ✅ | ❌ | ❌ |
+| `parcel` | ❌ | ✅ | ✅ | ❌ |
 
 Pour la __recherche textuelle__, c'est le logiciel [addok](https://addok.readthedocs.io) qui est utilisé. Il s'appuie sur une base de données [Redis](https://redis.io) qui doit être localisée au plus prêt du moteur afin d’optimiser le temps de réponse.
 
 Pour les __recherches spatiales et structurée__, le moteur fait partie du composant et s'appuie sur [LMDB](https://www.symas.com/lmdb), une base de données _clé-valeur_ embarquée haute performance, et sur une structure _R-Tree_ implémentée grâce à la bibliothèque [Flatbush](https://github.com/mourner/flatbush).
+
+Le __traitement en masse__ n’est disponible dans un premier temps que pour les adresses. Il fonctionne en mode synchrone avec des fichiers CSV.
 
 ## Schéma détaillé
 
