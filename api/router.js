@@ -20,7 +20,7 @@ import computeAutocompleteCapabilities from './capabilities/autocomplete.js'
 import {editConfig} from './open-api/edit-config.js'
 import {computeHtmlPage} from './open-api/swagger-ui.js'
 
-import {csv} from './csv/index.js'
+import {csv, parseAndValidate} from './csv/index.js'
 
 const GEOCODE_INDEXES = process.env.GEOCODE_INDEXES
   ? process.env.GEOCODE_INDEXES.split(',')
@@ -66,8 +66,19 @@ export default async function createRouter(options = {}) {
     res.send({results})
   }))
 
-  router.post('/search/csv', upload.single('data'), w(csv({indexes, operation: 'search'})))
-  router.post('/reverse/csv', upload.single('data'), w(csv({indexes, operation: 'reverse'})))
+  router.post(
+    '/search/csv',
+    upload.single('data'),
+    w(parseAndValidate),
+    w(csv({indexes, operation: 'search'}))
+  )
+
+  router.post(
+    '/reverse/csv',
+    upload.single('data'),
+    w(parseAndValidate),
+    w(csv({indexes, operation: 'reverse'}))
+  )
 
   router.get('/completion', w(async (req, res) => {
     const params = extractAutocompleteParams(req.query)
