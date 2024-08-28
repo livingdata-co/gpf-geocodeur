@@ -9,7 +9,7 @@
     "test": "c8 --all ava --no-worker-threads api indexes lib",
     "test-lcov": "c8 --reporter=lcov --reporter=text --reporter=html --all ava --no-worker-threads api indexes lib",
     "test-recette": "ava tests/recette",
-    "test-recette-batch": "ava tests/recette-batch",
+    "test-recette-batch": "ava --timeout=10m --serial tests/recette-batch",
     "poi:build-from-bdtopo": "node indexes/poi/scripts/build-from-bdtopo",
     "poi:build-index": "node indexes/poi/scripts/build-index",
     "poi:publish-index": "node indexes/poi/scripts/publish-index",
