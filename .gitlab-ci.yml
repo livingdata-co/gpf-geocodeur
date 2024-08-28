@@ -45,6 +45,14 @@ test:recette:
     - yarn test-recette
   when: manual
 
+test:recette-batch:
+  before_script:
+    - corepack disable && npm install -g yarn
+    - yarn --frozen-lockfile
+  script:
+    - yarn test-recette-batch
+  when: manual
+
 pages:
   stage: deploy
   when: manual

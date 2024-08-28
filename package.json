@@ -9,6 +9,7 @@
     "test": "c8 --all ava --no-worker-threads api indexes lib",
     "test-lcov": "c8 --reporter=lcov --reporter=text --reporter=html --all ava --no-worker-threads api indexes lib",
     "test-recette": "ava tests/recette",
+    "test-recette-batch": "ava tests/recette-batch",
     "poi:build-from-bdtopo": "node indexes/poi/scripts/build-from-bdtopo",
     "poi:build-index": "node indexes/poi/scripts/build-index",
     "poi:publish-index": "node indexes/poi/scripts/publish-index",
@@ -75,6 +76,7 @@
     "c8": "^10.1.2",
     "get-stream": "^9.0.1",
     "mock-fs": "^5.2.0",
+    "papaparse": "~5.3.2",
     "supertest": "^7.0.0",
     "xo": "^0.58.0"
   },
