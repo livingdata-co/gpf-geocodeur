@@ -1,4 +1,4 @@
-/* eslint-disable ava/no-skip-test, camelcase */
+/* eslint-disable camelcase */
 import 'dotenv/config.js'
 
 import process from 'node:process'
