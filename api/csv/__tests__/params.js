@@ -74,7 +74,7 @@ test('prepareParams - forward geocoding with columns', t => {
     lat: null,
     lon: null
   }
-  const expected = {q: '123 Main St Anytown', filters: {}}
+  const expected = {q: '123 Main St Anytown'}
   t.deepEqual(prepareParams(item, options), expected)
 })
 
@@ -89,7 +89,8 @@ test('prepareParams - forward geocoding with citycode and postcode', t => {
     lon: null
   }
   const expected = {
-    filters: {citycode: '12345', postcode: '67890'},
+    citycode: '12345',
+    postcode: '67890',
     q: '2 allée des peupliers'
   }
   t.deepEqual(prepareParams(item, options), expected)
@@ -105,7 +106,7 @@ test('prepareParams - reverse geocoding', t => {
     lat: 'latitude',
     lon: 'longitude'
   }
-  const expected = {filters: {}, lat: 40.7128, lon: -74.006}
+  const expected = {lat: 40.7128, lon: -74.006}
   t.deepEqual(prepareParams(item, options), expected)
 })
 
@@ -158,6 +159,6 @@ test('prepareParams - forward geocoding with lat and lon', t => {
     lat: 'latitude',
     lon: 'longitude'
   }
-  const expected = {q: '123 Main St Anytown', filters: {}, lat: 40.7128, lon: -74.006}
+  const expected = {q: '123 Main St Anytown', lat: 40.7128, lon: -74.006}
   t.deepEqual(prepareParams(item, options), expected)
 })

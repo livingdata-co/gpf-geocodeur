@@ -55,8 +55,7 @@ test('prepareRequest / valid search', t => {
     id: 1,
     operation: 'search',
     params: {
-      q: 'test',
-      filters: {}
+      q: 'test'
     }
   })
 })
@@ -78,8 +77,7 @@ test('prepareRequest / valid reverse', t => {
     operation: 'reverse',
     params: {
       lon: 0.1,
-      lat: 0.2,
-      filters: {}
+      lat: 0.2
     }
   })
 })

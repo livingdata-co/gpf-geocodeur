@@ -1,7 +1,5 @@
 export function prepareParams(item, {reverse, columns, citycode, postcode, lat, lon}) {
-  const params = {
-    filters: {}
-  }
+  const params = {}
 
   if (!reverse && columns) {
     const stringToGeocode = columns
@@ -13,11 +11,11 @@ export function prepareParams(item, {reverse, columns, citycode, postcode, lat, 
   }
 
   if (citycode && item[citycode]) {
-    params.filters.citycode = item[citycode]
+    params.citycode = item[citycode]
   }
 
   if (postcode && item[postcode]) {
-    params.filters.postcode = item[postcode]
+    params.postcode = item[postcode]
   }
 
   if (reverse) {
