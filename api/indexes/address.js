@@ -30,8 +30,7 @@ export function prepareRequest(params) {
 
 export default function createAddressIndex(options = {}) {
   const client = createClient({
-    indexUrl: options.addressIndexUrl || ADDRESS_INDEX_URL,
-    prepareRequest
+    indexUrl: options.addressIndexUrl || ADDRESS_INDEX_URL
   })
 
   return {

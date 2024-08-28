@@ -30,8 +30,7 @@ export function prepareRequest(params) {
 
 export default function createPoiIndex(options = {}) {
   const client = createClient({
-    indexUrl: options.poiIndexUrl || POI_INDEX_URL,
-    prepareRequest
+    indexUrl: options.poiIndexUrl || POI_INDEX_URL
   })
 
   return {

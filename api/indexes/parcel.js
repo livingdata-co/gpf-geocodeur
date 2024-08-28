@@ -33,8 +33,7 @@ export function prepareRequest(params) {
 
 export default function createParcelIndex(options = {}) {
   const client = createClient({
-    indexUrl: options.parcelIndexUrl || PARCEL_INDEX_URL,
-    prepareRequest
+    indexUrl: options.parcelIndexUrl || PARCEL_INDEX_URL
   })
 
   return {
