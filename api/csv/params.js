@@ -18,25 +18,20 @@ export function prepareParams(item, {reverse, columns, citycode, postcode, lat, 
     params.postcode = item[postcode]
   }
 
-  if (reverse) {
-    params.lat = getLat(item, lat)
-    params.lon = getLon(item, lon)
+  const extractedLat = getLat(item, lat)
+  const extractedLon = getLon(item, lon)
 
-    if (!params.lat || !params.lon || Number.isNaN(params.lat) || Number.isNaN(params.lat)) {
-      return null
-    }
-  } else {
-    if (lon && item[lon]) {
-      params.lon = Number.parseFloat(item[lon])
-    }
+  if (extractedLat && extractedLon && !Number.isNaN(extractedLat) && !Number.isNaN(extractedLon)) {
+    params.lat = extractedLat
+    params.lon = extractedLon
+  }
 
-    if (lat && item[lat]) {
-      params.lat = Number.parseFloat(item[lat])
-    }
+  if (reverse && !params.lat) {
+    return null
+  }
 
-    if (!params.q || params.q.length < 3 || !isFirstCharValid(params.q.charAt(0))) {
-      return null
-    }
+  if (!reverse && (!params.q || params.q.length < 3 || !isFirstCharValid(params.q.charAt(0)))) {
+    return null
   }
 
   return params
