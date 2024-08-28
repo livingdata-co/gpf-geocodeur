@@ -50,7 +50,15 @@ async function executeRequest(options = {}) {
   })
 
   if (!response.ok) {
-    const {code, message} = await response.json()
+    const responseText = await response.text()
+
+    if (response.headers.get('content-type') !== 'application/json') {
+      const error = new Error(responseText)
+      error.code = response.status
+      throw error
+    }
+
+    const {code, message} = JSON.parse(responseText)
     const error = new Error(message)
     error.code = code
     throw error
