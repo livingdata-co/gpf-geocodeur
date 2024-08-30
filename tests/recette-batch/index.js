@@ -52,7 +52,7 @@ async function executeRequest(options = {}) {
   if (!response.ok) {
     const responseText = await response.text()
 
-    if (response.headers.get('content-type') !== 'application/json') {
+    if (!response.headers.get('content-type').includes('application/json')) {
       const error = new Error(responseText)
       error.code = response.status
       throw error
