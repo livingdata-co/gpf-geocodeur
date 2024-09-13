@@ -380,6 +380,13 @@ paths:
                   items:
                     type: string
                   description: "Liste des colonnes de type résultat à conserver dans le fichier CSV de sortie"
+            encoding:
+              columns:
+                style: form
+                explode: true
+              result_columns:
+                style: form
+                explode: true
       responses:
         "200":
           description: Géocodage réussi
@@ -466,6 +473,13 @@ paths:
                   items:
                     type: string
                   description: "Liste des colonnes de type résultat à conserver dans le fichier CSV de sortie"
+            encoding:
+              columns:
+                style: form
+                explode: true
+              result_columns:
+                style: form
+                explode: true
       responses:
         "200":
           description: Géocodage réussi
