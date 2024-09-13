@@ -1,3 +1,4 @@
+import process from 'node:process'
 import path from 'node:path'
 import {Router, json} from 'express'
 import {createCluster} from 'addok-cluster'
@@ -14,6 +15,10 @@ import {POI_INDEX_PATH, POI_INDEX_MDB_PATH, POI_INDEX_CATEGORIES_PATH, POI_INDEX
 import {search} from './search.js'
 import {reverse} from './reverse.js'
 
+const ADDOK_REQUEST_TIMEOUT = process.env.ADDOK_REQUEST_TIMEOUT
+  ? Number.parseInt(process.env.ADDOK_REQUEST_TIMEOUT, 10)
+  : 2000
+
 export async function createRouter() {
   const db = await createLmdbInstance(POI_INDEX_MDB_PATH, {
     geometryType: 'Polygon',
@@ -24,7 +29,8 @@ export async function createRouter() {
   const redisServer = await createRedisServer(POI_INDEX_PATH, {crashOnFailure: true})
   const addokCluster = await createCluster({
     addokRedisUrl: ['unix:' + redisServer.socketPath],
-    addokConfigModule: path.resolve('./indexes/poi/config/addok.conf')
+    addokConfigModule: path.resolve('./indexes/poi/config/addok.conf'),
+    requestTimeout: ADDOK_REQUEST_TIMEOUT
   })
 
   const categories = await readJson(POI_INDEX_CATEGORIES_PATH)
