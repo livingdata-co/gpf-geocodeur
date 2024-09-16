@@ -2,54 +2,68 @@
 import {fromPairs, mapKeys, pick} from 'lodash-es'
 
 export const DEFAULT_RESULT_COLUMNS = {
-  search: [
-    'latitude',
-    'longitude',
-    'result_label',
-    'result_score',
-    'result_score_next',
-    'result_type',
-    'result_id',
-    'result_housenumber',
-    'result_name',
-    'result_street',
-    'result_postcode',
-    'result_city',
-    'result_context',
-    'result_citycode',
-    'result_oldcitycode',
-    'result_oldcity',
-    'result_district',
-    'result_status'
-  ],
-
-  reverse: [
-    'result_latitude',
-    'result_longitude',
-    'result_distance',
-    'result_label',
-    'result_type',
-    'result_id',
-    'result_housenumber',
-    'result_name',
-    'result_street',
-    'result_postcode',
-    'result_city',
-    'result_context',
-    'result_citycode',
-    'result_oldcitycode',
-    'result_oldcity',
-    'result_district',
-    'result_status'
-  ]
+  address: {
+    search: [
+      'result_index',
+      'latitude',
+      'longitude',
+      'result_label',
+      'result_score',
+      'result_score_next',
+      'result_type',
+      'result_id',
+      'result_housenumber',
+      'result_name',
+      'result_street',
+      'result_postcode',
+      'result_city',
+      'result_context',
+      'result_citycode',
+      'result_oldcitycode',
+      'result_oldcity',
+      'result_district',
+      'result_status'
+    ],
+    reverse: [
+      'result_index',
+      'result_latitude',
+      'result_longitude',
+      'result_distance',
+      'result_label',
+      'result_type',
+      'result_id',
+      'result_housenumber',
+      'result_name',
+      'result_street',
+      'result_postcode',
+      'result_city',
+      'result_context',
+      'result_citycode',
+      'result_oldcitycode',
+      'result_oldcity',
+      'result_district',
+      'result_status'
+    ]
+  }
 }
 
-export function createEmptyResultItem(operation) {
-  return fromPairs(DEFAULT_RESULT_COLUMNS[operation].map(resultColumn => [resultColumn, '']))
+export function createEmptyResultItem(indexes, operation) {
+  let columns = []
+
+  for (const index of indexes) {
+    const indexColumns = DEFAULT_RESULT_COLUMNS[index]?.[operation]
+    if (!indexColumns) {
+      throw new Error(`Invalid index or operation: ${index}, ${operation}`)
+    }
+
+    columns = [...columns, ...indexColumns]
+  }
+
+  return fromPairs(columns.map(resultColumn => [resultColumn, '']))
 }
 
 export function convertResultItem(resultItem, emptyResultItem) {
-  const {status, result} = resultItem
+  const {status, result, index} = resultItem
 
   return {
     ...emptyResultItem,
@@ -64,7 +78,8 @@ export function convertResultItem(resultItem, emptyResultItem) {
 
       return `result_${key}`
     }),
-    result_status: status
+    result_status: status,
+    result_index: index
   }
 }
 
