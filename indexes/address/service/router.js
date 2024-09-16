@@ -38,7 +38,7 @@ export async function createRouter() {
   router.post('/batch', w(batch({
     operations: {
       search: (params, options) => search(params, {...options, addokCluster, priority: 'low'}),
-      reverse
+      reverse: (params, options) => reverse(params, {...options, db, rtreeIndex})
     }
   })))
 
