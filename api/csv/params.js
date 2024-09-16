@@ -1,4 +1,4 @@
-export function prepareParams(item, {reverse, columns, citycode, postcode, lat, lon}) {
+export function prepareParams(item, {reverse, columns, citycode, postcode, type, lat, lon}) {
   const params = {}
 
   if (!reverse && columns) {
@@ -8,6 +8,10 @@ export function prepareParams(item, {reverse, columns, citycode, postcode, lat, 
       .trim()
 
     params.q = stringToGeocode
+  }
+
+  if (type && item[type]) {
+    params.type = item[type]
   }
 
   if (citycode && item[citycode]) {

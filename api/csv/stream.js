@@ -12,6 +12,7 @@ export function createGeocodeStream(geocodeOptions, {operation, indexes, signal,
       columns: geocodeOptions.columns,
       citycode: geocodeOptions.citycode,
       postcode: geocodeOptions.postcode,
+      type: geocodeOptions.type,
       lat: geocodeOptions.lat,
       lon: geocodeOptions.lon
     }))
