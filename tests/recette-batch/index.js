@@ -286,6 +286,23 @@ test('citycode provided', async t => {
   t.true(resultAfter.result_citycode === '10387')
 })
 
+test('type provided', async t => {
+  const resultBefore = await executeSingleRequest('search', {
+    numero: '57',
+    voie: 'grand rue'
+  }, {columns: ['numero', 'voie']})
+  t.true(resultBefore.result_score > '0.8')
+  t.is(resultBefore.result_type, 'housenumber')
+
+  const resultAfter = await executeSingleRequest('search', {
+    numero: '57',
+    voie: 'grand rue',
+    type: 'street'
+  }, {columns: ['numero', 'voie'], type: 'type', citycode: 'code_insee'})
+  t.true(resultAfter.result_score > '0.5')
+  t.is(resultAfter.result_type, 'street')
+})
+
 /* IGNGPF-3998 Détection des colonnes "latitude" et "longitude" */
 
 test('latitude and longitude provided', async t => {
@@ -368,4 +385,13 @@ test('output filename / input filename given', async t => {
   const inputFile = createBlobFromString('adresse,b,c\n,,')
   const {response} = await executeRequest({inputFile, inputFileName: 'file.csv'})
   t.is(response.headers.get('content-disposition'), 'attachment; filename="file-geocoded.csv"')
+})
+
+/* Reverse */
+
+test('basic reverse', async t => {
+  const result = await executeSingleRequest('reverse', {
+    longitude: '6.121065', latitude: '49.142324'
+  })
+  t.is(result.result_status, 'ok')
 })
