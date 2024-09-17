@@ -17,7 +17,7 @@ export function createGeocodeStream(geocodeOptions, {operation, indexes, signal,
       lon: geocodeOptions.lon
     }))
 
-    const emptyResultItem = createEmptyResultItem(operation)
+    const emptyResultItem = createEmptyResultItem(['address'], operation)
 
     try {
       const batchResults = await batch({

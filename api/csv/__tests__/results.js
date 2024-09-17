@@ -3,8 +3,10 @@ import test from 'ava'
 import {createEmptyResultItem, convertResultItem, expandItemWithResult} from '../results.js'
 
 test('createEmptyResultItem - search operation', t => {
+  const indexes = ['address']
   const operation = 'search'
   const expected = {
+    result_index: '',
     latitude: '',
     longitude: '',
     result_label: '',
@@ -24,12 +26,14 @@ test('createEmptyResultItem - search operation', t => {
     result_district: '',
     result_status: ''
   }
-  t.deepEqual(createEmptyResultItem(operation), expected)
+  t.deepEqual(createEmptyResultItem(indexes, operation), expected)
 })
 
 test('createEmptyResultItem - reverse operation', t => {
+  const indexes = ['address']
   const operation = 'reverse'
   const expected = {
+    result_index: '',
     result_latitude: '',
     result_longitude: '',
     result_distance: '',
@@ -48,12 +52,13 @@ test('createEmptyResultItem - reverse operation', t => {
     result_district: '',
     result_status: ''
   }
-  t.deepEqual(createEmptyResultItem(operation), expected)
+  t.deepEqual(createEmptyResultItem(indexes, operation), expected)
 })
 
 test('convertResultItem', t => {
   const resultItem = {
     status: 'OK',
+    index: 'address',
     result: {
       lat: '40.7128',
       lon: '-74.0060',
@@ -62,9 +67,10 @@ test('convertResultItem', t => {
       id: '123'
     }
   }
-  const emptyResultItem = createEmptyResultItem('search')
+  const emptyResultItem = createEmptyResultItem(['address'], 'search')
   const expected = {
     ...emptyResultItem,
+    result_index: 'address',
     result_label: 'New York',
     result_type: 'city',
     result_id: '123',
@@ -79,6 +85,7 @@ test('expandItemWithResult - with resultColumns', t => {
   const item = {someInputKey: 'someInputValue'}
   const resultItem = {
     status: 'OK',
+    index: 'address',
     result: {
       lat: '40.7128',
       lon: '-74.0060',
@@ -88,7 +95,7 @@ test('expandItemWithResult - with resultColumns', t => {
       someKey: 'someValue'
     }
   }
-  const emptyResultItem = createEmptyResultItem('search')
+  const emptyResultItem = createEmptyResultItem(['address'], 'search')
   const resultColumns = ['latitude', 'longitude', 'result_label']
   const expected = {
     latitude: '40.7128',
@@ -103,6 +110,7 @@ test('expandItemWithResult - without resultColumns', t => {
   const item = {someKey: 'someValue'}
   const resultItem = {
     status: 'OK',
+    index: 'address',
     result: {
       lat: '40.7128',
       lon: '-74.0060',
@@ -111,7 +119,7 @@ test('expandItemWithResult - without resultColumns', t => {
       id: '123'
     }
   }
-  const emptyResultItem = createEmptyResultItem('search')
+  const emptyResultItem = createEmptyResultItem(['address'], 'search')
   const expected = {
     someKey: 'someValue',
     ...convertResultItem(resultItem, emptyResultItem)
