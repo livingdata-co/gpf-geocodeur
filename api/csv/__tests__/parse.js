@@ -1,5 +1,6 @@
 import test from 'ava'
 import mockFs from 'mock-fs'
+import iconv from 'iconv-lite'
 
 import {parseAndValidate} from '../parse.js'
 
@@ -8,6 +9,7 @@ test.before(() => {
     'path/to/csv': {
       'valid-default.csv': 'column1,column2\nvalue1,value2',
       'valid-utf8.csv': 'column1,column2\nécole,value2',
+      'valid-iso-8859-15.csv': iconv.encode('column1,column€\nécole,value2', 'ISO-8859-15'),
       'columns.csv': 'column1,column2\nvalue1,value2,value3',
       'delimiter.csv': 'column1\nvalue1',
       'too-many-rows.csv': 'column1,column2\nvalue1,value2\nvalue1,value2\nvalue1,value2\nvalue1,value2'
@@ -72,7 +74,7 @@ test('parseAndValidate / default', async t => {
     delimiter: ',',
     linebreak: '\n',
     quoteChar: '"',
-    encoding: 'ISO-8859-1'
+    encoding: 'ISO-8859-15'
   })
 })
 
@@ -89,5 +91,21 @@ test('parseAndValidate / UTF-8', async t => {
     linebreak: '\n',
     quoteChar: '"',
     encoding: 'UTF-8' // eslint-disable-line unicorn/text-encoding-identifier-case
+  })
+})
+
+test('parseAndValidate / ISO-8859-15', async t => {
+  const req = {file: {path: 'path/to/csv/valid-iso-8859-15.csv'}}
+  const res = {}
+  const next = () => {}
+
+  await parseAndValidate()(req, res, next)
+
+  t.deepEqual(req.columnsInFile, ['column1', 'column€'])
+  t.deepEqual(req.formatOptions, {
+    delimiter: ',',
+    linebreak: '\n',
+    quoteChar: '"',
+    encoding: 'ISO-8859-15'
   })
 })
