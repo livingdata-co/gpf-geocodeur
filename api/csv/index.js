@@ -1,3 +1,4 @@
+import process from 'node:process'
 import {createReadStream} from 'node:fs'
 import {rm} from 'node:fs/promises'
 import {pipeline} from 'node:stream/promises'

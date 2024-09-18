@@ -23,7 +23,7 @@ export function createGeocodeStream(geocodeOptions, {operation, indexes, signal,
       const batchResults = await batch({
         indexes: geocodeOptions.indexes,
         requests: preparedRequests.filter(Boolean) // Remove null values
-      }, {indexes, signal})
+      }, {indexes, signal, index: geocodeOptions.index})
 
       return items.map((item, i) => {
         const resultItem = preparedRequests[i] ? batchResults.shift() : {status: 'skipped', result: {}}
