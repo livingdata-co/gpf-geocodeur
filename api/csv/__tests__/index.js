@@ -33,7 +33,8 @@ test('extractGeocodeOptions / geocode options', t => {
     type: 'address',
     lon: 'longitude',
     lat: 'latitude',
-    resultColumns: ['result_col1', 'result_col2']
+    resultColumns: ['result_col1', 'result_col2'],
+    index: ['address']
   }
 
   const actual = extractGeocodeOptions(req)
@@ -60,7 +61,8 @@ test('extractGeocodeOptions / default columns', t => {
   }
 
   const expected = {
-    columns: ['col1', 'col2', 'col3']
+    columns: ['col1', 'col2', 'col3'],
+    index: ['address']
   }
 
   const actual = extractGeocodeOptions(req)
