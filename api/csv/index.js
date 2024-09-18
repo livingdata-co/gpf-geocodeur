@@ -1,3 +1,4 @@
+import process from 'node:process'
 import {createReadStream} from 'node:fs'
 import {rm} from 'node:fs/promises'
 import {pipeline} from 'node:stream/promises'
@@ -14,6 +15,10 @@ import logger from '../../lib/logger.js'
 import batch from '../operations/batch.js'
 
 import {createGeocodeStream} from './stream.js'
+
+const GEOCODE_INDEXES = process.env.GEOCODE_INDEXES
+  ? process.env.GEOCODE_INDEXES.split(',')
+  : ['address', 'poi', 'parcel']
 
 export {parseAndValidate} from './parse.js'
 
@@ -105,6 +110,16 @@ export function extractGeocodeOptions(req) {
   if (req.body.result_columns) {
     geocodeOptions.resultColumns = ensureArray(req.body.result_columns)
   }
+
+  if (typeof req.body.index === 'string' && !GEOCODE_INDEXES.includes(req.body.index)) {
+    throw createHttpError(400, 'Unsupported index type: ' + req.body.index)
+  }
+
+  if (Array.isArray(req.body.index) && !req.body.index.every(index => GEOCODE_INDEXES.includes(index))) {
+    throw createHttpError(400, 'Unsupported index type: ' + req.body.index)
+  }
+
+  geocodeOptions.index = typeof req.body.index === 'string' ? [req.body.index] : req.body.index ?? ['address']
 
   return geocodeOptions
 }
