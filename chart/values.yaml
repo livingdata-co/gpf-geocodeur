@@ -94,3 +94,8 @@ startupProbe:
     port: http
   failureThreshold: 60
   periodSeconds: 10
+
+uploadService:
+  enabled: false
+  type: ClusterIP
+  port: 80

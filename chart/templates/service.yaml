@@ -13,3 +13,22 @@ spec:
       name: http
   selector:
     {{- include "chart.selectorLabels" . | nindent 4 }}
+
+{{- if .Values.uploadService.enabled }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "chart.fullname" . }}-upload
+  labels:
+    {{- include "chart.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.uploadService.type }}
+  ports:
+    - port: {{ .Values.uploadService.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "chart.selectorLabels" . | nindent 4 }}
+{{- end }}
