@@ -48,6 +48,11 @@ export async function createRouter() {
     }
   })))
 
+  router.get('/inspect', w(async (req, res) => {
+    const addokInfo = await addokCluster.inspect()
+    res.send({addok: addokInfo})
+  }))
+
   router.use(errorHandler)
 
   return router
