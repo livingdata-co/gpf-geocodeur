@@ -104,7 +104,8 @@ test('createGeocodeStream / search', async t => {
   const operation = 'search'
   const geocodeOptions = {
     columns: ['column1'],
-    resultColumns: ['result_status', 'result_error', 'result_result1']
+    resultColumns: ['result_status', 'result_error', 'result_result1'],
+    indexes: ['address']
   }
   const resultsById = {
     1: {status: 'ok', result: {result1: 'test'}}
@@ -120,7 +121,8 @@ test('createGeocodeStream / skipped', async t => {
   const operation = 'search'
   const geocodeOptions = {
     columns: ['column1'],
-    resultColumns: ['result_status', 'result_error', 'result_result1']
+    resultColumns: ['result_status', 'result_error', 'result_result1'],
+    indexes: ['address']
   }
   const resultsById = {
     1: {status: 'ok', result: {result1: 'test'}}
@@ -136,7 +138,8 @@ test('createGeocodeStream / batch error', async t => {
   const operation = 'search'
   const geocodeOptions = {
     columns: ['column1'],
-    resultColumns: ['result_status', 'result_error', 'result_result1', 'result_error']
+    resultColumns: ['result_status', 'result_error', 'result_result1', 'result_error'],
+    indexes: ['address']
   }
 
   const results = await executeInBatch(items, operation, geocodeOptions, new Error('Boom'))
