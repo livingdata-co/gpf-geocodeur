@@ -414,7 +414,8 @@ paths:
                   - result_oldcitycode<br>
                   - result_oldcity<br>
                   - result_district<br>
-                  - result_status
+                  - result_status (ok = trouvé, not-found = non trouvé, skipped = ligne ignorée en raison de paramètres manquants ou invalides, error = erreur du serveur lors de la recherche)<br><br>
+                  NB : En cas de colonnes d'origine nommées latitude ou longitude, elles seront écrasées par les valeurs calculées.
 
         "400":
           description: "Échec du géocodage suite à une erreur dans la requête"
@@ -506,7 +507,7 @@ paths:
                   - result_oldcitycode<br>
                   - result_oldcity<br>
                   - result_district<br>
-                  - result_status
+                  - result_status (ok = trouvé, not-found = non trouvé, skipped = ligne ignorée en raison de paramètres manquants ou invalides, error = erreur du serveur lors de la recherche)
 
         "400":
           description: "Échec du géocodage suite à une erreur dans la requête"
