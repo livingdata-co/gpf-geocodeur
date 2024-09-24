@@ -7,30 +7,34 @@ export default async function batch(payload, options = {}) {
   return mergeResults(results)
 }
 
-const mergeResults = indexesResults => {
-  const results = []
+function mergeResults(indexesResults) {
+  const successfulResults = []
+  let errorResult
 
-  const keys = Object.keys(indexesResults)
+  for (const [index, indexResults] of Object.entries(indexesResults)) {
+    for (const result of indexResults) {
+      if (result.status === 'ok') {
+        successfulResults.push({
+          status: 'ok',
+          result: result.result,
+          index
+        })
+      }
 
-  for (let i = 0; i < indexesResults[keys[0]].length; i++) {
-    const items = keys.map(key => indexesResults[key][i])
-    const validResults = items.filter(item => item.status === 'ok')
-    const bestResult = maxBy(validResults, item => item.result.score)
-
-    if (bestResult) {
-      results.push({
-        status: bestResult.status,
-        result: bestResult.result,
-        index: keys.find(key => indexesResults[key][i] === bestResult)
-      })
-    } else {
-      results.push({
-        status: 'not-found',
-        result: {},
-        index: keys.find(key => indexesResults[key][i].status === 'not-found')
-      })
+      if (result.status === 'error') {
+        errorResult = {
+          status: 'error',
+          result: result.result,
+          index
+        }
+      }
     }
   }
 
-  return results
+  if (successfulResults.length === 0) {
+    return errorResult ? [errorResult] : [{status: 'not-found', result: {}}]
+  }
+
+  const bestResult = maxBy(successfulResults, item => item.result.score)
+  return [bestResult]
 }
