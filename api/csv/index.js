@@ -10,6 +10,7 @@ import iconv from 'iconv-lite'
 import {createCsvReadStream} from '@livingdata/tabular-data-helpers'
 
 import logger from '../../lib/logger.js'
+import {GEOCODE_INDEXES} from '../../lib/config.js'
 
 import batch from '../operations/batch.js'
 
@@ -69,6 +70,27 @@ export function computeResultFilename(originalFilename) {
   return `${basename}-geocoded${extension}`
 }
 
+export function extractIndexes(indexesValue) {
+  if (!indexesValue) {
+    return ['address']
+  }
+
+  indexesValue = ensureArray(indexesValue)
+
+  if (indexesValue.length === 0) {
+    return ['address']
+  }
+
+  const invalidValue = indexesValue.find(index => !GEOCODE_INDEXES.includes(index))
+
+  if (invalidValue) {
+    throw createHttpError(400, 'Unsupported index type: ' + invalidValue)
+  }
+
+  // Remove duplicates
+  return [...new Set(indexesValue)]
+}
+
 export function extractGeocodeOptions(req) {
   const geocodeOptions = {}
 
@@ -105,6 +127,8 @@ export function extractGeocodeOptions(req) {
   if (req.body.result_columns) {
     geocodeOptions.resultColumns = ensureArray(req.body.result_columns)
   }
+
+  geocodeOptions.indexes = extractIndexes(req.body.indexes)
 
   return geocodeOptions
 }
