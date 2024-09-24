@@ -208,6 +208,15 @@ test('encoding / latin-1', async t => {
   t.true('éléphant' in parseResult.data[0])
 })
 
+test('encoding / latin-9', async t => {
+  const inputFile = createBlobFromBuffer(iconv.encode('a,b,éléphant€€\n,,\n,,', 'latin9'))
+  const {parseResult} = await executeRequest({inputFile})
+  t.is(parseResult.data.length, 2)
+  t.true('a' in parseResult.data[0])
+  t.true('b' in parseResult.data[0])
+  t.true('éléphant€€' in parseResult.data[0])
+})
+
 /* IGNGPF-3996 Spécification des colonnes pour le géocodage direct */
 
 test('empty data', async t => {
