@@ -70,6 +70,27 @@ export function computeResultFilename(originalFilename) {
   return `${basename}-geocoded${extension}`
 }
 
+export function extractIndexes(indexesValue) {
+  if (!indexesValue) {
+    return ['address']
+  }
+
+  indexesValue = ensureArray(indexesValue)
+
+  if (indexesValue.length === 0) {
+    return ['address']
+  }
+
+  const invalidValue = indexesValue.find(index => !GEOCODE_INDEXES.includes(index))
+
+  if (invalidValue) {
+    throw createHttpError(400, 'Unsupported index type: ' + invalidValue)
+  }
+
+  // Remove duplicates
+  return [...new Set(indexesValue)]
+}
+
 export function extractGeocodeOptions(req) {
   const geocodeOptions = {}
 
@@ -107,15 +128,7 @@ export function extractGeocodeOptions(req) {
     geocodeOptions.resultColumns = ensureArray(req.body.result_columns)
   }
 
-  if (typeof req.body.index === 'string' && !GEOCODE_INDEXES.includes(req.body.index)) {
-    throw createHttpError(400, 'Unsupported index type: ' + req.body.index)
-  }
-
-  if (Array.isArray(req.body.index) && !req.body.index.every(index => GEOCODE_INDEXES.includes(index))) {
-    throw createHttpError(400, 'Unsupported index type: ' + req.body.index)
-  }
-
-  geocodeOptions.index = typeof req.body.index === 'string' ? [req.body.index] : req.body.index ?? ['address']
+  geocodeOptions.indexes = extractIndexes(req.body.indexes)
 
   return geocodeOptions
 }
