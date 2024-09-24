@@ -7,7 +7,7 @@ export default async function batch(payload, options = {}) {
   return mergeResults(results)
 }
 
-function mergeResults(indexesResults) {
+export function mergeResults(indexesResults) {
   const successfulResults = []
   let errorResult
 
