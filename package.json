@@ -38,7 +38,7 @@
     "@turf/circle": "^6.5.0",
     "@turf/distance": "^6.5.0",
     "@turf/truncate": "^6.5.0",
-    "addok-cluster": "^0.6.2",
+    "addok-cluster": "^0.8.0",
     "content-disposition": "^0.5.4",
     "cors": "^2.8.5",
     "csv-write-stream": "^2.0.0",

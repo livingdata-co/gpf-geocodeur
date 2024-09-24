@@ -1865,16 +1865,19 @@ acorn@^8.9.0:
   resolved "https://registry.yarnpkg.com/acorn/-/acorn-8.10.0.tgz#8be5b3907a67221a81ab23c7889c4c5526b62ec5"
   integrity sha512-F0SAmZ8iUtS//m8DmCTA0jlh6TDKkHQyK6xc6V4KDTyZKA9dnvX9/3sRTVQrWm79glUAZbnmmNcdYwUIHWVybw==
 
-addok-cluster@^0.6.2:
-  version "0.6.2"
-  resolved "https://registry.yarnpkg.com/addok-cluster/-/addok-cluster-0.6.2.tgz#1eb2e55f095cdee835f048444381445183eda001"
-  integrity sha512-13C23b905Z1zwo4GKpFo/+DFMeVjapdxXdr1cLB8QkVAhP5zjYd50OkPBWsBAM3ssG9xyL1GBiFRrHsU70DT3A==
+addok-cluster@^0.8.0:
+  version "0.8.0"
+  resolved "https://registry.yarnpkg.com/addok-cluster/-/addok-cluster-0.8.0.tgz#39e8df34c150b262c0d45667bce79543dc24ba2e"
+  integrity sha512-0A5iK+MtVFtcjN1R5NMny3pAZ6UqLiILsO8FF/FGYF+RmayJ0kF54fzkyzfEMjJ576xxKAcnQwVxEjImoNd3SA==
   dependencies:
     debug "^4.3.4"
+    execa "^8.0.1"
     http-errors "^2.0.0"
+    ioredis "^5.3.2"
     lodash-es "^4.17.21"
+    nanoid "^5.0.5"
     python-shell "^5.0.0"
-    supports-color "^9.3.1"
+    supports-color "^9.4.0"
 
 afinn-165-financialmarketnews@^3.0.0:
   version "3.0.0"
@@ -4389,7 +4392,7 @@ interpret@^1.4.0:
   resolved "https://registry.yarnpkg.com/interpret/-/interpret-1.4.0.tgz#665ab8bc4da27a774a40584e812e3e0fa45b1a1e"
   integrity sha512-agE4QfB2Lkp9uICn7BAqoscw4SZP9kTE2hxiFI3jBPmXJfdqiahTbUuKGsMoN2GtqL9AxhYioAcVvgsb1HvRbA==
 
-ioredis@^5.4.1:
+ioredis@^5.3.2, ioredis@^5.4.1:
   version "5.4.1"
   resolved "https://registry.yarnpkg.com/ioredis/-/ioredis-5.4.1.tgz#1c56b70b759f01465913887375ed809134296f40"
   integrity sha512-2YZsvl7jopIa1gaePkeMtd9rAcSjOOjPtpcLlOeusyO+XH2SK5ZcT+UCrElPP+WVIInh2TzeI4XW9ENaSLVVHA==
@@ -5323,7 +5326,7 @@ nan@^2.17.0:
   resolved "https://registry.yarnpkg.com/nan/-/nan-2.17.0.tgz#c0150a2368a182f033e9aa5195ec76ea41a199cb"
   integrity sha512-2ZTgtl0nJsO0KQCjEpxcIr5D+Yv90plTitZt9JBfQvVJDS5seMl3FOvsh3+9CoYWXf/1l5OaZzzF6nDm4cagaQ==
 
-nanoid@^5.0.7:
+nanoid@^5.0.5, nanoid@^5.0.7:
   version "5.0.7"
   resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-5.0.7.tgz#6452e8c5a816861fd9d2b898399f7e5fd6944cc6"
   integrity sha512-oLxFY2gd2IqnjcYyOXD8XGCftpGtZP2AbHbOkthDkvRywH5ayNtPVy9YlOPcHckXzbLTCHpkb7FB+yuxKV13pQ==
@@ -6798,10 +6801,10 @@ supports-color@^7.0.0, supports-color@^7.1.0:
   dependencies:
     has-flag "^4.0.0"
 
-supports-color@^9.3.1:
-  version "9.3.1"
-  resolved "https://registry.yarnpkg.com/supports-color/-/supports-color-9.3.1.tgz#34e4ad3c71c9a39dae3254ecc46c9b74e89e15a6"
-  integrity sha512-knBY82pjmnIzK3NifMo3RxEIRD9E0kIzV4BKcyTZ9+9kWgLMxd4PrsTSMoFQUabgRBbF8KOLRDCyKgNV+iK44Q==
+supports-color@^9.4.0:
+  version "9.4.0"
+  resolved "https://registry.yarnpkg.com/supports-color/-/supports-color-9.4.0.tgz#17bfcf686288f531db3dea3215510621ccb55954"
+  integrity sha512-VL+lNrEoIXww1coLPOmiEmK/0sGigko5COxI09KzHc2VJXJsQ37UaQ+8quuxjDeA7+KnLGTWRyOXSLLR2Wb4jw==
 
 supports-hyperlinks@^3.0.0:
   version "3.0.0"
