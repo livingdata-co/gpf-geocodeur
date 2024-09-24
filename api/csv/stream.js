@@ -17,12 +17,13 @@ export function createGeocodeStream(geocodeOptions, {operation, indexes, signal,
       lon: geocodeOptions.lon
     }))
 
-    const emptyResultItem = createEmptyResultItem(geocodeOptions.index || ['address'], operation)
+    const emptyResultItem = createEmptyResultItem(geocodeOptions.indexes, operation)
 
     try {
       const batchResults = await batch({
+        indexes: geocodeOptions.indexes,
         requests: preparedRequests.filter(Boolean) // Remove null values
-      }, {indexes, signal, index: geocodeOptions.index})
+      }, {indexes, signal})
 
       return items.map((item, i) => {
         const resultItem = preparedRequests[i] ? batchResults.shift() : {status: 'skipped', result: {}}

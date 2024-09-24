@@ -1,8 +1,8 @@
 import {maxBy} from 'lodash-es'
 
 export default async function batch(payload, options = {}) {
-  const {indexes, signal, index} = options
-  const results = await indexes.dispatchRequest({...payload, indexes: index}, 'batch', {signal})
+  const {indexes, signal} = options
+  const results = await indexes.dispatchRequest(payload, 'batch', {signal})
 
   return mergeResults(results)
 }
