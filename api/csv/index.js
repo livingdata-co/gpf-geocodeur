@@ -1,4 +1,3 @@
-import process from 'node:process'
 import {createReadStream} from 'node:fs'
 import {rm} from 'node:fs/promises'
 import {pipeline} from 'node:stream/promises'
@@ -11,14 +10,11 @@ import iconv from 'iconv-lite'
 import {createCsvReadStream} from '@livingdata/tabular-data-helpers'
 
 import logger from '../../lib/logger.js'
+import {GEOCODE_INDEXES} from '../../lib/config.js'
 
 import batch from '../operations/batch.js'
 
 import {createGeocodeStream} from './stream.js'
-
-const GEOCODE_INDEXES = process.env.GEOCODE_INDEXES
-  ? process.env.GEOCODE_INDEXES.split(',')
-  : ['address', 'poi', 'parcel']
 
 export {parseAndValidate} from './parse.js'
 

@@ -7,6 +7,7 @@ import multer from 'multer'
 import w from '../lib/w.js'
 import errorHandler from '../lib/error-handler.js'
 import {validateBatchPayload} from '../lib/batch.js'
+import {GEOCODE_INDEXES} from '../lib/config.js'
 
 import {createIndexes} from './indexes/index.js'
 import search from './operations/search.js'
@@ -21,10 +22,6 @@ import {editConfig} from './open-api/edit-config.js'
 import {computeHtmlPage} from './open-api/swagger-ui.js'
 
 import {csv, parseAndValidate} from './csv/index.js'
-
-const GEOCODE_INDEXES = process.env.GEOCODE_INDEXES
-  ? process.env.GEOCODE_INDEXES.split(',')
-  : ['address', 'poi', 'parcel']
 
 const DEFAULT_UPLOAD_DIR = 'uploads/'
 
