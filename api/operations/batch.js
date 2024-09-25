@@ -8,33 +8,36 @@ export default async function batch(payload, options = {}) {
 }
 
 export function mergeResults(indexesResults) {
-  const successfulResults = []
-  let errorResult
+  // Extract the first index results to get the keys
+  const anyIndexResults = indexesResults[Object.keys(indexesResults)[0]]
 
-  for (const [index, indexResults] of Object.entries(indexesResults)) {
-    for (const result of indexResults) {
-      if (result.status === 'ok') {
+  return anyIndexResults.map((_, resultIndex) => {
+    const successfulResults = []
+    let errorResult
+
+    for (const [index, indexResults] of Object.entries(indexesResults)) {
+      const indexResult = indexResults[resultIndex]
+
+      if (indexResult.status === 'ok') {
         successfulResults.push({
           status: 'ok',
-          result: result.result,
+          result: indexResult.result,
           index
         })
       }
 
-      if (result.status === 'error') {
+      if (indexResult.status === 'error') {
         errorResult = {
           status: 'error',
-          result: result.result,
-          index
+          result: indexResult.result
         }
       }
     }
-  }
 
-  if (successfulResults.length === 0) {
-    return errorResult ? [errorResult] : [{status: 'not-found', result: {}}]
-  }
+    if (successfulResults.length === 0) {
+      return errorResult ?? {status: 'not-found', result: {}}
+    }
 
-  const bestResult = maxBy(successfulResults, item => item.result.score)
-  return [bestResult]
+    return maxBy(successfulResults, item => item.result.score)
+  })
 }
