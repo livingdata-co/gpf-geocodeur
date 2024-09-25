@@ -2,5 +2,5 @@ apiVersion: v2
 name: gpf-geocodeur
 description: Chart for the deployment of the geocodeur project
 type: application
-version: 3.5.4
-appVersion: "3.5.4"
+version: 3.5.5-SNAPSHOT
+appVersion: "3.5.5-SNAPSHOT"
