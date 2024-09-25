@@ -59,8 +59,8 @@ test('createEmptyResultItem - reverse operation - address index', t => {
   const operation = 'reverse'
   const expected = {
     result_index: '',
-    latitude: '',
-    longitude: '',
+    result_latitude: '',
+    result_longitude: '',
     result_distance: '',
     result_label: '',
     result_type: '',
@@ -98,8 +98,8 @@ test('createEmptyResultItem - reverse operation - poi index', t => {
     result_territory: '',
     result_score: '',
     result_score_next: '',
-    latitude: '',
-    longitude: '',
+    result_latitude: '',
+    result_longitude: '',
     result_status: ''
   }
   t.deepEqual(createEmptyResultItem(indexes, operation), expected)
@@ -144,8 +144,8 @@ test('createEmptyResultItem - reverse operation - address & poi indexes', t => {
   const operation = 'reverse'
   const expected = {
     result_index: '',
-    latitude: '',
-    longitude: '',
+    result_latitude: '',
+    result_longitude: '',
     result_category: '',
     result_classification: '',
     result_score: '',

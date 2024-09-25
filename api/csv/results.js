@@ -29,8 +29,8 @@ export const DEFAULT_RESULT_COLUMNS = {
     ],
     reverse: [
       'result_index',
-      'latitude',
-      'longitude',
+      'result_latitude',
+      'result_longitude',
       'result_distance',
       'result_label',
       'result_type',
@@ -80,8 +80,8 @@ export const DEFAULT_RESULT_COLUMNS = {
       'result_territory',
       'result_score',
       'result_score_next',
-      'longitude',
-      'latitude',
+      'result_longitude',
+      'result_latitude',
       'result_status'
     ]
   }
