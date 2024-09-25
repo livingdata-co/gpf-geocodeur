@@ -116,6 +116,10 @@ export function extractGeocodeOptions(req) {
     geocodeOptions.type = req.body.type
   }
 
+  if (req.body.category) {
+    geocodeOptions.category = req.body.category
+  }
+
   if (req.body.lon) {
     geocodeOptions.lon = req.body.lon
   }

@@ -78,19 +78,23 @@ test('prepareParams - forward geocoding with columns', t => {
   t.deepEqual(prepareParams(item, options), expected)
 })
 
-test('prepareParams - forward geocoding with citycode and postcode', t => {
-  const item = {q: '2 allée des peupliers', citycode: '12345', postcode: '67890'}
+test('prepareParams - forward geocoding with citycode, postcode, type and category', t => {
+  const item = {q: '2 allée des peupliers', citycode: '12345', postcode: '67890', type: 'foo', category: 'bar'}
   const options = {
     reverse: false,
     columns: ['q'],
     citycode: 'citycode',
     postcode: 'postcode',
+    type: 'type',
+    category: 'category',
     lat: null,
     lon: null
   }
   const expected = {
     citycode: '12345',
     postcode: '67890',
+    type: 'foo',
+    category: 'bar',
     q: '2 allée des peupliers'
   }
   t.deepEqual(prepareParams(item, options), expected)

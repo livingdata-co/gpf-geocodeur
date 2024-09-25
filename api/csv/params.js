@@ -1,4 +1,6 @@
-export function prepareParams(item, {reverse, columns, citycode, postcode, type, lat, lon}) {
+/* eslint-disable complexity */
+
+export function prepareParams(item, {reverse, columns, citycode, postcode, type, category, lat, lon}) {
   const params = {}
 
   if (!reverse && columns) {
@@ -20,6 +22,10 @@ export function prepareParams(item, {reverse, columns, citycode, postcode, type,
 
   if (postcode && item[postcode]) {
     params.postcode = item[postcode]
+  }
+
+  if (category && item[category]) {
+    params.category = item[category]
   }
 
   const extractedLat = getLat(item, lat)
