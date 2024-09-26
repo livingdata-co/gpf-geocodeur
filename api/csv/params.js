@@ -1,6 +1,7 @@
 /* eslint-disable complexity */
 
-export function prepareParams(item, {reverse, columns, citycode, postcode, type, category, lat, lon}) {
+export function prepareParams(item, geocodeOptions) {
+  const {reverse, columns, citycode, postcode, type, category, lat, lon, indexes} = geocodeOptions
   const params = {}
 
   if (!reverse && columns) {
@@ -40,7 +41,7 @@ export function prepareParams(item, {reverse, columns, citycode, postcode, type,
     return null
   }
 
-  if (!reverse && (!params.q || params.q.length < 3 || params.q.length > 200 || !isFirstCharValid(params.q.charAt(0)))) {
+  if ((!reverse && !indexes.includes('parcel')) && (!params.q || params.q.length < 3 || params.q.length > 200 || !isFirstCharValid(params.q.charAt(0)))) {
     return null
   }
 

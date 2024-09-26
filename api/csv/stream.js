@@ -14,7 +14,8 @@ export function createGeocodeStream(geocodeOptions, {operation, indexes, signal,
       postcode: geocodeOptions.postcode,
       type: geocodeOptions.type,
       lat: geocodeOptions.lat,
-      lon: geocodeOptions.lon
+      lon: geocodeOptions.lon,
+      indexes: geocodeOptions.indexes
     }))
 
     const emptyResultItem = createEmptyResultItem(geocodeOptions.indexes, operation)
