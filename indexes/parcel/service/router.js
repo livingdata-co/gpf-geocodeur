@@ -33,8 +33,8 @@ export async function createRouter() {
 
   router.post('/batch', w(batch({
     operations: {
-      search: (params, options) => search(params, {...options, db, rtreeIndex}),
-      reverse: (params, options) => reverse(params, {...options, db, rtreeIndex})
+      search: (params, options) => search({...params, limit: 2, batch: true}, {...options, db, rtreeIndex}),
+      reverse: (params, options) => reverse({...params, limit: 2}, {...options, db, rtreeIndex})
     }
   })))
 

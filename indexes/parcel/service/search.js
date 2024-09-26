@@ -57,7 +57,7 @@ export function buildSearchPattern({departmentcode, municipalitycode, oldmunicip
 }
 
 export function structuredSearch(params, options) {
-  const {filters, limit, returntruegeometry} = params
+  const {filters, limit, returntruegeometry, batch} = params
   const {db} = options
 
   const searchPattern = buildSearchPattern(filters)
@@ -83,6 +83,11 @@ export function structuredSearch(params, options) {
 
     if (!featureMatches(parcelFeature, null, filters)) {
       continue
+    }
+
+    // If we are in batch mode we don't want to have ambiguous results
+    if (batch && parcels.length > 0) {
+      return []
     }
 
     parcels.push(parcelFeature)
