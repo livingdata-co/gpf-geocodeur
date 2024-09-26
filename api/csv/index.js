@@ -120,6 +120,34 @@ export function extractGeocodeOptions(req) {
     geocodeOptions.category = req.body.category
   }
 
+  if (req.body.departmentcode) {
+    geocodeOptions.departmentcode = req.body.departmentcode
+  }
+
+  if (req.body.municipalitycode) {
+    geocodeOptions.municipalitycode = req.body.municipalitycode
+  }
+
+  if (req.body.oldmunicipalitycode) {
+    geocodeOptions.oldmunicipalitycode = req.body.oldmunicipalitycode
+  }
+
+  if (req.body.districtcode) {
+    geocodeOptions.districtcode = req.body.districtcode
+  }
+
+  if (req.body.section) {
+    geocodeOptions.section = req.body.section
+  }
+
+  if (req.body.sheet) {
+    geocodeOptions.sheet = req.body.sheet
+  }
+
+  if (req.body.number) {
+    geocodeOptions.number = req.body.number
+  }
+
   if (req.body.lon) {
     geocodeOptions.lon = req.body.lon
   }
