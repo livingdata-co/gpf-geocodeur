@@ -40,7 +40,7 @@ export function prepareParams(item, {reverse, columns, citycode, postcode, type,
     return null
   }
 
-  if (!reverse && (!params.q || params.q.length < 3 || !isFirstCharValid(params.q.charAt(0)))) {
+  if (!reverse && (!params.q || params.q.length < 3 || params.q.length > 200 || !isFirstCharValid(params.q.charAt(0)))) {
     return null
   }
 
