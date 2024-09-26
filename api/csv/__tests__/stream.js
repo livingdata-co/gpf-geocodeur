@@ -15,7 +15,8 @@ test('prepareRequest / empty address columns', t => {
     citycode: '75001',
     postcode: '75001',
     lat: 'lat',
-    lon: 'lon'
+    lon: 'lon',
+    indexes: ['foo']
   }
 
   const result = prepareRequest(item, options)
@@ -30,7 +31,8 @@ test('prepareRequest / missing lon', t => {
     citycode: '75001',
     postcode: '75001',
     lat: 'lat',
-    lon: 'lon'
+    lon: 'lon',
+    indexes: ['foo']
   }
 
   const result = prepareRequest(item, options)
@@ -46,7 +48,8 @@ test('prepareRequest / valid search', t => {
     citycode: '75001',
     postcode: '75001',
     lat: 'lat',
-    lon: 'lon'
+    lon: 'lon',
+    indexes: ['foo']
   }
 
   const result = prepareRequest(item, options)
@@ -67,7 +70,8 @@ test('prepareRequest / valid reverse', t => {
     citycode: '75001',
     postcode: '75001',
     lat: 'lat',
-    lon: 'lon'
+    lon: 'lon',
+    indexes: ['foo']
   }
 
   const result = prepareRequest(item, options)
