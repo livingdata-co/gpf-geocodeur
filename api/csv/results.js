@@ -84,6 +84,30 @@ export const DEFAULT_RESULT_COLUMNS = {
       'result_latitude',
       'result_status'
     ]
+  },
+  parcel: {
+    search: [
+      'result_index',
+      'result_status',
+      'result_latitude',
+      'result_longitude'
+    ],
+    reverse: [
+      'result_index',
+      'result_status',
+      'result_latitude',
+      'result_longitude',
+      'result_departementcode',
+      'result_municipalitycode',
+      'result_section',
+      'result_sheet',
+      'result_number',
+      'result_oldmunicipalitycode',
+      'result_districtcode',
+      'result_distance',
+      'result_score',
+      'result_score_next'
+    ]
   }
 }
 
