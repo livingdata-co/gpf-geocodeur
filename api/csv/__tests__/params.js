@@ -102,6 +102,33 @@ test('prepareParams - forward geocoding with citycode, postcode, type and catego
   t.deepEqual(prepareParams(item, options), expected)
 })
 
+test('prepareParams - forward geocoding with parcel params', t => {
+  const item = {number: '0001', section: 'A', municipalitycode: '567', departmentcode: '12', oldmunicipalitycode: '123', sheet: 'B', districtcode: '111'}
+  const options = {
+    reverse: false,
+    columns: ['q'],
+    number: 'number',
+    section: 'section',
+    municipalitycode: 'municipalitycode',
+    departmentcode: 'departmentcode',
+    oldmunicipalitycode: 'oldmunicipalitycode',
+    sheet: 'sheet',
+    districtcode: 'districtcode',
+    indexes: ['parcel']
+  }
+  const expected = {
+    number: '0001',
+    section: 'A',
+    municipalitycode: '567',
+    departmentcode: '12',
+    oldmunicipalitycode: '123',
+    sheet: 'B',
+    districtcode: '111',
+    q: ''
+  }
+  t.deepEqual(prepareParams(item, options), expected)
+})
+
 test('prepareParams - reverse geocoding', t => {
   const item = {latitude: '40.7128', longitude: '-74.0060'}
   const options = {
