@@ -9,6 +9,7 @@ import errorHandler from '../../../lib/error-handler.js'
 import {createRtree} from '../../../lib/spatial-index/rtree.js'
 import {createInstance as createRedisServer} from '../../../lib/addok/redis.js'
 import {createInstance as createLmdbInstance} from '../../../lib/spatial-index/lmdb.js'
+import {batch} from '../../../lib/batch.js'
 
 import {POI_INDEX_PATH, POI_INDEX_MDB_PATH, POI_INDEX_CATEGORIES_PATH, POI_INDEX_RTREE_PATH} from '../util/paths.js'
 
@@ -51,6 +52,13 @@ export async function createRouter() {
   router.get('/categories', (req, res) => {
     res.send(categories)
   })
+
+  router.post('/batch', w(batch({
+    operations: {
+      search: (params, options) => search(params, {...options, addokCluster, db, priority: 'low'}),
+      reverse: (params, options) => reverse(params, {...options, db, rtreeIndex})
+    }
+  })))
 
   router.get('/inspect', w(async (req, res) => {
     const addokInfo = await addokCluster.inspect()

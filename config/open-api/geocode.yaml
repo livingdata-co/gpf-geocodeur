@@ -360,15 +360,23 @@ paths:
                   items:
                     type: string
                   description: "Liste des colonnes du fichier CSV à utiliser pour le géocodage"
+                indexes:
+                  type: array
+                  items:
+                    type: string
+                  description: "Liste des index à utiliser pour le géocodage"
                 type:
                   type: string
-                  description: "Colonne contenant le type d’objet accepté pour le géocodage de la ligne"
+                  description: "Colonne contenant le type d’objet accepté pour le géocodage de la ligne (address)"
                 citycode:
                   type: string
-                  description: "Colonne contenant le code INSEE de la commune à utiliser comme filtre"
+                  description: "Colonne contenant le code INSEE de la commune à utiliser comme filtre (address, poi)"
                 postcode:
                   type: string
-                  description: "Colonne contenant le code postal à utiliser comme filtre"
+                  description: "Colonne contenant le code postal à utiliser comme filtre (address, poi)"
+                category:
+                  type: string
+                  description: "Colonne contenant la catégorie de POI à utiliser comme filtre (poi)"
                 lon:
                   type: string
                   description: "Colonne contenant la longitude du point de recherche"
@@ -387,6 +395,9 @@ paths:
               result_columns:
                 style: form
                 explode: true
+              indexes:
+                style: form
+                explode: true
       responses:
         "200":
           description: Géocodage réussi
@@ -402,18 +413,20 @@ paths:
                   - result_label<br>
                   - result_score<br>
                   - result_score_next<br>
-                  - result_type<br>
+                  - result_type (address)<br>
                   - result_id<br>
-                  - result_housenumber<br>
-                  - result_name<br>
-                  - result_street<br>
-                  - result_postcode<br>
-                  - result_city<br>
+                  - result_housenumber (address)<br>
+                  - result_name (address)<br>
+                  - result_street (address)<br>
+                  - result_postcode (address, poi)<br>
+                  - result_city (address, poi)<br>
                   - result_context<br>
-                  - result_citycode<br>
-                  - result_oldcitycode<br>
-                  - result_oldcity<br>
-                  - result_district<br>
+                  - result_citycode (address, poi)<br>
+                  - result_oldcitycode (address, poi)<br>
+                  - result_oldcity (address, poi)<br>
+                  - result_district (address, poi)<br>
+                  - result_category (poi)<br>
+                  - result_index : index dans lequel l'objet a été trouvé<br>
                   - result_status (ok = trouvé, not-found = non trouvé, skipped = ligne ignorée en raison de paramètres manquants ou invalides, error = erreur du serveur lors de la recherche)<br><br>
                   NB : En cas de colonnes d'origine nommées latitude ou longitude, elles seront écrasées par les valeurs calculées.
 
@@ -454,15 +467,23 @@ paths:
                   items:
                     type: string
                   description: "Liste des colonnes du fichier CSV à utiliser pour le géocodage"
+                indexes:
+                  type: array
+                  items:
+                    type: string
+                  description: "Liste des index à utiliser pour le géocodage"
                 type:
                   type: string
-                  description: "Colonne contenant le type d’objet accepté pour le géocodage de la ligne"
+                  description: "Colonne contenant le type d’objet accepté pour le géocodage de la ligne (address)"
                 citycode:
                   type: string
-                  description: "Colonne contenant le code INSEE de la commune à utiliser comme filtre"
+                  description: "Colonne contenant le code INSEE de la commune à utiliser comme filtre (address, poi)"
                 postcode:
                   type: string
-                  description: "Colonne contenant le code postal à utiliser comme filtre"
+                  description: "Colonne contenant le code postal à utiliser comme filtre (address, poi)"
+                category:
+                  type: string
+                  description: "Colonne contenant la catégorie de POI à utiliser comme filtre (poi)"
                 lon:
                   type: string
                   description: "Colonne contenant la longitude du point de recherche"
@@ -481,6 +502,9 @@ paths:
               result_columns:
                 style: form
                 explode: true
+              indexes:
+                style: form
+                explode: true
       responses:
         "200":
           description: Géocodage réussi
@@ -495,11 +519,11 @@ paths:
                   - result_latitude<br>
                   - result_longitude<br>
                   - result_distance<br>
-                  - result_type<br>
+                  - result_type (address)<br>
                   - result_id<br>
-                  - result_housenumber<br>
+                  - result_housenumber (address)<br>
                   - result_name<br>
-                  - result_street<br>
+                  - result_street (address)<br>
                   - result_postcode<br>
                   - result_city<br>
                   - result_context<br>
@@ -507,6 +531,8 @@ paths:
                   - result_oldcitycode<br>
                   - result_oldcity<br>
                   - result_district<br>
+                  - result_category (poi)<br>
+                  - result_index : index dans lequel l'objet a été trouvé<br>
                   - result_status (ok = trouvé, not-found = non trouvé, skipped = ligne ignorée en raison de paramètres manquants ou invalides, error = erreur du serveur lors de la recherche)
 
         "400":

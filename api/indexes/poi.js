@@ -49,8 +49,16 @@ export default function createPoiIndex(options = {}) {
       return client.execRequest('search', requestBody)
     },
 
-    async batch(params) {
-      return params.requests.map(r => ({id: r.id, status: 'error', error: 'Index not available'}))
+    async batch(params, options = {}) {
+      const preparedRequests = params.requests.map(request => ({
+        id: request.id,
+        operation: request.operation,
+        params: prepareRequest(request.params)
+      }))
+
+      const {results} = await client.execRequest('batch', {requests: preparedRequests}, options)
+
+      return results
     }
   }
 }
