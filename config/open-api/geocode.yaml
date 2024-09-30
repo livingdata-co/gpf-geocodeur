@@ -388,6 +388,27 @@ paths:
                   items:
                     type: string
                   description: "Liste des colonnes de type résultat à conserver dans le fichier CSV de sortie"
+                departmentcode:
+                  type: string
+                  description: "Colonne contenant le code département à utiliser comme filtre (parcel)"
+                municipalitycode:
+                  type: string
+                  description: "Colonne contenant le code commune  à utiliser comme filtre (parcel)"
+                oldmunicipalitycode:
+                  type: string
+                  description: "Colonne contenant l'ancien code commune à utiliser comme filtre (parcel)"
+                districtcode:
+                  type: string
+                  description: "Colonne contenant le code d'arrondissement à utiliser comme filtre (parcel)"
+                section:
+                  type: string
+                  description: "Colonne contenant le numéro de section à utiliser comme filtre (parcel)"
+                sheet:
+                  type: string
+                  description: "Colonne contenant le numéro de feuille à utiliser comme filtre (parcel)"
+                number:
+                  type: string
+                  description: "Colonne contenant le numéro de parcelle à utiliser comme filtre (parcel)"
             encoding:
               columns:
                 style: form
@@ -426,6 +447,13 @@ paths:
                   - result_oldcity (address, poi)<br>
                   - result_district (address, poi)<br>
                   - result_category (poi)<br>
+                  - result_departementcode (parcel)<br>
+                  - result_municipalitycode (parcel)<br>
+                  - result_section (parcel)<br>
+                  - result_sheet (parcel)<br>
+                  - result_number (parcel)<br>
+                  - result_oldmunicipalitycode (parcel)<br>
+                  - result_districtcode (parcel)<br>
                   - result_index : index dans lequel l'objet a été trouvé<br>
                   - result_status (ok = trouvé, not-found = non trouvé, skipped = ligne ignorée en raison de paramètres manquants ou invalides, error = erreur du serveur lors de la recherche)<br><br>
                   NB : En cas de colonnes d'origine nommées latitude ou longitude, elles seront écrasées par les valeurs calculées.
@@ -495,6 +523,27 @@ paths:
                   items:
                     type: string
                   description: "Liste des colonnes de type résultat à conserver dans le fichier CSV de sortie"
+                departmentcode:
+                  type: string
+                  description: "Colonne contenant le code département à utiliser comme filtre (parcel)"
+                municipalitycode:
+                  type: string
+                  description: "Colonne contenant le code commune  à utiliser comme filtre (parcel)"
+                oldmunicipalitycode:
+                  type: string
+                  description: "Colonne contenant l'ancien code commune à utiliser comme filtre (parcel)"
+                districtcode:
+                  type: string
+                  description: "Colonne contenant le code d'arrondissement à utiliser comme filtre (parcel)"
+                section:
+                  type: string
+                  description: "Colonne contenant le numéro de section à utiliser comme filtre (parcel)"
+                sheet:
+                  type: string
+                  description: "Colonne contenant le numéro de feuille à utiliser comme filtre (parcel)"
+                number:
+                  type: string
+                  description: "Colonne contenant le numéro de parcelle à utiliser comme filtre (parcel)"
             encoding:
               columns:
                 style: form
@@ -532,6 +581,16 @@ paths:
                   - result_oldcity<br>
                   - result_district<br>
                   - result_category (poi)<br>
+                  - result_departementcode (parcel)<br>
+                  - result_municipalitycode (parcel)<br>
+                  - result_section (parcel)<br>
+                  - result_sheet (parcel)<br>
+                  - result_number (parcel)<br>
+                  - result_oldmunicipalitycode (parcel)<br>
+                  - result_districtcode (parcel)<br>
+                  - result_distance (parcel)<br>
+                  - result_score (parcel)<br>
+                  - result_score_next (parcel)<br>
                   - result_index : index dans lequel l'objet a été trouvé<br>
                   - result_status (ok = trouvé, not-found = non trouvé, skipped = ligne ignorée en raison de paramètres manquants ou invalides, error = erreur du serveur lors de la recherche)
 

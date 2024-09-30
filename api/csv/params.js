@@ -1,7 +1,7 @@
 /* eslint-disable complexity */
 
 export function prepareParams(item, geocodeOptions) {
-  const {reverse, columns, citycode, postcode, type, category, lat, lon, indexes} = geocodeOptions
+  const {reverse, columns, citycode, postcode, type, category, lat, lon, indexes, departmentcode, municipalitycode, oldmunicipalitycode, districtcode, section, sheet, number} = geocodeOptions
   const params = {}
 
   if (!reverse && columns) {
@@ -27,6 +27,34 @@ export function prepareParams(item, geocodeOptions) {
 
   if (category && item[category]) {
     params.category = item[category]
+  }
+
+  if (departmentcode && item[departmentcode]) {
+    params.departmentcode = item[departmentcode]
+  }
+
+  if (municipalitycode && item[municipalitycode]) {
+    params.municipalitycode = item[municipalitycode]
+  }
+
+  if (oldmunicipalitycode && item[oldmunicipalitycode]) {
+    params.oldmunicipalitycode = item[oldmunicipalitycode]
+  }
+
+  if (districtcode && item[districtcode]) {
+    params.districtcode = item[districtcode]
+  }
+
+  if (section && item[section]) {
+    params.section = item[section]
+  }
+
+  if (sheet && item[sheet]) {
+    params.sheet = item[sheet]
+  }
+
+  if (number && item[number]) {
+    params.number = item[number]
   }
 
   const extractedLat = getLat(item, lat)

@@ -4,6 +4,7 @@ import w from '../../../lib/w.js'
 import errorHandler from '../../../lib/error-handler.js'
 import {createRtree} from '../../../lib/spatial-index/rtree.js'
 import {createInstance} from '../../../lib/spatial-index/lmdb.js'
+import {batch} from '../../../lib/batch.js'
 
 import {PARCEL_INDEX_RTREE_PATH, PARCEL_INDEX_MDB_PATH} from '../util/paths.js'
 
@@ -29,6 +30,13 @@ export async function createRouter() {
   router.post('/reverse', w((req, res) => {
     res.send(reverse(req.body, {db, rtreeIndex}))
   }))
+
+  router.post('/batch', w(batch({
+    operations: {
+      search: (params, options) => search({...params, limit: 2, batch: true}, {...options, db, rtreeIndex}),
+      reverse: (params, options) => reverse({...params, limit: 2}, {...options, db, rtreeIndex})
+    }
+  })))
 
   router.use(errorHandler)
 

@@ -72,7 +72,8 @@ test('prepareParams - forward geocoding with columns', t => {
     citycode: null,
     postcode: null,
     lat: null,
-    lon: null
+    lon: null,
+    indexes: ['foo']
   }
   const expected = {q: '123 Main St Anytown'}
   t.deepEqual(prepareParams(item, options), expected)
@@ -88,7 +89,8 @@ test('prepareParams - forward geocoding with citycode, postcode, type and catego
     type: 'type',
     category: 'category',
     lat: null,
-    lon: null
+    lon: null,
+    indexes: ['foo']
   }
   const expected = {
     citycode: '12345',
@@ -96,6 +98,33 @@ test('prepareParams - forward geocoding with citycode, postcode, type and catego
     type: 'foo',
     category: 'bar',
     q: '2 allée des peupliers'
+  }
+  t.deepEqual(prepareParams(item, options), expected)
+})
+
+test('prepareParams - forward geocoding with parcel params', t => {
+  const item = {number: '0001', section: 'A', municipalitycode: '567', departmentcode: '12', oldmunicipalitycode: '123', sheet: 'B', districtcode: '111'}
+  const options = {
+    reverse: false,
+    columns: ['q'],
+    number: 'number',
+    section: 'section',
+    municipalitycode: 'municipalitycode',
+    departmentcode: 'departmentcode',
+    oldmunicipalitycode: 'oldmunicipalitycode',
+    sheet: 'sheet',
+    districtcode: 'districtcode',
+    indexes: ['parcel']
+  }
+  const expected = {
+    number: '0001',
+    section: 'A',
+    municipalitycode: '567',
+    departmentcode: '12',
+    oldmunicipalitycode: '123',
+    sheet: 'B',
+    districtcode: '111',
+    q: ''
   }
   t.deepEqual(prepareParams(item, options), expected)
 })
@@ -108,7 +137,8 @@ test('prepareParams - reverse geocoding', t => {
     citycode: null,
     postcode: null,
     lat: 'latitude',
-    lon: 'longitude'
+    lon: 'longitude',
+    indexes: ['foo']
   }
   const expected = {lat: 40.7128, lon: -74.006}
   t.deepEqual(prepareParams(item, options), expected)
@@ -122,7 +152,8 @@ test('prepareParams - reverse geocoding with invalid coordinates', t => {
     citycode: null,
     postcode: null,
     lat: 'latitude',
-    lon: 'longitude'
+    lon: 'longitude',
+    indexes: ['foo']
   }
   t.is(prepareParams(item, options), null)
 })
@@ -135,7 +166,8 @@ test('prepareParams - forward geocoding with invalid query', t => {
     citycode: null,
     postcode: null,
     lat: null,
-    lon: null
+    lon: null,
+    indexes: ['foo']
   }
   t.is(prepareParams(item, options), null)
 })
@@ -148,7 +180,8 @@ test('prepareParams - forward geocoding with invalid first character', t => {
     citycode: null,
     postcode: null,
     lat: null,
-    lon: null
+    lon: null,
+    indexes: ['foo']
   }
   t.is(prepareParams(item, options), null)
 })
@@ -161,7 +194,8 @@ test('prepareParams - forward geocoding with lat and lon', t => {
     citycode: null,
     postcode: null,
     lat: 'latitude',
-    lon: 'longitude'
+    lon: 'longitude',
+    indexes: ['foo']
   }
   const expected = {q: '123 Main St Anytown', lat: 40.7128, lon: -74.006}
   t.deepEqual(prepareParams(item, options), expected)
