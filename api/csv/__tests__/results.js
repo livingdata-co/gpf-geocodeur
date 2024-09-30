@@ -174,6 +174,90 @@ test('createEmptyResultItem - reverse operation - address & poi indexes', t => {
   t.deepEqual(createEmptyResultItem(indexes, operation), expected)
 })
 
+test('createEmptyResultItem - search operation - parcel index', t => {
+  const indexes = ['parcel']
+  const operation = 'search'
+  const expected = {
+    result_index: '',
+    result_status: '',
+    result_departementcode: '',
+    result_municipalitycode: '',
+    result_section: '',
+    result_sheet: '',
+    result_number: '',
+    result_oldmunicipalitycode: '',
+    result_districtcode: '',
+    latitude: '',
+    longitude: '',
+    result_score: '',
+    result_score_next: ''
+  }
+  t.deepEqual(createEmptyResultItem(indexes, operation), expected)
+})
+
+test('createEmptyResultItem - reverse operation - parcel index', t => {
+  const indexes = ['parcel']
+  const operation = 'reverse'
+  const expected = {
+    result_index: '',
+    result_status: '',
+    result_departementcode: '',
+    result_municipalitycode: '',
+    result_section: '',
+    result_sheet: '',
+    result_number: '',
+    result_oldmunicipalitycode: '',
+    result_districtcode: '',
+    result_latitude: '',
+    result_longitude: '',
+    result_distance: '',
+    result_score: '',
+    result_score_next: ''
+  }
+  t.deepEqual(createEmptyResultItem(indexes, operation), expected)
+})
+
+test('createEmptyResultItem - search operation - address & poi & parcel indexes', t => {
+  const indexes = ['address', 'poi', 'parcel']
+  const operation = 'search'
+  const expected = {
+    result_index: '',
+    result_category: '',
+    result_classification: '',
+    result_score: '',
+    result_score_next: '',
+    result_label: '',
+    result_type: '',
+    result_id: '',
+    result_housenumber: '',
+    result_name: '',
+    result_street: '',
+    result_postcode: '',
+    result_city: '',
+    result_context: '',
+    result_citycode: '',
+    result_oldcitycode: '',
+    result_oldcity: '',
+    result_district: '',
+    result_toponym: '',
+    result_territory: '',
+    result_importance: '',
+    result_x: '',
+    result_y: '',
+    result_status: '',
+    result_departementcode: '',
+    result_municipalitycode: '',
+    result_section: '',
+    result_sheet: '',
+    result_number: '',
+    result_oldmunicipalitycode: '',
+    result_districtcode: '',
+    latitude: '',
+    longitude: ''
+  }
+  t.deepEqual(createEmptyResultItem(indexes, operation), expected)
+})
+
 test('convertResultItem - address index', t => {
   const resultItem = {
     status: 'OK',
@@ -266,6 +350,31 @@ test('expandItemWithResult - with resultColumns - index poi', t => {
     }
   }
   const emptyResultItem = createEmptyResultItem(['poi'], 'search')
+  const resultColumns = ['latitude', 'longitude', 'result_label']
+  const expected = {
+    latitude: '40.7128',
+    longitude: '-74.0060',
+    result_label: 'New York',
+    someInputKey: 'someInputValue'
+  }
+  t.deepEqual(expandItemWithResult(item, resultItem, emptyResultItem, resultColumns), expected)
+})
+
+test('expandItemWithResult - with resultColumns - index parcel', t => {
+  const item = {someInputKey: 'someInputValue'}
+  const resultItem = {
+    status: 'OK',
+    index: 'parcel',
+    result: {
+      lat: '40.7128',
+      lon: '-74.0060',
+      label: 'New York',
+      type: 'city',
+      id: '123',
+      someKey: 'someValue'
+    }
+  }
+  const emptyResultItem = createEmptyResultItem(['parcel'], 'search')
   const resultColumns = ['latitude', 'longitude', 'result_label']
   const expected = {
     latitude: '40.7128',
