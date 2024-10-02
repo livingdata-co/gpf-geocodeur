@@ -46,15 +46,15 @@ export function prepareParams(item, geocodeOptions) {
   }
 
   if (section && item[section]) {
-    params.section = item[section]
+    params.section = item[section].padStart(2, '0')
   }
 
   if (sheet && item[sheet]) {
-    params.sheet = item[sheet]
+    params.sheet = item[sheet].padStart(2, '0')
   }
 
   if (number && item[number]) {
-    params.number = item[number]
+    params.number = item[number].padStart(4, '0')
   }
 
   const extractedLat = getLat(item, lat)
