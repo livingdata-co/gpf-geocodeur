@@ -21,14 +21,20 @@ export function prepareRequest(params) {
     ? [params.lon, params.lat]
     : undefined
 
-  return {
-    q: params.q,
+  const request = {
     center,
     filters,
     limit: Math.max(params.limit || 10, 10),
     returntruegeometry: params.returntruegeometry,
     geometry: params.searchgeom
   }
+
+  // Send q param only if no filters are provided
+  if (Object.keys(request.filters).length === 0) {
+    request.q = params.q
+  }
+
+  return request
 }
 
 export default function createParcelIndex(options = {}) {
