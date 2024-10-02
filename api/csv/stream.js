@@ -9,13 +9,7 @@ export function createGeocodeStream(geocodeOptions, {operation, indexes, signal,
   async function handler(items) {
     const preparedRequests = items.map(item => prepareRequest(item, {
       reverse: operation === 'reverse',
-      columns: geocodeOptions.columns,
-      citycode: geocodeOptions.citycode,
-      postcode: geocodeOptions.postcode,
-      type: geocodeOptions.type,
-      lat: geocodeOptions.lat,
-      lon: geocodeOptions.lon,
-      indexes: geocodeOptions.indexes
+      ...geocodeOptions
     }))
 
     const emptyResultItem = createEmptyResultItem(geocodeOptions.indexes, operation)
