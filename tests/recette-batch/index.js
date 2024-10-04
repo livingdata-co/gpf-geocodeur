@@ -405,22 +405,109 @@ test('basic reverse', async t => {
   t.is(result.result_status, 'ok')
 })
 
+test('reverse - index address', async t => {
+  const result = await executeSingleRequest('reverse', {
+    longitude: '6.168371', latitude: '49.101643'
+  }, {
+    indexes: ['address']
+  })
+  t.is(result.result_status, 'ok')
+  t.is(result.result_index, 'address')
+})
+
+test('reverse - index poi', async t => {
+  const result = await executeSingleRequest('reverse', {
+    longitude: '6.168371', latitude: '49.101643'
+  }, {
+    indexes: ['poi']
+  })
+  t.is(result.result_status, 'ok')
+  t.is(result.result_index, 'poi')
+})
+
+test('reverse - index parcel', async t => {
+  const result = await executeSingleRequest('reverse', {
+    longitude: '6.168371', latitude: '49.101643'
+  }, {
+    indexes: ['parcel']
+  })
+  t.is(result.result_status, 'ok')
+  t.is(result.result_index, 'parcel')
+})
+
+test('reverse - multiple indexes', async t => {
+  const result = await executeSingleRequest('reverse', {
+    longitude: '6.168371', latitude: '49.101643'
+  }, {
+    indexes: ['address', 'poi']
+  })
+  t.is(result.result_status, 'ok')
+  t.is(result.result_index, 'address')
+})
+
+test('reverse - multiple indexes - poi / parcel', async t => {
+  const result = await executeSingleRequest('reverse', {
+    longitude: '6.168371', latitude: '49.101643'
+  }, {
+    indexes: ['poi', 'parcel']
+  })
+  t.is(result.result_status, 'ok')
+  t.is(result.result_index, 'poi')
+})
+
+test('reverse - parcel index - limit result', async t => {
+  const result = await executeSingleRequest('reverse', {
+    longitude: '6.168371', latitude: '49.101643'
+  }, {
+    indexes: ['parcel'],
+    result_columns: ['result_city', 'result_section', 'result_number']
+  })
+  t.is(result.result_city, 'Metz')
+  t.true('result_section' in result)
+  t.true('result_number' in result)
+})
+
+test('reverse - poi index - limit result', async t => {
+  const result = await executeSingleRequest('reverse', {
+    longitude: '6.168371', latitude: '49.101643'
+  }, {
+    indexes: ['poi'],
+    result_columns: ['result_name', 'result_category']
+  })
+  t.is(result.result_name, 'Pont Amos')
+  t.true('result_category' in result)
+})
+
+test('reverse - with filters', async t => {
+  const result = await executeSingleRequest('reverse', {
+    longitude: '6.168371', latitude: '49.101643',
+    code_insee: '57463'
+  }, {
+    indexes: ['poi'],
+    columns: ['code_insee']
+  })
+  t.is(result.result_status, 'ok')
+  t.is(result.result_index, 'poi')
+})
+
 /* POI */
 
 test('poi - search', async t => {
   const result = await executeSingleRequest('search', {
     q: 'metz sablon',
-    catergory: 'mairie'
-  }, {indexes: ['poi']})
+    batiment: 'mairie'
+  }, {
+    indexes: ['poi'],
+    columns: ['q']
+  })
   t.is(result.result_status, 'ok')
   t.is(result.result_index, 'poi')
-  t.is(result.result_name, 'Metz - Mairie de Quartier du Sablon')
 })
 
 test('poi - search - category provided', async t => {
   const resultBefore = await executeSingleRequest('search', {
     q: 'sablon',
-    type: 'mairie'
+    batiment: 'mairie'
   }, {
     indexes: ['poi'],
     columns: ['q']
@@ -429,11 +516,11 @@ test('poi - search - category provided', async t => {
   t.is(resultBefore.result_name, 'Cimetière du Sablon')
   const resultAfter = await executeSingleRequest('search', {
     q: 'sablon',
-    type: 'mairie'
+    batiment: 'mairie'
   }, {
     indexes: ['poi'],
     columns: ['q'],
-    category: 'type'
+    category: 'batiment'
   })
   t.is(resultAfter.result_status, 'ok')
   t.is(resultAfter.result_name, 'Metz - Mairie de Quartier du Sablon')
@@ -459,6 +546,30 @@ test('poi - search - citycode provided', async t => {
   })
   t.is(resultAfter.result_status, 'ok')
   t.is(resultAfter.result_name, 'Mairie de Metz')
+})
+
+test('poi - search - catergory provided', async t => {
+  const resultBefore = await executeSingleRequest('search', {
+    q: 'sablon',
+    code: 'mairie'
+  }, {
+    indexes: ['poi'],
+    columns: ['q']
+  })
+  t.is(resultBefore.result_status, 'ok')
+  t.is(resultBefore.result_index, 'poi')
+  t.false(resultBefore.result_category === 'mairie')
+  const resultAfter = await executeSingleRequest('search', {
+    q: 'sablon',
+    code: 'mairie'
+  }, {
+    indexes: ['poi'],
+    columns: ['q'],
+    category: 'code'
+  })
+  t.is(resultAfter.result_status, 'ok')
+  t.is(resultAfter.result_index, 'poi')
+  t.true(resultAfter.result_category === 'mairie')
 })
 
 test('poi - search - batch', async t => {
@@ -552,4 +663,21 @@ test('parcel', async t => {
   t.is(resultAfter.parseResult.data.length, 2)
   t.is(resultAfter.parseResult.data[0].result_status, 'ok')
   t.is(resultAfter.parseResult.data[1].result_status, 'ok')
+})
+
+test('parcel - with columns', async t => {
+  const result = await executeSingleRequest('search', {
+    numero_section: 'SO',
+    numero_de_parcelle: '115',
+    code_departement: '57',
+    code_ville: '463'
+  }, {
+    indexes: ['parcel'],
+    section: 'numero_section',
+    number: 'numero_de_parcelle',
+    departmentcode: 'code_departement',
+    municipalitycode: 'code_ville',
+    columns: ['numero_section', 'numero_de_parcelle']
+  })
+  t.is(result.result_status, 'ok')
 })
