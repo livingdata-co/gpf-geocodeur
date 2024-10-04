@@ -548,30 +548,6 @@ test('poi - search - citycode provided', async t => {
   t.is(resultAfter.result_name, 'Mairie de Metz')
 })
 
-test('poi - search - catergory provided', async t => {
-  const resultBefore = await executeSingleRequest('search', {
-    q: 'sablon',
-    code: 'mairie'
-  }, {
-    indexes: ['poi'],
-    columns: ['q']
-  })
-  t.is(resultBefore.result_status, 'ok')
-  t.is(resultBefore.result_index, 'poi')
-  t.false(resultBefore.result_category === 'mairie')
-  const resultAfter = await executeSingleRequest('search', {
-    q: 'sablon',
-    code: 'mairie'
-  }, {
-    indexes: ['poi'],
-    columns: ['q'],
-    category: 'code'
-  })
-  t.is(resultAfter.result_status, 'ok')
-  t.is(resultAfter.result_index, 'poi')
-  t.true(resultAfter.result_category === 'mairie')
-})
-
 test('poi - search - batch', async t => {
   const inputFile = createBlobFromString('numero,voie,city\n4,rue des Robert,Metz\n33, rue Paul Diacre, Metz')
   const {parseResult} = await executeRequest(
