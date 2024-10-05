@@ -10,7 +10,7 @@ import morgan from 'morgan'
 import logger from '../lib/logger.js'
 
 import createRouter from './router.js'
-import createAsyncRouter from './async/router.js'
+import createAsyncRouter from '../batch/router.js'
 
 const PORT = process.env.API_PORT || process.env.PORT || 3000
 

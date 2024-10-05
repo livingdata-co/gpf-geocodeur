@@ -11,10 +11,12 @@ import pumpify from 'pumpify'
 
 import {validateCsvFromStream, createCsvReadStream} from '@livingdata/tabular-data-helpers'
 
-import {GEOCODE_INDEXES} from '../../lib/config.js'
-import batch from '../operations/batch.js'
-import {createIndexes} from '../indexes/index.js'
-import {createGeocodeStream} from '../csv/stream.js'
+import {GEOCODE_INDEXES} from '../lib/config.js'
+
+import batch from '../api/operations/batch.js'
+import {createIndexes} from '../api/indexes/index.js'
+
+import {createGeocodeStream} from './stream/index.js'
 
 import {processNext, getInputFileDownloadStream, getProject, setOutputFile, endProcessing, updateProcessing, getStalledProjects, resetProcessing, askProcessing} from './models/project.js'
 

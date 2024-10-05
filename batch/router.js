@@ -3,7 +3,7 @@ import createError from 'http-errors'
 import contentDisposition from 'content-disposition'
 import bytes from 'bytes'
 
-import w from '../../lib/w.js'
+import w from '../lib/w.js'
 
 import {createProject, setPipeline, getProject, getProcessing, checkProjectToken, askProcessing, setInputFile, getOutputFileDownloadStream, deleteProject} from './models/project.js'
 import {validatePipeline} from './pipeline.js'

@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "api:start": "node api",
-    "worker:start": "node api/async/worker.js",
+    "worker:start": "node batch/worker.js",
     "lint": "xo",
     "test": "c8 --all ava --no-worker-threads api indexes lib",
     "test-lcov": "c8 --reporter=lcov --reporter=text --reporter=html --all ava --no-worker-threads api indexes lib",
