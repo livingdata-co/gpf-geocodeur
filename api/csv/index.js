@@ -14,7 +14,7 @@ import {GEOCODE_INDEXES} from '../../lib/config.js'
 
 import batch from '../operations/batch.js'
 
-import {createGeocodeStream} from './stream.js'
+import {createGeocodeStream} from '../../batch/stream/index.js'
 
 export {parseAndValidate} from './parse.js'
 
