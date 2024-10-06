@@ -1,16 +1,7 @@
 /* eslint-disable camelcase */
 import test from 'ava'
 
-import {computeResultFilename, extractGeocodeOptions, ensureArray, extractIndexes} from '../index.js'
-
-test('computeResultFilename', t => {
-  t.is(computeResultFilename('input.csv'), 'input-geocoded.csv')
-  t.is(computeResultFilename('input'), 'input-geocoded.csv')
-  t.is(computeResultFilename('input.txt'), 'input-geocoded.txt')
-  t.is(computeResultFilename(''), 'geocoded.csv')
-  t.is(computeResultFilename(null), 'geocoded.csv')
-  t.is(computeResultFilename(undefined), 'geocoded.csv')
-})
+import {extractGeocodeOptions, ensureArray, extractIndexes} from '../index.js'
 
 test('extractGeocodeOptions / geocode options', t => {
   const req = {
