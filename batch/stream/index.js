@@ -5,14 +5,17 @@ import batchTransform from '../util/batch-transform-stream.js'
 import {createEmptyResultItem, expandItemWithResult} from './results.js'
 import {prepareParams} from './params.js'
 
-export function createGeocodeStream(geocodeOptions, {operation, indexes, signal, batch}) {
+export function createGeocodeStream(geocodeOptions, {indexes, signal, batch}) {
   async function handler(items) {
     const preparedRequests = items.map(item => prepareRequest(item, {
-      reverse: operation === 'reverse',
+      reverse: geocodeOptions.operation === 'reverse',
       ...geocodeOptions
     }))
 
-    const emptyResultItem = createEmptyResultItem(geocodeOptions.indexes, operation)
+    const emptyResultItem = createEmptyResultItem(
+      geocodeOptions.indexes,
+      geocodeOptions.operation
+    )
 
     try {
       const batchResults = await batch({

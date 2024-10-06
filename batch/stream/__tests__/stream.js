@@ -86,7 +86,7 @@ test('prepareRequest / valid reverse', t => {
   })
 })
 
-function executeInBatch(items, operation, geocodeOptions, resultsByIdOrError) {
+function executeInBatch(items, geocodeOptions, resultsByIdOrError) {
   const readable = Readable.from(items)
 
   async function batch({requests}) {
@@ -100,13 +100,13 @@ function executeInBatch(items, operation, geocodeOptions, resultsByIdOrError) {
     }))
   }
 
-  return getStreamAsArray(readable.pipe(createGeocodeStream(geocodeOptions, {operation, batch})))
+  return getStreamAsArray(readable.pipe(createGeocodeStream(geocodeOptions, {batch})))
 }
 
 test('createGeocodeStream / search', async t => {
   const items = [{id: 1, column1: 'test'}]
-  const operation = 'search'
   const geocodeOptions = {
+    operation: 'search',
     columns: ['column1'],
     resultColumns: ['result_status', 'result_error', 'result_result1'],
     indexes: ['address']
@@ -115,15 +115,15 @@ test('createGeocodeStream / search', async t => {
     1: {status: 'ok', result: {result1: 'test'}}
   }
 
-  const results = await executeInBatch(items, operation, geocodeOptions, resultsById)
+  const results = await executeInBatch(items, geocodeOptions, resultsById)
 
   t.deepEqual(results, [{id: 1, column1: 'test', result_result1: 'test', result_status: 'ok'}])
 })
 
 test('createGeocodeStream / skipped', async t => {
   const items = [{id: 1, column1: ''}]
-  const operation = 'search'
   const geocodeOptions = {
+    operation: 'search',
     columns: ['column1'],
     resultColumns: ['result_status', 'result_error', 'result_result1'],
     indexes: ['address']
@@ -132,21 +132,21 @@ test('createGeocodeStream / skipped', async t => {
     1: {status: 'ok', result: {result1: 'test'}}
   }
 
-  const results = await executeInBatch(items, operation, geocodeOptions, resultsById)
+  const results = await executeInBatch(items, geocodeOptions, resultsById)
 
   t.deepEqual(results, [{id: 1, column1: '', result_status: 'skipped'}])
 })
 
 test('createGeocodeStream / batch error', async t => {
   const items = [{id: 1, column1: ''}]
-  const operation = 'search'
   const geocodeOptions = {
+    operation: 'search',
     columns: ['column1'],
     resultColumns: ['result_status', 'result_error', 'result_result1', 'result_error'],
     indexes: ['address']
   }
 
-  const results = await executeInBatch(items, operation, geocodeOptions, new Error('Boom'))
+  const results = await executeInBatch(items, geocodeOptions, new Error('Boom'))
 
   t.deepEqual(results, [{id: 1, column1: '', result_status: 'error'}])
 })

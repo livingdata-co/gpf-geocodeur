@@ -34,7 +34,11 @@ export function csv({operation, indexes}) {
       }
     })
 
-    const geocodeOptions = extractGeocodeOptions(req)
+    const geocodeOptions = {
+      ...extractGeocodeOptions(req),
+      operation
+    }
+
     const filename = computeOutputFilename(req.file.originalname)
 
     res
@@ -45,7 +49,7 @@ export function csv({operation, indexes}) {
     await pipeline(
       createReadStream(req.file.path),
       createCsvReadStream({formatOptions: req.formatOptions}),
-      createGeocodeStream(geocodeOptions, {operation, indexes, signal, batch}),
+      createGeocodeStream(geocodeOptions, {indexes, signal, batch}),
       stringify({separator: req.formatOptions.delimiter, newline: req.formatOptions.linebreak}),
       iconv.encodeStream('utf8'),
       res,

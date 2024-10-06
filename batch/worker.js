@@ -131,7 +131,7 @@ async function main() {
       const fullGeocodeStream = pumpify(
         inputFileStream,
         createCsvReadStream(project.pipeline),
-        createGeocodeStream(geocodeOptions, {operation: 'search', indexes, batch}),
+        createGeocodeStream(geocodeOptions, {indexes, batch}),
         // Transform stream to update the progress
         new Transform({
           objectMode: true,
