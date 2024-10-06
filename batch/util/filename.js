@@ -1,9 +1,15 @@
-export function computeOutputFilename(originalName, outputFormat) {
-  const lastPointPos = originalName.lastIndexOf('.')
-
-  if (lastPointPos === -1 || lastPointPos === 0) {
-    return `${originalName}.geocoded.${outputFormat}`
+export function computeOutputFilename(originalFilename, outputFormat = 'csv') {
+  if (!originalFilename) {
+    return `geocoded.${outputFormat}`
   }
 
-  return `${originalName.slice(0, lastPointPos)}.geocoded.${outputFormat}`
+  const pointPos = originalFilename.lastIndexOf('.')
+
+  if (pointPos === -1) {
+    return `${originalFilename}-geocoded.${outputFormat}`
+  }
+
+  const basename = originalFilename.slice(0, pointPos)
+
+  return `${basename}-geocoded.${outputFormat}`
 }

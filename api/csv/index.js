@@ -14,6 +14,7 @@ import {GEOCODE_INDEXES} from '../../lib/config.js'
 
 import batch from '../operations/batch.js'
 
+import {computeOutputFilename} from '../../batch/util/filename.js'
 import {createGeocodeStream} from '../../batch/stream/index.js'
 
 export {parseAndValidate} from './parse.js'
@@ -34,7 +35,7 @@ export function csv({operation, indexes}) {
     })
 
     const geocodeOptions = extractGeocodeOptions(req)
-    const filename = computeResultFilename(req.file.originalname)
+    const filename = computeOutputFilename(req.file.originalname)
 
     res
       .set('content-type', 'text/csv')
@@ -51,23 +52,6 @@ export function csv({operation, indexes}) {
       {signal}
     )
   }
-}
-
-export function computeResultFilename(originalFilename) {
-  if (!originalFilename) {
-    return 'geocoded.csv'
-  }
-
-  const pointPos = originalFilename.lastIndexOf('.')
-
-  if (pointPos === -1) {
-    return `${originalFilename}-geocoded.csv`
-  }
-
-  const extension = originalFilename.slice(pointPos)
-  const basename = originalFilename.slice(0, pointPos)
-
-  return `${basename}-geocoded${extension}`
 }
 
 export function extractIndexes(indexesValue) {
