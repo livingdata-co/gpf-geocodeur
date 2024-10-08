@@ -562,19 +562,25 @@ test('poi - search - batch', async t => {
   t.is(parseResult.data.length, 2)
 })
 
-test('poi - search - batch - multiple indexes', async t => {
-  const inputFile = createBlobFromString('numero,voie,city,category,lon,lat\n4,rue des Robert,Metz,,,\n,,metz,mairie,6.173588,49.099124')
+test('search - batch - multiple indexes', async t => {
+  const inputFile = createBlobFromString('numero,voie,city,category,lon,lat,section,number,departmentcode,municipalitycode\n4,rue des Robert,Metz,,,,,,,\n,,metz,mairie,6.173588,49.099124,,,,\n,,,,,,SO,115,57,463')
   const {parseResult} = await executeRequest(
     {
       inputFile,
       params: {
-        indexes: ['poi', 'address']
+        indexes: ['poi', 'address', 'parcel'],
+        section: 'section',
+        number: 'number',
+        departmentcode: 'departmentcode',
+        municipalitycode: 'municipalitycode'
       }
     }
   )
-  t.is(parseResult.data.length, 2)
+
+  t.is(parseResult.data.length, 3)
   t.is(parseResult.data[0].result_index, 'address')
   t.is(parseResult.data[1].result_index, 'poi')
+  t.is(parseResult.data[2].result_index, 'parcel')
 })
 
 test('poi - search - batch - unknown index', async t => {
