@@ -118,11 +118,11 @@ test('prepareParams - forward geocoding with parcel params', t => {
   }
   const expected = {
     number: '0001',
-    section: 'A',
+    section: '0A',
     municipalitycode: '567',
     departmentcode: '12',
     oldmunicipalitycode: '123',
-    sheet: 'B',
+    sheet: '0B',
     districtcode: '111',
     q: ''
   }

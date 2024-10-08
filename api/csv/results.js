@@ -89,7 +89,7 @@ export const DEFAULT_RESULT_COLUMNS = {
     search: [
       'result_index',
       'result_status',
-      'result_departementcode',
+      'result_departmentcode',
       'result_municipalitycode',
       'result_section',
       'result_sheet',
@@ -106,7 +106,7 @@ export const DEFAULT_RESULT_COLUMNS = {
       'result_status',
       'result_latitude',
       'result_longitude',
-      'result_departementcode',
+      'result_departmentcode',
       'result_municipalitycode',
       'result_section',
       'result_sheet',
