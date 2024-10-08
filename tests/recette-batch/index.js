@@ -490,6 +490,25 @@ test('reverse - with filters', async t => {
   t.is(result.result_index, 'poi')
 })
 
+test('reverse - batch - multiple indexes', async t => {
+  const inputFile = createBlobFromString('longitude,latitude,category\n6.183678,49.118099,\n6.175475,49.119999,clocher\n6.173412,49.099143,')
+  const {parseResult} = await executeRequest(
+    {
+      operation: 'reverse',
+      inputFile,
+      params: {
+        indexes: ['parcel', 'poi', 'address'],
+        columns: ['longitude', 'latitude', 'category']
+      }
+    }
+  )
+
+  t.is(parseResult.data.length, 3)
+  t.is(parseResult.data[0].result_index, 'address')
+  t.is(parseResult.data[1].result_index, 'poi')
+  t.is(parseResult.data[2].result_index, 'parcel')
+})
+
 /* POI */
 
 test('poi - search', async t => {
