@@ -16,6 +16,7 @@ import batch from '../operations/batch.js'
 
 import {computeOutputFilename} from '../../batch/util/filename.js'
 import {createGeocodeStream} from '../../batch/stream/index.js'
+import {extractGeocodeOptions} from '../../batch/options.js'
 
 export {parseAndValidate} from './parse.js'
 
@@ -35,7 +36,7 @@ export function csv({operation, indexes}) {
     })
 
     const geocodeOptions = {
-      ...extractGeocodeOptions(req),
+      ...extractGeocodeOptions(req.body, {columnsInFile: req.columnsInFile}),
       operation
     }
 
@@ -77,80 +78,6 @@ export function extractIndexes(indexesValue) {
 
   // Remove duplicates
   return [...new Set(indexesValue)]
-}
-
-export function extractGeocodeOptions(req) {
-  const geocodeOptions = {}
-
-  if (req.body.columns) {
-    geocodeOptions.columns = ensureArray(req.body.columns)
-
-    if (geocodeOptions.columns.some(c => !req.columnsInFile.includes(c))) {
-      throw createHttpError(400, 'At least one given column name is unknown')
-    }
-  } else {
-    geocodeOptions.columns = req.columnsInFile
-  }
-
-  if (req.body.citycode) {
-    geocodeOptions.citycode = req.body.citycode
-  }
-
-  if (req.body.postcode) {
-    geocodeOptions.postcode = req.body.postcode
-  }
-
-  if (req.body.type) {
-    geocodeOptions.type = req.body.type
-  }
-
-  if (req.body.category) {
-    geocodeOptions.category = req.body.category
-  }
-
-  if (req.body.departmentcode) {
-    geocodeOptions.departmentcode = req.body.departmentcode
-  }
-
-  if (req.body.municipalitycode) {
-    geocodeOptions.municipalitycode = req.body.municipalitycode
-  }
-
-  if (req.body.oldmunicipalitycode) {
-    geocodeOptions.oldmunicipalitycode = req.body.oldmunicipalitycode
-  }
-
-  if (req.body.districtcode) {
-    geocodeOptions.districtcode = req.body.districtcode
-  }
-
-  if (req.body.section) {
-    geocodeOptions.section = req.body.section
-  }
-
-  if (req.body.sheet) {
-    geocodeOptions.sheet = req.body.sheet
-  }
-
-  if (req.body.number) {
-    geocodeOptions.number = req.body.number
-  }
-
-  if (req.body.lon) {
-    geocodeOptions.lon = req.body.lon
-  }
-
-  if (req.body.lat) {
-    geocodeOptions.lat = req.body.lat
-  }
-
-  if (req.body.result_columns) {
-    geocodeOptions.resultColumns = ensureArray(req.body.result_columns)
-  }
-
-  geocodeOptions.indexes = extractIndexes(req.body.indexes)
-
-  return geocodeOptions
 }
 
 export function ensureArray(value) {
