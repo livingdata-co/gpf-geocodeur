@@ -9,7 +9,7 @@ import {Transform} from 'node:stream'
 import pLimit from 'p-limit'
 import pumpify from 'pumpify'
 
-import {validateCsvFromStream, createCsvReadStream} from '@livingdata/tabular-data-helpers'
+import {validateCsvFromStream, createCsvReadStream, previewCsvFromStream} from '@livingdata/tabular-data-helpers'
 
 import {GEOCODE_INDEXES} from '../lib/config.js'
 
@@ -24,6 +24,7 @@ import {createWriteStream as createGeoJsonWriteStream} from './writers/geojson.j
 import {createWriteStream as createCsvWriteStream} from './writers/csv.js'
 
 import {computeOutputFilename} from './util/filename.js'
+import {extractGeocodeOptions} from './options.js'
 
 const OUTPUT_FORMATS = {
   csv: createCsvWriteStream,
@@ -120,7 +121,9 @@ async function main() {
         geocodingProgress: {readRows: 0, totalRows}
       }))
 
-      const {geocodeOptions, outputFormat} = project.pipeline
+      const {columns} = previewCsvFromStream(validationInputStream, project.pipeline)
+      const {outputFormat} = project.pipeline
+      const geocodeOptions = extractGeocodeOptions(project.pipeline.geocodeOptions, {columnsInFile: columns})
 
       const inputFileName = project.inputFile.filename
       const outputFileName = computeOutputFilename(inputFileName || 'result', outputFormat)
