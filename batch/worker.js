@@ -121,7 +121,7 @@ async function main() {
         geocodingProgress: {readRows: 0, totalRows}
       }))
 
-      const {columns} = previewCsvFromStream(validationInputStream, project.pipeline)
+      const {columns} = await previewCsvFromStream(validationInputStream, project.pipeline)
       const {outputFormat} = project.pipeline
       const geocodeOptions = extractGeocodeOptions(project.pipeline.geocodeOptions, {columnsInFile: columns})
 
