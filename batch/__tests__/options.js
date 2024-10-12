@@ -4,18 +4,17 @@ import test from 'ava'
 import {extractGeocodeOptions} from '../options.js'
 
 test('extractGeocodeOptions / geocode options', t => {
-  const req = {
-    body: {
-      columns: ['col1', 'col2'],
-      citycode: '75001',
-      postcode: '75001',
-      type: 'address',
-      lon: 'longitude',
-      lat: 'latitude',
-      result_columns: ['result_col1', 'result_col2']
-    },
-    columnsInFile: ['col1', 'col2', 'col3']
+  const body = {
+    columns: ['col1', 'col2'],
+    citycode: '75001',
+    postcode: '75001',
+    type: 'address',
+    lon: 'longitude',
+    lat: 'latitude',
+    result_columns: ['result_col1', 'result_col2']
   }
+
+  const columnsInFile = ['col1', 'col2', 'col3']
 
   const expected = {
     columns: ['col1', 'col2'],
@@ -28,34 +27,27 @@ test('extractGeocodeOptions / geocode options', t => {
     indexes: ['address']
   }
 
-  const actual = extractGeocodeOptions(req)
+  const actual = extractGeocodeOptions(body, {columnsInFile})
   t.deepEqual(actual, expected)
 })
 
 test('extractGeocodeOptions / unknown column name', t => {
-  const req = {
-    body: {
-      columns: ['col1', 'unknown_col']
-    },
-    columnsInFile: ['col1', 'col2', 'col3']
+  const body = {
+    columns: ['col1', 'unknown_col']
   }
 
-  const error = t.throws(() => extractGeocodeOptions(req))
+  const columnsInFile = ['col1', 'col2', 'col3']
+
+  const error = t.throws(() => extractGeocodeOptions(body, {columnsInFile}))
   t.is(error.status, 400)
   t.is(error.message, 'At least one given column name is unknown')
 })
 
 test('extractGeocodeOptions / default columns', t => {
-  const req = {
-    body: {},
-    columnsInFile: ['col1', 'col2', 'col3']
-  }
+  const result = extractGeocodeOptions({}, {columnsInFile: ['col1', 'col2', 'col3']})
 
-  const expected = {
+  t.deepEqual(result, {
     columns: ['col1', 'col2', 'col3'],
     indexes: ['address']
-  }
-
-  const actual = extractGeocodeOptions(req)
-  t.deepEqual(actual, expected)
+  })
 })
