@@ -7,6 +7,7 @@ import process from 'node:process'
 import pLimit from 'p-limit'
 
 import {GEOCODE_INDEXES} from '../../lib/config.js'
+import logger from '../../lib/logger.js'
 import {createIndexes} from '../../api/indexes/index.js'
 
 import {processNext, getStalledProjects, resetProcessing, askProcessing} from '../models/project.js'
@@ -59,6 +60,6 @@ async function main() {
 try {
   await main()
 } catch (error) {
-  console.error(error)
+  logger.error(error)
   process.exit(1)
 }

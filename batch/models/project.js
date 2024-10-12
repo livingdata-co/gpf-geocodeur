@@ -3,6 +3,8 @@ import createError from 'http-errors'
 import pFilter from 'p-filter'
 import {subMinutes, isBefore} from 'date-fns'
 
+import logger from '../../lib/logger.js'
+
 import storage from '../storage/index.js'
 import redis, {hydrateObject, prepareObject} from '../util/redis.js'
 
@@ -94,7 +96,7 @@ export async function setInputFile(id, filename, fileSize, inputStream) {
 
   if (currentObjectKey) {
     storage.deleteFile(currentObjectKey).catch(error => {
-      console.error(`Unable to delete object ${currentObjectKey} from storage: ${error.message}`)
+      logger.error(`Unable to delete object ${currentObjectKey} from storage: ${error.message}`)
     })
   }
 
@@ -119,7 +121,7 @@ export async function setOutputFile(id, filename, inputStream) {
 
   if (currentObjectKey) {
     storage.deleteFile(currentObjectKey).catch(error => {
-      console.error(`Unable to delete object ${currentObjectKey} from storage: ${error.message}`)
+      logger.error(`Unable to delete object ${currentObjectKey} from storage: ${error.message}`)
     })
   }
 
@@ -242,14 +244,14 @@ export async function deleteProject(id) {
   const inputFileObjectKey = await redis().get(`project:${id}:input-obj-key`)
   if (inputFileObjectKey) {
     storage.deleteFile(inputFileObjectKey).catch(error => {
-      console.error(`Unable to delete object ${inputFileObjectKey} from storage: ${error.message}`)
+      logger.error(`Unable to delete object ${inputFileObjectKey} from storage: ${error.message}`)
     })
   }
 
   const outputFileObjectKey = await redis().get(`project:${id}:output-obj-key`)
   if (outputFileObjectKey) {
     storage.deleteFile(outputFileObjectKey).catch(error => {
-      console.error(`Unable to delete object ${outputFileObjectKey} from storage: ${error.message}`)
+      logger.error(`Unable to delete object ${outputFileObjectKey} from storage: ${error.message}`)
     })
   }
 

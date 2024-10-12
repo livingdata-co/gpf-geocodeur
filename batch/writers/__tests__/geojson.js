@@ -17,7 +17,6 @@ test('createWriteStream / valid', async t => {
   ]
 
   const output = await writeData(data)
-  console.log(output)
   t.is(output, `{"type":"FeatureCollection","features": [
 {"type":"Feature","geometry":null,"properties":{"name":"John","age":30,"city":"New York"}},
 {"type":"Feature","geometry":null,"properties":{"name":"Jane","age":25,"city":"San Francisco"}},

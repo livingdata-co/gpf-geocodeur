@@ -5,6 +5,8 @@ import pLimit from 'p-limit'
 
 import {validateCsvFromStream, createCsvReadStream, previewCsvFromStream} from '@livingdata/tabular-data-helpers'
 
+import logger from '../../lib/logger.js'
+
 import batch from '../../api/operations/batch.js'
 
 import {getInputFileDownloadStream, getProject, setOutputFile, endProcessing, updateProcessing} from '../models/project.js'
@@ -23,7 +25,7 @@ const OUTPUT_FORMATS = {
 
 export async function executeProcessing(projectId, {indexes}) {
   try {
-    console.log(`${projectId} | start processing`)
+    logger.log(`${projectId} | start processing`)
 
     const project = await getProject(projectId)
     const {inputFile} = project
@@ -122,11 +124,11 @@ export async function executeProcessing(projectId, {indexes}) {
 
     await upLimit(() => endProcessing(projectId))
 
-    console.log(`${projectId} | processed successfully`)
+    logger.log(`${projectId} | processed successfully`)
   } catch (error) {
     await endProcessing(projectId, error)
 
-    console.log(`${projectId} | error during processing`)
-    console.error(error)
+    logger.log(`${projectId} | error during processing`)
+    logger.error(error)
   }
 }
