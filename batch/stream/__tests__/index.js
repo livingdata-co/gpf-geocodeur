@@ -5,7 +5,7 @@ import {setTimeout} from 'node:timers/promises'
 import test from 'ava'
 import {getStreamAsArray} from 'get-stream'
 
-import {prepareRequest, createGeocodeStream} from '../stream.js'
+import {prepareRequest, createGeocodeStream} from '../index.js'
 
 test('prepareRequest / empty address columns', t => {
   const item = {id: 1}

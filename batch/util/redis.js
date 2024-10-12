@@ -4,9 +4,12 @@ import Redis from 'ioredis'
 
 const REDIS_URL = process.env.REDIS_URL || 'redis://127.0.0.1:6379/0'
 
-const redis = new Redis(REDIS_URL)
+let redisInstance
 
-export default redis
+export default function redis() {
+  redisInstance ||= new Redis(REDIS_URL)
+  return redisInstance
+}
 
 export function readValue(value, type) {
   if (!value) {
