@@ -78,7 +78,7 @@ export async function executeProcessing(projectId, {model, indexes}) {
     const {outputFormat} = project.pipeline
     const geocodeOptions = extractGeocodeOptions(project.pipeline.geocodeOptions, {columnsInFile: columns})
 
-    const inputFileName = project.inputFile.filename
+    const inputFileName = project.inputFile.name
     const outputFileName = computeOutputFilename(inputFileName || 'result', outputFormat)
 
     const inputFileStream = await model.getInputFileDownloadStream(projectId)

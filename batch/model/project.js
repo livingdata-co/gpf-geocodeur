@@ -84,12 +84,12 @@ export async function ensureProjectStatus(id, expectedStatuses, {redis}) {
 }
 
 export async function setPipeline(id, pipeline, {redis}) {
-  await ensureProjectStatus(id, 'idle')
+  await ensureProjectStatus(id, 'idle', {redis})
   await redis.hset(`project:${id}:meta`, prepareObject({pipeline, updatedAt: new Date()}))
 }
 
 export async function setInputFile(id, {name, size}, inputStream, {redis, storage}) {
-  await ensureProjectStatus(id, 'idle')
+  await ensureProjectStatus(id, 'idle', {redis})
   const objectKey = await storage.uploadFile(inputStream, 'input', size)
   const currentObjectKey = await redis.get(`project:${id}:input-obj-key`)
 
@@ -101,7 +101,7 @@ export async function setInputFile(id, {name, size}, inputStream, {redis, storag
 
   await redis.pipeline()
     .hset(`project:${id}:meta`, prepareObject({
-      inputFile: {filename: name, size},
+      inputFile: {name, size},
       updatedAt: new Date()
     }))
     .set(`project:${id}:input-obj-key`, objectKey)
@@ -114,7 +114,7 @@ export async function getInputFileDownloadStream(id, {redis, storage}) {
 }
 
 export async function setOutputFile(id, filename, inputStream, {redis, storage}) {
-  await ensureProjectStatus(id, 'processing')
+  await ensureProjectStatus(id, 'processing', {redis})
   const objectKey = await storage.uploadFile(inputStream, 'output')
   const currentObjectKey = await redis.get(`project:${id}:output-obj-key`)
 
@@ -128,7 +128,7 @@ export async function setOutputFile(id, filename, inputStream, {redis, storage})
 
   await redis.pipeline()
     .hset(`project:${id}:meta`, prepareObject({
-      outputFile: {filename, size: fileSize, token: nanoid(24)},
+      outputFile: {name: filename, size: fileSize, token: nanoid(24)},
       updatedAt: new Date()
     }))
     .set(`project:${id}:output-obj-key`, objectKey)
@@ -151,7 +151,7 @@ export async function getProcessing(id, {redis}) {
 }
 
 export async function askProcessing(id, {redis}) {
-  await ensureProjectStatus(id, 'idle')
+  await ensureProjectStatus(id, 'idle', {redis})
 
   const keys = await redis.hkeys(`project:${id}:meta`)
 
@@ -194,7 +194,7 @@ export async function processNext({redis}) {
 }
 
 export async function updateProcessing(id, changes, {redis}) {
-  await ensureProjectStatus(id, 'processing')
+  await ensureProjectStatus(id, 'processing', {redis})
   await redis.hset(`project:${id}:processing`, prepareObject({...changes, heartbeat: new Date()}))
 }
 
@@ -212,7 +212,7 @@ export async function resetProcessing(id, {redis}) {
 }
 
 export async function endProcessing(id, error, {redis}) {
-  await ensureProjectStatus(id, 'processing')
+  await ensureProjectStatus(id, 'processing', {redis})
 
   await redis
     .pipeline()
@@ -238,7 +238,7 @@ export async function getStalledProjects({redis}) {
 }
 
 export async function deleteProject(id, {redis, storage}) {
-  await ensureProjectStatus(id, ['idle', 'completed', 'aborted', 'failed'])
+  await ensureProjectStatus(id, ['idle', 'completed', 'aborted', 'failed'], {redis})
 
   const inputFileObjectKey = await redis.get(`project:${id}:input-obj-key`)
   if (inputFileObjectKey) {

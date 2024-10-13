@@ -11,6 +11,14 @@ test('extractGeocodeOptions / geocode options', t => {
     type: 'address',
     lon: 'longitude',
     lat: 'latitude',
+    category: 'category',
+    departmentcode: 'departmentcode',
+    municipalitycode: 'municipalitycode',
+    oldmunicipalitycode: 'oldmunicipalitycode',
+    districtcode: 'districtcode',
+    section: 'section',
+    sheet: 'sheet',
+    number: 'number',
     result_columns: ['result_col1', 'result_col2']
   }
 
@@ -23,6 +31,14 @@ test('extractGeocodeOptions / geocode options', t => {
     type: 'address',
     lon: 'longitude',
     lat: 'latitude',
+    category: 'category',
+    departmentcode: 'departmentcode',
+    municipalitycode: 'municipalitycode',
+    oldmunicipalitycode: 'oldmunicipalitycode',
+    districtcode: 'districtcode',
+    section: 'section',
+    sheet: 'sheet',
+    number: 'number',
     resultColumns: ['result_col1', 'result_col2'],
     indexes: ['address']
   }
