@@ -5,7 +5,7 @@ import {subMinutes, isBefore} from 'date-fns'
 
 import logger from '../../lib/logger.js'
 
-import storage from '../storage/index.js'
+import storage from './storage/index.js'
 import redis, {hydrateObject, prepareObject} from '../util/redis.js'
 
 const nanoid = customAlphabet('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')

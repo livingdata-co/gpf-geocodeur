@@ -92,7 +92,7 @@
       "**/__tests__/*.js",
       "api/index.js",
       "**/service/index.js",
-      "batch/storage/fs.js",
+      "batch/model/storage/fs.js",
       "tests",
       "coverage"
     ]

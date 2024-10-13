@@ -5,7 +5,7 @@ import bytes from 'bytes'
 
 import w from '../lib/w.js'
 
-import {createProject, setPipeline, getProject, getProcessing, checkProjectToken, askProcessing, setInputFile, getOutputFileDownloadStream, deleteProject} from './models/project.js'
+import {createProject, setPipeline, getProject, getProcessing, checkProjectToken, askProcessing, setInputFile, getOutputFileDownloadStream, deleteProject} from './model/project.js'
 import {validatePipeline} from './pipeline.js'
 
 const ensureProjectToken = w(async (req, res, next) => {

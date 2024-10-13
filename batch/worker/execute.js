@@ -9,7 +9,7 @@ import logger from '../../lib/logger.js'
 
 import batch from '../../api/operations/batch.js'
 
-import {getInputFileDownloadStream, getProject, setOutputFile, endProcessing, updateProcessing} from '../models/project.js'
+import {getInputFileDownloadStream, getProject, setOutputFile, endProcessing, updateProcessing} from '../model/project.js'
 
 import {createGeocodeStream} from '../stream/index.js'
 import {computeOutputFilename} from '../util/filename.js'
