@@ -10,13 +10,15 @@ import {GEOCODE_INDEXES} from '../../lib/config.js'
 import logger from '../../lib/logger.js'
 import {createIndexes} from '../../api/indexes/index.js'
 
-import {processNext, getStalledProjects, resetProcessing, askProcessing} from '../models/project.js'
+import {initModel} from '../model/index.js'
 
 import {executeProcessing} from './execute.js'
 import {getConcurrency} from './util.js'
 
 async function main() {
   const indexes = createIndexes(GEOCODE_INDEXES)
+
+  const model = await initModel()
 
   const concurrency = getConcurrency(process.env)
   const processingProjects = new Map()
@@ -27,7 +29,7 @@ async function main() {
       return
     }
 
-    const projectId = await processNext()
+    const projectId = await model.processNext()
 
     if (!projectId) {
       limit.clearQueue()
@@ -38,7 +40,7 @@ async function main() {
     processingProjects.set(projectId, {abortController})
 
     process.nextTick(async () => {
-      await executeProcessing(projectId, {signal: abortController.signal, indexes})
+      await executeProcessing(projectId, {signal: abortController.signal, indexes, model})
       processingProjects.delete(projectId)
       limit(() => getNextJob())
     })
@@ -49,10 +51,10 @@ async function main() {
       limit(() => getNextJob())
     }
 
-    const stalledProjects = await getStalledProjects()
+    const stalledProjects = await model.getStalledProjects()
     await Promise.all(stalledProjects.map(async projectId => {
-      await resetProcessing(projectId)
-      await askProcessing(projectId)
+      await model.resetProcessing(projectId)
+      await model.askProcessing(projectId)
     }))
   }, 1000)
 }
