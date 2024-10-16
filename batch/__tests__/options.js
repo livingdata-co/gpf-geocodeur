@@ -1,7 +1,7 @@
 /* eslint-disable camelcase */
 import test from 'ava'
 
-import {extractGeocodeOptions} from '../options.js'
+import {extractGeocodeOptions, extractIndexes, ensureArray} from '../options.js'
 
 test('extractGeocodeOptions / geocode options', t => {
   const body = {
@@ -66,4 +66,22 @@ test('extractGeocodeOptions / default columns', t => {
     columns: ['col1', 'col2', 'col3'],
     indexes: ['address']
   })
+})
+
+test('extractIndexes', t => {
+  t.deepEqual(extractIndexes('address'), ['address'])
+  t.deepEqual(extractIndexes(['address']), ['address'])
+  t.deepEqual(extractIndexes([]), ['address'])
+  t.deepEqual(extractIndexes(undefined), ['address'])
+  t.deepEqual(extractIndexes(['address', 'poi']), ['address', 'poi'])
+  t.throws(() => extractIndexes('unknown'), {message: 'Unsupported index type: unknown'})
+  t.throws(() => extractIndexes(['address', 'unknown']), {message: 'Unsupported index type: unknown'})
+  t.deepEqual(extractIndexes(['address', 'poi', 'address']), ['address', 'poi'])
+})
+
+test('ensureArray', t => {
+  t.deepEqual(ensureArray('value'), ['value'])
+  t.deepEqual(ensureArray(['value']), ['value'])
+  t.deepEqual(ensureArray(null), [])
+  t.deepEqual(ensureArray(undefined), [])
 })

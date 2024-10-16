@@ -1,5 +1,35 @@
 import createHttpError from 'http-errors'
-import {ensureArray, extractIndexes} from '../api/csv/index.js'
+
+import {GEOCODE_INDEXES} from '../lib/config.js'
+
+export function ensureArray(value) {
+  if (value) {
+    return Array.isArray(value) ? value : [value]
+  }
+
+  return []
+}
+
+export function extractIndexes(indexesValue) {
+  if (!indexesValue) {
+    return ['address']
+  }
+
+  indexesValue = ensureArray(indexesValue)
+
+  if (indexesValue.length === 0) {
+    return ['address']
+  }
+
+  const invalidValue = indexesValue.find(index => !GEOCODE_INDEXES.includes(index))
+
+  if (invalidValue) {
+    throw createHttpError(400, 'Unsupported index type: ' + invalidValue)
+  }
+
+  // Remove duplicates
+  return [...new Set(indexesValue)]
+}
 
 export function extractGeocodeOptions(body, {columnsInFile}) {
   const geocodeOptions = {}

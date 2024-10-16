@@ -2,7 +2,6 @@ import {createReadStream} from 'node:fs'
 import {rm} from 'node:fs/promises'
 import {pipeline} from 'node:stream/promises'
 
-import createHttpError from 'http-errors'
 import onFinished from 'on-finished'
 import contentDisposition from 'content-disposition'
 import stringify from 'csv-write-stream'
@@ -10,7 +9,6 @@ import iconv from 'iconv-lite'
 import {createCsvReadStream} from '@livingdata/tabular-data-helpers'
 
 import logger from '../../lib/logger.js'
-import {GEOCODE_INDEXES} from '../../lib/config.js'
 
 import batch from '../operations/batch.js'
 
@@ -57,33 +55,4 @@ export function csv({operation, indexes}) {
       {signal}
     )
   }
-}
-
-export function extractIndexes(indexesValue) {
-  if (!indexesValue) {
-    return ['address']
-  }
-
-  indexesValue = ensureArray(indexesValue)
-
-  if (indexesValue.length === 0) {
-    return ['address']
-  }
-
-  const invalidValue = indexesValue.find(index => !GEOCODE_INDEXES.includes(index))
-
-  if (invalidValue) {
-    throw createHttpError(400, 'Unsupported index type: ' + invalidValue)
-  }
-
-  // Remove duplicates
-  return [...new Set(indexesValue)]
-}
-
-export function ensureArray(value) {
-  if (value) {
-    return Array.isArray(value) ? value : [value]
-  }
-
-  return []
 }
