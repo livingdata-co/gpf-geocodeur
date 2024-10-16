@@ -43,7 +43,7 @@ export async function createProject({redis}) {
   await redis
     .pipeline()
     .hset(`project:${id}:meta`, prepareObject({id, status, createdAt, updatedAt, userParams}))
-    .set(`token:${token}`, id)
+    .set(`token:${token}`, id) // TODO: Set expiration or delete token on project deletion
     .exec()
 
   return {id, status, token, createdAt, updatedAt, userParams, processing: {}}
