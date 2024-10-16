@@ -16,7 +16,7 @@ export function createStorage(options = {}) {
     throw new Error('storageDir option is required')
   }
 
-  const {storageDir} = options.storageDir
+  const {storageDir} = options
 
   async function createDownloadStream(objectKey) {
     const filePath = new URL(objectKey, storageDir)
