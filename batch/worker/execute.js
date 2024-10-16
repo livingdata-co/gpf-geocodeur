@@ -74,9 +74,17 @@ export async function executeProcessing(projectId, {model, indexes}) {
       geocodingProgress: {readRows: 0, totalRows}
     }))
 
-    const {columns} = await previewCsvFromStream(validationInputStream, project.pipeline)
-    const {outputFormat} = project.pipeline
-    const geocodeOptions = extractGeocodeOptions(project.pipeline.geocodeOptions, {columnsInFile: columns})
+    const previewInputStream = await model.getInputFileDownloadStream(projectId)
+
+    const {columns} = await previewCsvFromStream(previewInputStream, project.pipeline)
+    const {outputFormat, geocodeOptions: rawGeocodeOptions} = project.pipeline
+    const geocodeOptions = {
+      ...extractGeocodeOptions(
+        rawGeocodeOptions,
+        {columnsInFile: columns}
+      ),
+      operation: rawGeocodeOptions.operation === 'search' ? 'search' : 'reverse'
+    }
 
     const inputFileName = project.inputFile.name
     const outputFileName = computeOutputFilename(inputFileName || 'result', outputFormat)
