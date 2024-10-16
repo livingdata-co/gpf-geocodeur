@@ -3,7 +3,6 @@ import test from 'ava'
 import Redis from 'ioredis-mock'
 import {
   createProject,
-  touchProject,
   checkProjectToken,
   getProject,
   deleteProject,
@@ -43,23 +42,6 @@ test.serial('createProject should create a new project and store it in Redis', a
   t.truthy(project.id)
   t.truthy(project.token)
   t.is(storedProject.status, 'idle')
-})
-
-/**
- * Test de la fonction touchProject
- */
-test.serial('touchProject should update the updatedAt field in Redis', async t => {
-  const {redis} = t.context
-  const projectId = '123'
-
-  await redis.hset(`project:${projectId}:meta`, 'updatedAt', 'old-date')
-
-  await touchProject(projectId, {redis})
-
-  const updatedAt = await redis.hget(`project:${projectId}:meta`, 'updatedAt')
-
-  t.truthy(updatedAt)
-  t.not(updatedAt, 'old-date') // Vérifie que la date a bien été mise à jour
 })
 
 /**

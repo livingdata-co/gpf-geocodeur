@@ -49,10 +49,6 @@ export async function createProject({redis}) {
   return {id, status, token, createdAt, updatedAt, userParams, processing: {}}
 }
 
-export async function touchProject(id, {redis}) {
-  await redis.hset(`project:${id}:meta`, prepareObject({updatedAt: new Date()}))
-}
-
 export async function checkProjectToken(id, token, {redis}) {
   if (!id || !token) {
     return false
