@@ -68,7 +68,7 @@ async function executeRequest(inputFile, inputFileName, pipeline, options = {}) 
   return project
 }
 
-test('Utilisation normale bout en bout', async t => {
+test('Opération search sur l’index address seul', async t => {
   const file = Buffer.from('localisant,foo\nMetz,bar\nWoippy,baz\n')
   const pipeline = {
     format: 'csv',
@@ -85,5 +85,25 @@ test('Utilisation normale bout en bout', async t => {
   const {status, outputFile} = await executeRequest(file, 'foo.csv', pipeline)
   t.is(status, 'completed')
   t.is(outputFile.data.length, 2)
-  t.true(outputFile.data.every(row => row.result_id))
+  t.true(outputFile.data.every(row => row.result_index === 'address'))
+})
+
+test('Opération search sur l’index poi seul', async t => {
+  const file = Buffer.from('localisant,foo\nGare de Metz,bar\nHôpital de Mercy,baz\n')
+  const pipeline = {
+    format: 'csv',
+    formatOptions: {delimiter: ','},
+    geocodeOptions: {
+      operation: 'search',
+      indexes: ['poi'],
+      columns: ['localisant']
+    },
+    outputFormat: 'csv',
+    outputFormatOptions: {}
+  }
+
+  const {status, outputFile} = await executeRequest(file, 'poi.csv', pipeline)
+  t.is(status, 'completed')
+  t.is(outputFile.data.length, 2)
+  t.true(outputFile.data.every(row => row.result_index === 'poi'))
 })
