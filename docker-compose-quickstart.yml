@@ -8,6 +8,23 @@ services:
       ADDRESS_INDEX_URL: http://address:3000
       PARCEL_INDEX_URL: http://parcel:3000
       POI_INDEX_URL: http://poi:3000
+      REDIS_URL: redis://redis:6379
+      STORAGE_FS_DIR: /app/storage/
+    volumes:
+      - shared-storage:/app/storage
+  redis:
+    image: redis:6-alpine
+  worker:
+    build: .
+    command: yarn worker:start
+    environment:
+      ADDRESS_INDEX_URL: http://address:3000
+      PARCEL_INDEX_URL: http://parcel:3000
+      POI_INDEX_URL: http://poi:3000
+      REDIS_URL: redis://redis:6379
+      STORAGE_FS_DIR: /app/storage/
+    volumes:
+      - shared-storage:/app/storage
   address:
     build: .
     command: bash -c "yarn address:download-index && yarn address:start"
@@ -23,3 +40,6 @@ services:
     command: bash -c "yarn poi:download-index && yarn poi:start"
     environment:
       POI_ARCHIVE_URL_RESOLVER: https://gpf-prepared-data.s3.sbg.io.cloud.ovh.net/sample-57-index-poi-latest
+
+volumes:
+  shared-storage:
