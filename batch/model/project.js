@@ -140,16 +140,6 @@ export async function getOutputFileDownloadStream(id, {redis, storage}) {
   return storage.createDownloadStream(objectKey)
 }
 
-export async function getProcessing(id, {redis}) {
-  const processing = await redis.hgetall(`project:${id}:processing`)
-
-  if (processing.step) {
-    return hydrateObject(processing, processingSchema)
-  }
-
-  return {}
-}
-
 export async function askProcessing(id, {redis}) {
   await ensureProjectStatus(id, 'idle', {redis})
 

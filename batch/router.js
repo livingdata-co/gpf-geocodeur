@@ -45,11 +45,6 @@ export default async function createRouter() {
     res.sendStatus(204)
   }))
 
-  app.get('/projects/:projectId/processing', ensureProjectToken(model), w(async (req, res) => {
-    const processing = await model.getProcessing(req.params.projectId)
-    res.send(processing)
-  }))
-
   app.put('/projects/:projectId/pipeline', ensureProjectToken(model), express.json(), w(async (req, res) => {
     const pipeline = validatePipeline(req.body)
     await model.setPipeline(req.params.projectId, pipeline)
