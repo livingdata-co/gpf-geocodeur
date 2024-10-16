@@ -208,7 +208,7 @@ export async function endProcessing(id, error, {redis}) {
     .pipeline()
     .srem('processing-list', id)
     .hset(`project:${id}:meta`, prepareObject({status: error ? 'failed' : 'completed', updatedAt: new Date()}))
-    .hset(`project:${id}:processing`, prepareObject({step: error ? 'failed' : 'completed', finishedAt: new Date(), globalError: error}))
+    .hset(`project:${id}:processing`, prepareObject({step: error ? 'failed' : 'completed', finishedAt: new Date(), globalError: error?.message}))
     .hdel(`project:${id}:processing`, 'heartbeat')
     .exec()
 }

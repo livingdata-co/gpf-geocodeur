@@ -120,7 +120,7 @@ export async function executeProcessing(projectId, {model, indexes}) {
       throw new Error('Geocoding failed')
     }
 
-    await upLimit(() => model.endProcessing(projectId))
+    await upLimit(() => model.endProcessing(projectId, null))
 
     logger.log(`${projectId} | processed successfully`)
   } catch (error) {
