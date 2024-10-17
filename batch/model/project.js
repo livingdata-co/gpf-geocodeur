@@ -74,6 +74,11 @@ export async function getProject(id, {redis}) {
   }
 }
 
+export async function getProjects({redis}) {
+  const projectIds = await redis.lrange('projects', 0, -1)
+  return Promise.all(projectIds.map(async projectId => getProject(projectId, {redis})))
+}
+
 export async function ensureProjectStatus(id, expectedStatuses, {redis}) {
   expectedStatuses = Array.isArray(expectedStatuses) ? expectedStatuses : [expectedStatuses]
   const status = await redis.hget(`project:${id}:meta`, 'status')

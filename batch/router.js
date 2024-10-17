@@ -30,19 +30,40 @@ export default async function createRouter() {
 
   const model = await initModel()
 
+  app.param('projectId', w(async (req, res, next) => {
+    const project = await model.getProject(req.params.projectId)
+
+    if (!project) {
+      throw createError(404, 'Project not found')
+    }
+
+    req.project = project
+    next()
+  }))
+
+  app.get('/projects', w(async (req, res) => {
+    const projects = await model.getProjects()
+    res.send(projects)
+  }))
+
   app.post('/projects', w(async (req, res) => {
     const project = await model.createProject()
     res.status(201).send(project)
   }))
 
   app.get('/projects/:projectId', ensureProjectToken(model), w(async (req, res) => {
-    const project = await model.getProject(req.params.projectId)
-    res.send(project)
+    res.send(req.project)
   }))
 
   app.delete('/projects/:projectId', ensureProjectToken(model), w(async (req, res) => {
     await model.deleteProject(req.params.projectId)
     res.sendStatus(204)
+  }))
+
+  app.post('/projects/:projectId/abort', ensureProjectToken(model), w(async (req, res) => {
+    await model.abortProcessing(req.params.projectId)
+    const project = await model.getProject(req.params.projectId)
+    res.send(project)
   }))
 
   app.put('/projects/:projectId/pipeline', ensureProjectToken(model), express.json(), w(async (req, res) => {
@@ -64,7 +85,7 @@ export default async function createRouter() {
     const {parameters: {filename}} = contentDisposition.parse(req.get('Content-Disposition'))
     const fileSize = Number.parseInt(req.get('Content-Length'), 10)
 
-    const {userParams} = await model.getProject(req.params.projectId)
+    const {userParams} = req.project
 
     if (userParams.maxFileSize && fileSize > bytes(userParams.maxFileSize)) {
       throw createError(403, `File too large. Maximum allowed: ${userParams.maxFileSize}`)
@@ -82,16 +103,14 @@ export default async function createRouter() {
   }))
 
   app.get('/projects/:projectId/output-file/:token', w(async (req, res) => {
-    const project = await model.getProject(req.params.projectId)
-
-    if (!project || !project.outputFile || project.outputFile.token !== req.params.token) {
+    if (!req.project.outputFile || req.project.outputFile.token !== req.params.token) {
       throw createError(403, 'Unable to access to this file')
     }
 
     const outputFileStream = await model.getOutputFileDownloadStream(req.params.projectId)
 
-    res.set('Content-Disposition', contentDisposition(project.outputFile.filename))
-    res.set('Content-Length', project.outputFile.size)
+    res.set('Content-Disposition', contentDisposition(req.project.outputFile.filename))
+    res.set('Content-Length', req.project.outputFile.size)
     res.set('Content-Type', 'application/octet-stream')
     outputFileStream.pipe(res)
   }))
