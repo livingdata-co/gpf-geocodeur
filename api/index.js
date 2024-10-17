@@ -18,7 +18,9 @@ const app = express()
 
 app.disable('x-powered-by')
 
-if (process.env.NODE_ENV !== 'production') {
+if (process.env.NODE_ENV === 'production') {
+  app.set('trust proxy', true)
+} else {
   app.use(morgan('dev'))
 }
 
