@@ -47,15 +47,20 @@ async function main() {
   }
 
   setInterval(async () => {
+    // Start new jobs
     for (let i = processingProjects.size; i < concurrency; i++) {
       limit(() => getNextJob())
     }
 
+    // Restart stalled jobs
     const stalledProjects = await model.getStalledProjects()
     await Promise.all(stalledProjects.map(async projectId => {
       await model.resetProcessing(projectId)
       await model.askProcessing(projectId)
     }))
+
+    // Flush old projects
+    await model.flushOldProjects()
   }, 1000)
 }
 

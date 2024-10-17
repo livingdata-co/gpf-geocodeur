@@ -1,9 +1,10 @@
 import {customAlphabet} from 'nanoid'
 import createError from 'http-errors'
 import pFilter from 'p-filter'
-import {subMinutes, isBefore} from 'date-fns'
+import {subMinutes, isBefore, subDays} from 'date-fns'
 
 import logger from '../../lib/logger.js'
+import {BATCH_ASYNC_FLUSH_AFTER_N_DAYS} from '../../lib/config.js'
 
 import {hydrateObject, prepareObject} from '../util/redis.js'
 
@@ -43,7 +44,8 @@ export async function createProject({redis}) {
   await redis
     .pipeline()
     .hset(`project:${id}:meta`, prepareObject({id, status, createdAt, updatedAt, userParams}))
-    .set(`token:${token}`, id) // TODO: Set expiration or delete token on project deletion
+    .set(`token:${token}`, id, 'EX', BATCH_ASYNC_FLUSH_AFTER_N_DAYS * 24 * 60 * 60)
+    .rpush('projects', id)
     .exec()
 
   return {id, status, token, createdAt, updatedAt, userParams, processing: {}}
@@ -185,6 +187,8 @@ export async function updateProcessing(id, changes, {redis}) {
 }
 
 export async function resetProcessing(id, {redis}) {
+  await ensureProjectStatus(id, ['processing', 'waiting'], {redis})
+
   await redis
     .pipeline()
     .del(`project:${id}:processing-asked`)
@@ -200,11 +204,24 @@ export async function resetProcessing(id, {redis}) {
 export async function endProcessing(id, error, {redis}) {
   await ensureProjectStatus(id, 'processing', {redis})
 
+  const metaChanges = {
+    status: error ? 'failed' : 'completed',
+    updatedAt: new Date()
+  }
+
+  const processingChanges = {finishedAt: new Date()}
+
+  if (error) {
+    processingChanges.globalError = error.message
+  } else {
+    processingChanges.step = 'completed'
+  }
+
   await redis
     .pipeline()
     .srem('processing-list', id)
-    .hset(`project:${id}:meta`, prepareObject({status: error ? 'failed' : 'completed', updatedAt: new Date()}))
-    .hset(`project:${id}:processing`, prepareObject({step: error ? 'failed' : 'completed', finishedAt: new Date(), globalError: error?.message}))
+    .hset(`project:${id}:meta`, prepareObject(metaChanges))
+    .hset(`project:${id}:processing`, prepareObject(processingChanges))
     .hdel(`project:${id}:processing`, 'heartbeat')
     .exec()
 }
@@ -241,12 +258,37 @@ export async function deleteProject(id, {redis, storage}) {
   }
 
   await redis.pipeline()
-    .del(`project:${id}:processing-asked`) // Not necessary
-    .lrem('waiting-queue', 0, id) // Not necessary
-    .srem('processing-list', id) // Not necessary
+    .del(`project:${id}:processing-asked`)
+    .lrem('waiting-queue', 0, id)
+    .srem('processing-list', id)
+    .lrem('projects', 0, id)
     .del(`project:${id}:meta`)
     .del(`project:${id}:input-obj-key`)
     .del(`project:${id}:output-obj-key`)
     .del(`project:${id}:processing`)
     .exec()
 }
+
+/* eslint-disable no-await-in-loop */
+export async function flushOldProjects({redis, storage}) {
+  while (true) { // eslint-disable-line no-constant-condition
+    // Read the first project in the project list
+    const projectId = await redis.lindex('projects', 0)
+
+    if (!projectId) {
+      break
+    }
+
+    // Read the project metadata
+    const project = await getProject(projectId, {redis, storage})
+
+    // If the project is not old enough, we stop the loop
+    if (!isBefore(project.createdAt, subDays(new Date(), BATCH_ASYNC_FLUSH_AFTER_N_DAYS))) {
+      break
+    }
+
+    // Delete the project
+    await deleteProject(projectId, {redis, storage})
+  }
+}
+/* eslint-enable no-await-in-loop */
