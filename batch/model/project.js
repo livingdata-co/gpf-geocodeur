@@ -1,3 +1,5 @@
+import {EventEmitter} from 'node:events'
+
 import {customAlphabet} from 'nanoid'
 import createError from 'http-errors'
 import pFilter from 'p-filter'
@@ -226,6 +228,13 @@ export async function endProcessing(id, error, {redis}) {
     .exec()
 }
 
+export async function abortProcessing(id, {redis}) {
+  await ensureProjectStatus(id, ['processing', 'waiting'], {redis})
+
+  await redis.publish('processing-aborted', id)
+  await resetProcessing(id, {redis})
+}
+
 export async function getStalledProjects({redis}) {
   const processingProjects = await redis.smembers('processing-list')
 
@@ -292,3 +301,16 @@ export async function flushOldProjects({redis, storage}) {
   }
 }
 /* eslint-enable no-await-in-loop */
+
+export async function subscribeAbortedProcessing({subscriber}) {
+  const emitter = new EventEmitter()
+
+  subscriber.on('message', (channel, message) => {
+    if (channel === 'processing-aborted') {
+      emitter.emit('processing-aborted', message)
+    }
+  })
+
+  await subscriber.subscribe('processing-aborted')
+  return emitter
+}

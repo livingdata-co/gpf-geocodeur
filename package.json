@@ -107,6 +107,7 @@
         "never"
       ],
       "unicorn/prevent-abbreviations": "off",
+      "unicorn/prefer-event-target": "off",
       "import/no-unassigned-import": "off",
       "import/order": "off",
       "object-curly-newline": "off"

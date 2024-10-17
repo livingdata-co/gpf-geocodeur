@@ -24,6 +24,18 @@ async function main() {
   const processingProjects = new Map()
   const limit = pLimit(1)
 
+  /* Handle aborted processing */
+
+  const abortEmitter = await model.subscribeAbortedProcessing()
+
+  abortEmitter.on('processing-aborted', async projectId => {
+    const processing = processingProjects.get(projectId)
+
+    if (processing) {
+      processing.abortController.abort()
+    }
+  })
+
   async function getNextJob() {
     if (processingProjects.size >= concurrency) {
       return
