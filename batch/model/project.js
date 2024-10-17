@@ -250,7 +250,7 @@ export async function getStalledProjects({redis}) {
 }
 
 export async function deleteProject(id, {redis, storage}) {
-  await ensureProjectStatus(id, ['idle', 'completed', 'aborted', 'failed'], {redis})
+  await ensureProjectStatus(id, ['idle', 'completed', 'failed'], {redis})
 
   const inputFileObjectKey = await redis.get(`project:${id}:input-obj-key`)
   if (inputFileObjectKey) {
