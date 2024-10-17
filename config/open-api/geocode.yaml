@@ -447,7 +447,7 @@ paths:
                   - result_oldcity (address, poi)<br>
                   - result_district (address, poi)<br>
                   - result_category (poi)<br>
-                  - result_departementcode (parcel)<br>
+                  - result_departmentcode (parcel)<br>
                   - result_municipalitycode (parcel)<br>
                   - result_section (parcel)<br>
                   - result_sheet (parcel)<br>
@@ -581,7 +581,7 @@ paths:
                   - result_oldcity<br>
                   - result_district<br>
                   - result_category (poi)<br>
-                  - result_departementcode (parcel)<br>
+                  - result_departmentcode (parcel)<br>
                   - result_municipalitycode (parcel)<br>
                   - result_section (parcel)<br>
                   - result_sheet (parcel)<br>

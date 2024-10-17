@@ -180,7 +180,7 @@ test('createEmptyResultItem - search operation - parcel index', t => {
   const expected = {
     result_index: '',
     result_status: '',
-    result_departementcode: '',
+    result_departmentcode: '',
     result_municipalitycode: '',
     result_section: '',
     result_sheet: '',
@@ -201,7 +201,7 @@ test('createEmptyResultItem - reverse operation - parcel index', t => {
   const expected = {
     result_index: '',
     result_status: '',
-    result_departementcode: '',
+    result_departmentcode: '',
     result_municipalitycode: '',
     result_section: '',
     result_sheet: '',
@@ -245,7 +245,7 @@ test('createEmptyResultItem - search operation - address & poi & parcel indexes'
     result_x: '',
     result_y: '',
     result_status: '',
-    result_departementcode: '',
+    result_departmentcode: '',
     result_municipalitycode: '',
     result_section: '',
     result_sheet: '',

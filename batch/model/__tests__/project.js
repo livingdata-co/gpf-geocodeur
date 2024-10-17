@@ -196,9 +196,9 @@ test.serial('getStalledProjects should return projects with a stalled heartbeat'
  * Test de la fonction setPipeline
  */
 test.serial('setPipeline should store pipeline data in Redis', async t => {
-  const { redis } = t.context
+  const {redis} = t.context
   const projectId = '123'
-  const pipelineData = { step: 'initialization', completed: false }
+  const pipelineData = {step: 'initialization', completed: false}
 
   const metadata = {
     id: '123',
@@ -208,7 +208,7 @@ test.serial('setPipeline should store pipeline data in Redis', async t => {
   await redis.sadd('processing-list', projectId)
   await redis.hmset(`project:${projectId}:meta`, metadata)
 
-  await setPipeline(projectId, pipelineData, { redis })
+  await setPipeline(projectId, pipelineData, {redis})
 
   const storedPipeline = await redis.hgetall(`project:${projectId}:meta`)
 
@@ -219,9 +219,9 @@ test.serial('setPipeline should store pipeline data in Redis', async t => {
  * Test de la fonction setInputFile
  */
 test.serial('setInputFile should store input file metadata in Redis', async t => {
-  const { redis } = t.context
+  const {redis} = t.context
   const projectId = '123'
-  const inputFileData = { name: 'data.csv', size: 5000 }
+  const inputFileData = {name: 'data.csv', size: 5000}
 
   const metadata = {
     id: projectId,
@@ -240,7 +240,7 @@ test.serial('setInputFile should store input file metadata in Redis', async t =>
     }
   }
 
-  await setInputFile(projectId, inputFileData, dataStream, { redis, storage })
+  await setInputFile(projectId, inputFileData, dataStream, {redis, storage})
 
   const {inputFile} = await redis.hgetall(`project:${projectId}:meta`)
   t.is(inputFile, JSON.stringify(inputFileData))
@@ -252,9 +252,9 @@ test.serial('setInputFile should store input file metadata in Redis', async t =>
  * Test de la fonction setOutputFile
  */
 test.serial('setOutputFile should store output file metadata in Redis', async t => {
-  const { redis } = t.context
+  const {redis} = t.context
   const projectId = '123'
-  const outputFileData = { name: 'results.json', size: 8000 }
+  const outputFileData = {name: 'results.json', size: 8000}
 
   const metadata = {
     id: projectId,
@@ -276,7 +276,7 @@ test.serial('setOutputFile should store output file metadata in Redis', async t 
     }
   }
 
-  await setOutputFile(projectId, outputFileData.name, dataStream, { redis, storage })
+  await setOutputFile(projectId, outputFileData.name, dataStream, {redis, storage})
 
   const meta = await redis.hgetall(`project:${projectId}:meta`)
   const outputFile = JSON.parse(meta.outputFile)
