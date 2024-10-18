@@ -21,7 +21,7 @@ const OUTPUT_FORMATS = {
   geojson: createGeoJsonWriteStream
 }
 
-export async function executeProcessing(projectId, {model, indexes}) {
+export async function executeProcessing(projectId, {signal, model, indexes}) {
   try {
     logger.log(`${projectId} | start processing`)
 
@@ -92,10 +92,12 @@ export async function executeProcessing(projectId, {model, indexes}) {
     const inputFileStream = await model.getInputFileDownloadStream(projectId)
     const createWriteStream = OUTPUT_FORMATS[outputFormat]
 
+    const {concurrency} = project.params
+
     const fullGeocodeStream = pumpify(
       inputFileStream,
       createCsvReadStream(project.pipeline),
-      createGeocodeStream(geocodeOptions, {indexes, batch}),
+      createGeocodeStream(geocodeOptions, {signal, indexes, concurrency, batch}),
       // Transform stream to update the progress
       new Transform({
         objectMode: true,
