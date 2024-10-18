@@ -14,6 +14,9 @@ const nanoid = customAlphabet('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVW
 
 const metaSchema = {
   id: 'string',
+  ip: 'string',
+  userAgent: 'string',
+  community: 'string',
   status: 'string',
   createdAt: 'date',
   updatedAt: 'date',
@@ -35,7 +38,7 @@ const processingSchema = {
   heartbeat: 'date'
 }
 
-export async function createProject({redis}) {
+export async function createProject({userAgent, ip, community}, {redis}) {
   const id = nanoid(10)
   const token = nanoid(24)
   const status = 'idle'
@@ -45,12 +48,21 @@ export async function createProject({redis}) {
 
   await redis
     .pipeline()
-    .hset(`project:${id}:meta`, prepareObject({id, status, createdAt, updatedAt, userParams}))
+    .hset(`project:${id}:meta`, prepareObject({
+      id,
+      status,
+      createdAt,
+      updatedAt,
+      userParams,
+      ip,
+      userAgent,
+      community
+    }))
     .set(`token:${token}`, id, 'EX', BATCH_ASYNC_FLUSH_AFTER_N_DAYS * 24 * 60 * 60)
     .rpush('projects', id)
     .exec()
 
-  return {id, status, token, createdAt, updatedAt, userParams, processing: {}}
+  return {id, status, ip, userAgent, community, token, createdAt, updatedAt, userParams, processing: {}}
 }
 
 export async function checkProjectToken(id, token, {redis}) {
