@@ -150,10 +150,10 @@ export default async function createRouter() {
     const {parameters: {filename}} = contentDisposition.parse(req.get('Content-Disposition'))
     const fileSize = Number.parseInt(req.get('Content-Length'), 10)
 
-    const {userParams} = req.project
+    const {params} = req.project
 
-    if (userParams.maxFileSize && fileSize > bytes(userParams.maxFileSize)) {
-      throw createError(403, `File too large. Maximum allowed: ${userParams.maxFileSize}`)
+    if (params.maxInputFileSize && fileSize > bytes(params.maxInputFileSize)) {
+      throw createError(403, `File too large. Maximum allowed: ${params.maxInputFileSize}`)
     }
 
     await model.setInputFile(req.params.projectId, {name: filename, size: fileSize}, req)

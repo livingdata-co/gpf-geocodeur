@@ -20,7 +20,7 @@ const metaSchema = {
   status: 'string',
   createdAt: 'date',
   updatedAt: 'date',
-  userParams: 'object',
+  params: 'object',
   pipeline: 'object',
   inputFile: 'object',
   outputFile: 'object'
@@ -44,7 +44,7 @@ export async function createProject({userAgent, ip, community}, {redis}) {
   const status = 'idle'
   const createdAt = new Date()
   const updatedAt = new Date()
-  const userParams = {maxFileSize: '50MB'}
+  const params = {maxInputFileSize: '50MB', concurrency: 1}
 
   await redis
     .pipeline()
@@ -53,7 +53,7 @@ export async function createProject({userAgent, ip, community}, {redis}) {
       status,
       createdAt,
       updatedAt,
-      userParams,
+      params,
       ip,
       userAgent,
       community
@@ -62,7 +62,7 @@ export async function createProject({userAgent, ip, community}, {redis}) {
     .rpush('projects', id)
     .exec()
 
-  return {id, status, ip, userAgent, community, token, createdAt, updatedAt, userParams, processing: {}}
+  return {id, status, ip, userAgent, community, token, createdAt, updatedAt, params, processing: {}}
 }
 
 export async function checkProjectToken(id, token, {redis}) {
