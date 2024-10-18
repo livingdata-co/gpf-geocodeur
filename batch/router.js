@@ -1,3 +1,5 @@
+import process from 'node:process'
+
 import express from 'express'
 import createError from 'http-errors'
 import contentDisposition from 'content-disposition'
@@ -8,20 +10,58 @@ import w from '../lib/w.js'
 import {initModel} from './model/index.js'
 import {validatePipeline} from './pipeline.js'
 
-function ensureProjectToken(model) {
+function getAuthStrategyFromTokenType(tokenType) {
+  if (tokenType === 'Bearer') {
+    return 'admin'
+  }
+
+  if (tokenType === 'Token') {
+    return 'project'
+  }
+
+  throw createError(401, 'Invalid token type')
+}
+
+function authorize(strategies) {
   return w(async (req, res, next) => {
     if (!req.get('Authorization')) {
-      throw createError(401, 'Authorization token not provided')
+      throw createError(401, 'Authentication required')
     }
 
-    const token = req.get('Authorization').slice(6)
-    const isSameToken = await model.checkProjectToken(req.params.projectId, token)
+    const [tokenType, token] = req.get('Authorization').split(' ')
 
-    if (!isSameToken) {
-      throw createError(401, 'Bad token or bad project')
+    if (!tokenType || !token) {
+      throw createError(401, 'Invalid Authorization header')
     }
 
-    next()
+    const strategy = getAuthStrategyFromTokenType(tokenType)
+
+    if (!strategies.includes(strategy)) {
+      throw createError(401, 'Invalid token type')
+    }
+
+    if (strategy === 'project') {
+      const isValidToken = await req.model.checkProjectToken(req.params.projectId, token)
+      if (!isValidToken) {
+        throw createError(401, 'Invalid token')
+      }
+
+      return next()
+    }
+
+    if (strategy === 'admin') {
+      if (!process.env.MAGIC_TOKEN) {
+        throw createError(501, 'Authentication strategy not available')
+      }
+
+      if (token !== process.env.MAGIC_TOKEN) {
+        throw createError(401, 'Invalid token')
+      }
+
+      return next()
+    }
+
+    throw createError('Should not happen but it did')
   })
 }
 
@@ -41,7 +81,28 @@ export default async function createRouter() {
     next()
   }))
 
-  app.get('/projects', w(async (req, res) => {
+  // Inject model
+  app.use((req, res, next) => {
+    req.model = model
+    next()
+  })
+
+  app.get('/auth/gpf', w(async (req, res) => {
+    if (!process.env.MAGIC_TOKEN) {
+      return res.sendStatus(501)
+    }
+
+    if (!req.query.redirectUrl) {
+      throw createError(400, 'redirectUrl query parameter is required')
+    }
+
+    const redirectUrl = new URL(req.query.redirectUrl)
+    redirectUrl.searchParams.set('token', process.env.MAGIC_TOKEN)
+
+    res.redirect(redirectUrl.toString())
+  }))
+
+  app.get('/projects', authorize(['admin'], model), w(async (req, res) => {
     const projects = await model.getProjects()
     res.send(projects)
   }))
@@ -55,29 +116,29 @@ export default async function createRouter() {
     res.status(201).send(project)
   }))
 
-  app.get('/projects/:projectId', ensureProjectToken(model), w(async (req, res) => {
+  app.get('/projects/:projectId', authorize(['project', 'admin']), w(async (req, res) => {
     res.send(req.project)
   }))
 
-  app.delete('/projects/:projectId', ensureProjectToken(model), w(async (req, res) => {
+  app.delete('/projects/:projectId', authorize(['project', 'admin']), w(async (req, res) => {
     await model.deleteProject(req.params.projectId)
     res.sendStatus(204)
   }))
 
-  app.post('/projects/:projectId/abort', ensureProjectToken(model), w(async (req, res) => {
+  app.post('/projects/:projectId/abort', authorize(['project', 'admin']), w(async (req, res) => {
     await model.abortProcessing(req.params.projectId)
     const project = await model.getProject(req.params.projectId)
     res.send(project)
   }))
 
-  app.put('/projects/:projectId/pipeline', ensureProjectToken(model), express.json(), w(async (req, res) => {
+  app.put('/projects/:projectId/pipeline', authorize(['project']), express.json(), w(async (req, res) => {
     const pipeline = validatePipeline(req.body)
     await model.setPipeline(req.params.projectId, pipeline)
     const project = await model.getProject(req.params.projectId)
     res.send(project)
   }))
 
-  app.put('/projects/:projectId/input-file', ensureProjectToken(model), w(async (req, res) => {
+  app.put('/projects/:projectId/input-file', authorize(['project']), w(async (req, res) => {
     if (!req.get('Content-Disposition') || !req.get('Content-Disposition').includes('filename')) {
       throw createError(400, 'Filename must be provided through Content-Disposition')
     }
@@ -100,7 +161,7 @@ export default async function createRouter() {
     res.send(project)
   }))
 
-  app.post('/projects/:projectId/start', ensureProjectToken(model), w(async (req, res) => {
+  app.post('/projects/:projectId/start', authorize(['project']), w(async (req, res) => {
     await model.askProcessing(req.params.projectId)
     const project = await model.getProject(req.params.projectId)
     res.status(202).send(project)

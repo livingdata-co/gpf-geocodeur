@@ -10,6 +10,7 @@ services:
       POI_INDEX_URL: http://poi:3000
       REDIS_URL: redis://redis:6379
       STORAGE_FS_DIR: /app/storage/
+      MAGIC_TOKEN: "12345"
     volumes:
       - shared-storage:/app/storage
   redis:
