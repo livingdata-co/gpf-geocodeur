@@ -125,6 +125,17 @@ export default async function createRouter() {
     next()
   }))
 
+  app.param('communityId', w(async (req, res, next) => {
+    const community = await model.getCommunity(req.params.communityId)
+
+    if (!community) {
+      throw createError(404, 'Community not found')
+    }
+
+    req.community = community
+    next()
+  }))
+
   // Inject model
   app.use((req, res, next) => {
     req.model = model
@@ -222,6 +233,22 @@ export default async function createRouter() {
     res.set('Content-Length', req.project.outputFile.size)
     res.set('Content-Type', 'application/octet-stream')
     outputFileStream.pipe(res)
+  }))
+
+  app.get('/communities', authorize(['admin']), w(async (req, res) => {
+    const communities = await model.getCommunities()
+    res.send(communities)
+  }))
+
+  app.put('/communities/:communityId/params', authorize(['admin']), express.json(), w(async (req, res) => {
+    await model.updateCommunityParams(req.community.id, req.body)
+    const community = await model.getCommunity(req.community.id)
+    res.send(community)
+  }))
+
+  app.delete('/communities/:communityId', authorize(['admin']), w(async (req, res) => {
+    await model.deleteCommunity(req.community.id)
+    res.sendStatus(204)
   }))
 
   app.use(errorHandler)
