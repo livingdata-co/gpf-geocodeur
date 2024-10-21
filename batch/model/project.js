@@ -118,7 +118,7 @@ export async function setInputFile(id, {name, size}, inputStream, {redis, storag
 
   await redis.pipeline()
     .hset(`project:${id}:meta`, prepareObject({
-      inputFile: {name, size},
+      inputFile: {name, size, token: nanoid(24)},
       updatedAt: new Date()
     }))
     .set(`project:${id}:input-obj-key`, objectKey)

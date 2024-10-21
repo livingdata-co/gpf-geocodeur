@@ -222,6 +222,19 @@ export default async function createRouter() {
     res.status(202).send(project)
   }))
 
+  app.get('/projects/:projectId/input-file/:token', w(async (req, res) => {
+    if (!req.project.inputFile || req.project.inputFile.token !== req.params.token) {
+      throw createError(403, 'Unable to access to this file')
+    }
+
+    const inputFileStream = await model.getInputFileDownloadStream(req.params.projectId)
+
+    res.set('Content-Disposition', contentDisposition(req.project.inputFile.name))
+    res.set('Content-Length', req.project.inputFile.size)
+    res.set('Content-Type', 'application/octet-stream')
+    inputFileStream.pipe(res)
+  }))
+
   app.get('/projects/:projectId/output-file/:token', w(async (req, res) => {
     if (!req.project.outputFile || req.project.outputFile.token !== req.params.token) {
       throw createError(403, 'Unable to access to this file')
