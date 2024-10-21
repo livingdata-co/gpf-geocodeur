@@ -6,7 +6,7 @@ import pFilter from 'p-filter'
 import {subMinutes, isBefore, subDays} from 'date-fns'
 
 import logger from '../../lib/logger.js'
-import {BATCH_ASYNC_FLUSH_AFTER_N_DAYS} from '../../lib/config.js'
+import {BATCH_ASYNC_FLUSH_AFTER_N_DAYS, BATCH_ASYNC_DEFAULT_COMMUNITY_PARAMS} from '../../lib/config.js'
 
 import {hydrateObject, prepareObject} from '../util/redis.js'
 
@@ -44,7 +44,7 @@ export async function createProject({userAgent, ip, community}, {redis}) {
   const status = 'idle'
   const createdAt = new Date()
   const updatedAt = new Date()
-  const params = {maxInputFileSize: '50MB', concurrency: 1}
+  const params = community ? community.params : BATCH_ASYNC_DEFAULT_COMMUNITY_PARAMS
 
   await redis
     .pipeline()
@@ -56,7 +56,7 @@ export async function createProject({userAgent, ip, community}, {redis}) {
       params,
       ip,
       userAgent,
-      community
+      community: community?.id
     }))
     .set(`token:${token}`, id, 'EX', BATCH_ASYNC_FLUSH_AFTER_N_DAYS * 24 * 60 * 60)
     .rpush('projects', id)

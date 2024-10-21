@@ -6,6 +6,9 @@ import contentDisposition from 'content-disposition'
 import bytes from 'bytes'
 
 import w from '../lib/w.js'
+import errorHandler from '../lib/error-handler.js'
+
+import {getUserInfo} from './util/gpf.js'
 
 import {initModel} from './model/index.js'
 import {validatePipeline} from './pipeline.js'
@@ -65,6 +68,47 @@ function authorize(strategies) {
   })
 }
 
+export const handleCommunity = w(async (req, res, next) => {
+  const authorizationHeader = req.get('Authorization')
+  const communityHeader = req.get('X-Community')
+
+  if (!authorizationHeader && !communityHeader) {
+    return next()
+  }
+
+  if (!authorizationHeader) {
+    throw createError(401, 'Authentication required')
+  }
+
+  if (!authorizationHeader.startsWith('Bearer ')) {
+    throw createError(401, 'Invalid Authorization header')
+  }
+
+  const token = authorizationHeader.slice('Bearer '.length)
+  let userInfo
+
+  try {
+    userInfo = await getUserInfo(token)
+  } catch {
+    throw createError(401, 'Invalid token')
+  }
+
+  const community = userInfo.communities_member
+    .map(entry => entry.community)
+    .find(community => community._id === communityHeader)
+
+  if (!community) {
+    throw createError(403, 'User is not a member of this community')
+  }
+
+  req.community = await req.model.upsertCommunity({
+    id: community._id,
+    name: community.name
+  })
+
+  next()
+})
+
 export default async function createRouter() {
   const app = new express.Router()
 
@@ -107,11 +151,11 @@ export default async function createRouter() {
     res.send(projects)
   }))
 
-  app.post('/projects', w(async (req, res) => {
+  app.post('/projects', handleCommunity, w(async (req, res) => {
     const project = await model.createProject({
       ip: req.ip,
       userAgent: req.get('User-Agent'),
-      community: null
+      community: req.community
     })
     res.status(201).send(project)
   }))
@@ -179,6 +223,8 @@ export default async function createRouter() {
     res.set('Content-Type', 'application/octet-stream')
     outputFileStream.pipe(res)
   }))
+
+  app.use(errorHandler)
 
   return app
 }
