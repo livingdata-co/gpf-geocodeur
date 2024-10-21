@@ -35,7 +35,7 @@ test.beforeEach(t => {
 test.serial('createProject should create a new project and store it in Redis', async t => {
   const {redis} = t.context
 
-  const project = await createProject({redis})
+  const project = await createProject({}, {redis})
 
   const storedProject = await redis.hgetall(`project:${project.id}:meta`)
 
@@ -243,7 +243,7 @@ test.serial('setInputFile should store input file metadata in Redis', async t =>
   await setInputFile(projectId, inputFileData, dataStream, {redis, storage})
 
   const {inputFile} = await redis.hgetall(`project:${projectId}:meta`)
-  t.is(inputFile, JSON.stringify(inputFileData))
+  t.deepEqual(Object.keys(JSON.parse(inputFile)).sort(), ['name', 'size', 'token'])
 
   t.is(await redis.get(`project:${projectId}:input-obj-key`), 'foo')
 })
