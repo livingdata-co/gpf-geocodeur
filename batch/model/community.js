@@ -15,11 +15,11 @@ export async function upsertCommunity(community, {redis}) {
 
   const existingCommunity = await redis.hgetall(`community:${id}`)
 
-  if (existingCommunity && existingCommunity.name !== name) {
+  if (existingCommunity?.id && existingCommunity.name !== name) {
     await redis.hset(`community:${id}`, 'name', name)
   }
 
-  if (!existingCommunity) {
+  if (!existingCommunity?.id) {
     await redis
       .pipeline()
       .hset(`community:${id}`, prepareObject({
@@ -37,7 +37,7 @@ export async function upsertCommunity(community, {redis}) {
 export async function getCommunity(id, {redis}) {
   const community = await redis.hgetall(`community:${id}`)
 
-  if (!community) {
+  if (!community?.id) {
     throw createHttpError(404, `Community ${id} not found`)
   }
 
