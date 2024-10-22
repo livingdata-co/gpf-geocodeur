@@ -242,7 +242,7 @@ export default async function createRouter() {
 
     const outputFileStream = await model.getOutputFileDownloadStream(req.params.projectId)
 
-    res.set('Content-Disposition', contentDisposition(req.project.outputFile.filename))
+    res.set('Content-Disposition', contentDisposition(req.project.outputFile.name))
     res.set('Content-Length', req.project.outputFile.size)
     res.set('Content-Type', 'application/octet-stream')
     outputFileStream.pipe(res)
