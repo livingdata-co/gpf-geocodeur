@@ -59,6 +59,7 @@
     "iconv-lite": "^0.6.3",
     "ioredis": "^5.4.1",
     "js-yaml": "^4.1.0",
+    "jsonwebtoken": "^9.0.2",
     "lmdb": "^3.0.12",
     "lodash-es": "^4.17.21",
     "morgan": "^1.10.0",
@@ -73,6 +74,8 @@
     "p-filter": "^4.1.0",
     "p-limit": "^6.1.0",
     "p-retry": "^6.2.0",
+    "passport": "^0.7.0",
+    "passport-oauth2": "^1.8.0",
     "pbf": "^3.3.0",
     "pumpify": "^2.0.1",
     "tar-fs": "^3.0.6"

@@ -4,6 +4,8 @@ import express from 'express'
 import createError from 'http-errors'
 import contentDisposition from 'content-disposition'
 import bytes from 'bytes'
+import passport from 'passport'
+import jwt from 'jsonwebtoken'
 
 import w from '../lib/w.js'
 import errorHandler from '../lib/error-handler.js'
@@ -12,6 +14,7 @@ import {getUserInfo} from './util/gpf.js'
 
 import {initModel} from './model/index.js'
 import {validatePipeline} from './pipeline.js'
+import {configure as configurePassport} from './passport.js'
 
 function getAuthStrategyFromTokenType(tokenType) {
   if (tokenType === 'Bearer') {
@@ -53,11 +56,9 @@ function authorize(strategies) {
     }
 
     if (strategy === 'admin') {
-      if (!process.env.MAGIC_TOKEN) {
-        throw createError(501, 'Authentication strategy not available')
-      }
-
-      if (token !== process.env.MAGIC_TOKEN) {
+      try {
+        jwt.verify(token, process.env.JWT_SECRET)
+      } catch {
         throw createError(401, 'Invalid token')
       }
 
@@ -87,6 +88,19 @@ export const handleCommunity = w(async (req, res, next) => {
   const token = authorizationHeader.slice('Bearer '.length)
   let userInfo
 
+  if (process.env.MAGIC_TOKEN) {
+    if (token === process.env.MAGIC_TOKEN) {
+      req.community = await req.model.upsertCommunity({
+        id: 'acme',
+        name: 'ACME'
+      })
+
+      return next()
+    }
+
+    throw createError(401, 'Invalid token')
+  }
+
   try {
     userInfo = await getUserInfo(token)
   } catch {
@@ -113,6 +127,12 @@ export default async function createRouter() {
   const app = new express.Router()
 
   const model = await initModel()
+
+  const usePassport = Boolean(process.env.GPF_AUTHORIZATION_URL)
+
+  if (usePassport) {
+    configurePassport()
+  }
 
   app.param('projectId', w(async (req, res, next) => {
     const project = await model.getProject(req.params.projectId)
@@ -143,19 +163,36 @@ export default async function createRouter() {
   })
 
   app.get('/auth/gpf', w(async (req, res) => {
-    if (!process.env.MAGIC_TOKEN) {
-      return res.sendStatus(501)
+    if (process.env.MAGIC_TOKEN) {
+      const redirectUrl = new URL(process.env.SUPERVISION_APP_URL)
+
+      const token = jwt.sign(req.user, process.env.JWT_SECRET, {expiresIn: '12h'})
+      redirectUrl.searchParams.set('token', token)
+
+      return res.redirect(redirectUrl.toString())
     }
 
-    if (!req.query.redirectUrl) {
-      throw createError(400, 'redirectUrl query parameter is required')
+    if (usePassport) {
+      return passport.authenticate('gpf', {session: false})(req, res)
     }
 
-    const redirectUrl = new URL(req.query.redirectUrl)
-    redirectUrl.searchParams.set('token', process.env.MAGIC_TOKEN)
-
-    res.redirect(redirectUrl.toString())
+    res.sendStatus(501)
   }))
+
+  if (usePassport) {
+    app.get('/auth/gpf/callback', passport.authenticate('gpf', {session: false}), (req, res) => {
+      const redirectUrl = new URL(process.env.SUPERVISION_APP_URL)
+
+      if (req.user.isAdmin) {
+        const token = jwt.sign(req.user, process.env.JWT_SECRET, {expiresIn: '12h'})
+        redirectUrl.searchParams.set('token', token)
+      } else {
+        redirectUrl.searchParams.set('error', 'missing_role')
+      }
+
+      res.redirect(redirectUrl.toString())
+    })
+  }
 
   app.get('/projects', authorize(['admin'], model), w(async (req, res) => {
     const projects = await model.getProjects()
