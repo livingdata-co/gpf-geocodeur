@@ -5,13 +5,16 @@ import {
   createProject,
   checkProjectToken,
   getProject,
+  getProjects,
   deleteProject,
   endProcessing,
   getStalledProjects,
   ensureProjectStatus,
   setPipeline,
   setInputFile,
-  setOutputFile
+  setOutputFile,
+  processNext,
+  askProcessing
 } from '../project.js'
 
 /**
@@ -113,6 +116,36 @@ test.serial('getProject should retrieve a project and processing data from Redis
 })
 
 /**
+ * Test de la fonction getProjects
+ */
+test.serial('getProjects should retrieve all projects from Redis', async t => {
+  const {redis} = t.context
+  const project1 = {
+    id: '123',
+    status: 'idle'
+  }
+  const project2 = {
+    id: '456',
+    status: 'processing'
+  }
+
+  await redis
+    .pipeline()
+    .hmset(`project:${project1.id}:meta`, project1)
+    .hmset(`project:${project2.id}:meta`, project2)
+    .rpush('projects', project1.id)
+    .rpush('projects', project2.id)
+    .exec()
+
+  const result = await getProjects({redis})
+
+  t.deepEqual(result, [
+    {...project1, processing: {}},
+    {...project2, processing: {}}
+  ])
+})
+
+/**
  * Test de la fonction deleteProject
  */
 test.serial('deleteProject should remove project data from Redis and delete files from storage', async t => {
@@ -148,6 +181,60 @@ test.serial('deleteProject should remove project data from Redis and delete file
   const projectExists = await redis.exists(`project:${projectId}:meta`)
   t.is(projectExists, 0)
   t.is(deleted, 2)
+})
+
+/**
+ * Test de la fonction askProcessing
+ */
+test.serial('askProcessing should update project status to processing', async t => {
+  const {redis} = t.context
+  const projectId = '123'
+
+  const metadata = {
+    id: projectId,
+    status: 'idle',
+    inputFile: '{}',
+    pipeline: '{}'
+  }
+
+  await redis
+    .pipeline()
+    .hmset(`project:${projectId}:meta`, metadata)
+    .exec()
+
+  await askProcessing(projectId, {redis})
+
+  const updatedProject = await redis.hgetall(`project:${projectId}:meta`)
+  t.is(updatedProject.status, 'waiting')
+
+  const waitingQueue = await redis.lrange('waiting-queue', 0, -1)
+  t.deepEqual(waitingQueue, [projectId])
+})
+
+/**
+ * Test de la fonction processNext
+ */
+test.serial('processNext should move the next project from idle to processing', async t => {
+  const {redis} = t.context
+  const projectId = '123'
+  const metadata = {
+    id: projectId,
+    status: 'waiting'
+  }
+
+  await redis
+    .pipeline()
+    .hmset(`project:${projectId}:meta`, metadata)
+    .rpush('waiting-queue', projectId)
+    .exec()
+
+  await processNext({redis})
+
+  const updatedProject = await redis.hgetall(`project:${projectId}:meta`)
+  t.is(updatedProject.status, 'processing')
+
+  const processingList = await redis.smembers('processing-list')
+  t.deepEqual(processingList, [projectId])
 })
 
 /**
