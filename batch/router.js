@@ -95,7 +95,8 @@ export default async function createRouter() {
     const project = await model.createProject({
       ip: req.ip,
       userAgent: req.get('User-Agent'),
-      community: req.community
+      community: req.community,
+      email: req.user?.email
     })
     res.status(201).send(project)
   }))
