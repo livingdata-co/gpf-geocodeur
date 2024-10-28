@@ -3,12 +3,15 @@ import {EventEmitter} from 'node:events'
 import {customAlphabet} from 'nanoid'
 import createError from 'http-errors'
 import pFilter from 'p-filter'
-import {subMinutes, isBefore, subDays} from 'date-fns'
+import {subMinutes, isBefore, subDays, differenceInMinutes} from 'date-fns'
 
 import logger from '../../lib/logger.js'
 import {BATCH_ASYNC_FLUSH_AFTER_N_DAYS, BATCH_ASYNC_DEFAULT_COMMUNITY_PARAMS} from '../../lib/config.js'
 
 import {hydrateObject, prepareObject} from '../util/redis.js'
+import {formatSuccessEmail} from '../util/mail-template/success-template.js'
+import {formatErrorEmail} from '../util/mail-template/error-template.js'
+import {sendMail} from '../util/sendmail.js'
 
 const nanoid = customAlphabet('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')
 
@@ -232,8 +235,27 @@ export async function endProcessing(id, error, {redis}) {
 
   if (error) {
     processingChanges.globalError = error.message
+
+    const emailContent = formatErrorEmail({error})
+
+    try {
+      const project = await getProject(id, {redis})
+      await sendMail(emailContent, [project.email])
+    } catch (error) {
+      logger.error(`Unable to send email: ${error.message}`)
+    }
   } else {
     processingChanges.step = 'completed'
+
+    try {
+      const project = await getProject(id, {redis})
+      const fileName = project.inputFile.name
+      const duration = differenceInMinutes(new Date(project.processing.startedAt), new Date())
+      const emailContent = formatSuccessEmail({fileName, duration})
+      await sendMail(emailContent, [project.email])
+    } catch (error) {
+      logger.error(`Unable to send email: ${error.message}`)
+    }
   }
 
   await redis
