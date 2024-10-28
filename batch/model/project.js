@@ -225,37 +225,19 @@ export async function resetProcessing(id, {redis}) {
 
 export async function endProcessing(id, error, {redis}) {
   await ensureProjectStatus(id, 'processing', {redis})
+  const finishedAt = new Date()
 
   const metaChanges = {
     status: error ? 'failed' : 'completed',
-    updatedAt: new Date()
+    updatedAt: finishedAt
   }
 
-  const processingChanges = {finishedAt: new Date()}
+  const processingChanges = {finishedAt}
 
   if (error) {
     processingChanges.globalError = error.message
-
-    const emailContent = formatErrorEmail({error})
-
-    try {
-      const project = await getProject(id, {redis})
-      await sendMail(emailContent, [project.email])
-    } catch (error) {
-      logger.error(`Unable to send email: ${error.message}`)
-    }
   } else {
     processingChanges.step = 'completed'
-
-    try {
-      const project = await getProject(id, {redis})
-      const fileName = project.inputFile.name
-      const duration = differenceInMinutes(new Date(project.processing.startedAt), new Date())
-      const emailContent = formatSuccessEmail({fileName, duration})
-      await sendMail(emailContent, [project.email])
-    } catch (error) {
-      logger.error(`Unable to send email: ${error.message}`)
-    }
   }
 
   await redis
@@ -265,6 +247,28 @@ export async function endProcessing(id, error, {redis}) {
     .hset(`project:${id}:processing`, prepareObject(processingChanges))
     .hdel(`project:${id}:processing`, 'heartbeat')
     .exec()
+
+  const project = await getProject(id, {redis})
+
+  if (!project.email) {
+    return
+  }
+
+  let emailContent
+
+  if (error) {
+    emailContent = formatErrorEmail({error: error.message})
+  } else {
+    const fileName = project.inputFile.name
+    const duration = differenceInMinutes(project.processing.startedAt, finishedAt)
+    emailContent = formatSuccessEmail({fileName, duration})
+  }
+
+  try {
+    await sendMail(emailContent, [project.email])
+  } catch (sendMailError) {
+    logger.error(`Unable to send email: ${sendMailError.message}`)
+  }
 }
 
 export async function abortProcessing(id, {redis}) {
