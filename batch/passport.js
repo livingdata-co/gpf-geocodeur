@@ -3,6 +3,8 @@ import process from 'node:process'
 import passport from 'passport'
 import OAuth2Strategy from 'passport-oauth2'
 
+import {readTokenData} from './util/gpf.js'
+
 export function configure() {
   passport.use('gpf', new OAuth2Strategy(
     {
@@ -13,7 +15,7 @@ export function configure() {
       callbackURL: `${process.env.API_URL}/async/auth/gpf/callback`
     },
     (accessToken, refreshToken, profile, done) => {
-      const tokenContent = JSON.parse(Buffer.from(accessToken.split('.')[1], 'base64').toString())
+      const tokenContent = readTokenData(accessToken)
 
       const {name, email} = tokenContent
       const isAdmin = tokenContent.realm_access.roles.includes(process.env.GPF_ADMIN_ROLE)

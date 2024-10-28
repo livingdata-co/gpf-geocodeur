@@ -11,3 +11,7 @@ export async function getUserInfo(token) {
 
   return user
 }
+
+export function readTokenData(token) {
+  return JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString())
+}
