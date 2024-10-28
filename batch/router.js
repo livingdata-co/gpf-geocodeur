@@ -13,7 +13,7 @@ import errorHandler from '../lib/error-handler.js'
 import {initModel} from './model/index.js'
 import {validatePipeline} from './pipeline.js'
 import {configure as configurePassport} from './passport.js'
-import {handleCommunity, authorize} from './auth.js'
+import {handleToken, authorize} from './auth.js'
 
 export default async function createRouter() {
   const app = new express.Router()
@@ -91,7 +91,7 @@ export default async function createRouter() {
     res.send(projects)
   }))
 
-  app.post('/projects', handleCommunity, w(async (req, res) => {
+  app.post('/projects', handleToken, w(async (req, res) => {
     const project = await model.createProject({
       ip: req.ip,
       userAgent: req.get('User-Agent'),

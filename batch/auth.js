@@ -5,7 +5,7 @@ import jwt from 'jsonwebtoken'
 
 import w from '../lib/w.js'
 
-import {getUserInfo} from './util/gpf.js'
+import {getUserInfo, readTokenData} from './util/gpf.js'
 
 function getAuthStrategyFromTokenType(tokenType) {
   if (tokenType === 'Bearer') {
@@ -60,7 +60,7 @@ export function authorize(strategies) {
   })
 }
 
-export const handleCommunity = w(async (req, res, next) => {
+export const handleToken = w(async (req, res, next) => {
   const authorizationHeader = req.get('Authorization')
   const communityHeader = req.get('X-Community')
 
@@ -98,18 +98,23 @@ export const handleCommunity = w(async (req, res, next) => {
     throw createError(401, 'Invalid token')
   }
 
-  const community = userInfo.communities_member
-    .map(entry => entry.community)
-    .find(community => community._id === communityHeader)
+  if (communityHeader) {
+    const community = userInfo.communities_member
+      .map(entry => entry.community)
+      .find(community => community._id === communityHeader)
 
-  if (!community) {
-    throw createError(403, 'User is not a member of this community')
+    if (!community) {
+      throw createError(403, 'User is not a member of this community')
+    }
+
+    req.community = await req.model.upsertCommunity({
+      id: community._id,
+      name: community.name
+    })
   }
 
-  req.community = await req.model.upsertCommunity({
-    id: community._id,
-    name: community.name
-  })
+  const {name, email} = readTokenData(token)
+  req.user = {email, name}
 
   next()
 })
