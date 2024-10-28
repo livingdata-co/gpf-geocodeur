@@ -44,7 +44,7 @@ const bodyTemplate = template(`
     <p>
       Le géocodage de votre projet s'est terminé avec succès.
       <br/>
-      Votre fichier <%= fileName %> a été traité en <%= duration %> minutes.
+      Votre fichier <i><%= fileName %></i> a été traité en <i><%= durationWithMinutes %></i>.
     </p>
 
     <p><b><i>L'équipe IGN</i></b></p>
@@ -56,8 +56,10 @@ const bodyTemplate = template(`
 export function formatSuccessEmail(data) {
   const {fileName, duration} = data
 
+  const durationWithMinutes = duration === 1 ? '1 minute' : `${duration} minutes`
+
   return {
     subject: 'Votre géocodage est prêt',
-    html: bodyTemplate({fileName, duration})
+    html: bodyTemplate({fileName, durationWithMinutes})
   }
 }
