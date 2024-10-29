@@ -22,6 +22,6 @@ export async function execIfLockAcquired(lockName, duration, model, fn) {
   } catch (error) {
     logger.error(error)
   } finally {
-    await model.releaseLock(lockName)
+    await model.releaseLock(lockName, lock)
   }
 }

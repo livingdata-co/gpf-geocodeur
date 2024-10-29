@@ -1,4 +1,4 @@
-import nanoid from 'nanoid'
+import {nanoid} from 'nanoid'
 
 export async function acquireLock(lockName, lockTimeout, {redis}) {
   const lockKey = `lock:${lockName}`
