@@ -46,11 +46,7 @@ export async function getCommunity(id, {redis}) {
 
 export async function getCommunities({redis}) {
   const communities = await redis.lrange('communities', 0, -1)
-
-  return Promise.all(communities.map(async id => {
-    const community = await redis.hgetall(`community:${id}`)
-    return hydrateObject(community, communitySchema)
-  }))
+  return Promise.all(communities.map(async id => getCommunity(id, {redis})))
 }
 
 export async function updateCommunityParams(id, params, {redis}) {
@@ -58,7 +54,7 @@ export async function updateCommunityParams(id, params, {redis}) {
 
   const community = await redis.hgetall(`community:${id}`)
 
-  if (!community) {
+  if (!community?.id) {
     throw createHttpError(404, `Community ${id} not found`)
   }
 

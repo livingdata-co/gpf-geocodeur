@@ -7,7 +7,7 @@ import w from '../lib/w.js'
 
 import {getUserInfo, readTokenData} from './util/gpf.js'
 
-function getAuthStrategyFromTokenType(tokenType) {
+export function getAuthStrategyFromTokenType(tokenType) {
   if (tokenType === 'Bearer') {
     return 'admin'
   }

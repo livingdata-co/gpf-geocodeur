@@ -117,6 +117,12 @@
       "object-curly-newline": "off"
     }
   },
+  "ava": {
+    "environmentVariables": {
+      "NODE_ENV": "test",
+      "GPF_API_URL": "https://gpf-api"
+    }
+  },
   "engines": {
     "node": ">= 20.9 <21"
   },

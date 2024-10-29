@@ -14,7 +14,11 @@ import {
   setInputFile,
   setOutputFile,
   processNext,
-  askProcessing
+  askProcessing,
+  resetProcessing,
+  updateProcessing,
+  flushOldProjects,
+  eventuallySendEmailNotification
 } from '../project.js'
 
 /**
@@ -372,4 +376,127 @@ test.serial('setOutputFile should store output file metadata in Redis', async t 
   t.is(outputFile.size, 8000)
   t.truthy(outputFile.token)
   t.is(await redis.get(`project:${projectId}:output-obj-key`), 'bar')
+})
+
+/**
+ * Test de la fonction resetProcessing
+ */
+test.serial('resetProcessing should reset project status to idle', async t => {
+  const {redis} = t.context
+  const projectId = '123'
+  const metadata = {
+    id: projectId,
+    status: 'processing'
+  }
+
+  await redis.hmset(`project:${projectId}:meta`, metadata)
+  await redis.sadd('processing-list', projectId)
+
+  await resetProcessing(projectId, {redis})
+
+  const updatedProject = await redis.hgetall(`project:${projectId}:meta`)
+  t.is(updatedProject.status, 'idle')
+
+  const processingList = await redis.smembers('processing-list')
+  t.deepEqual(processingList, [])
+})
+
+/**
+ * Test de la fonction updateProcessing
+ */
+test.serial('updateProcessing should update processing data in Redis', async t => {
+  const {redis} = t.context
+  const projectId = '123'
+  const processingData = {step: 'started', completed: false}
+
+  const metadata = {
+    id: projectId,
+    status: 'processing'
+  }
+
+  await redis.hmset(`project:${projectId}:meta`, metadata)
+  await redis.hmset(`project:${projectId}:processing`, processingData)
+
+  await updateProcessing(projectId, {step: 'completed'}, {redis})
+
+  const updatedProcessing = await redis.hgetall(`project:${projectId}:processing`)
+  t.is(updatedProcessing.step, 'completed')
+})
+
+/**
+ * Test de la fonction eventuallySendEmailNotification
+ */
+test('eventuallySendEmailNotification should do nothing if no email is provided', async t => {
+  const result = await eventuallySendEmailNotification({})
+  t.is(result, undefined)
+})
+
+test('eventuallySendEmailNotification / success', async t => {
+  const result = await eventuallySendEmailNotification({
+    email: 'foo@bar.tld',
+    inputFile: {name: 'data.csv'},
+    processing: {
+      step: 'completed',
+      startedAt: new Date('2024-10-12T12:00:00.000Z'),
+      finishedAt: new Date('2024-10-12T12:10:00.000Z')
+    }
+  })
+
+  const message = result.message.toString()
+
+  t.true(message.includes('data.csv'))
+  t.true(message.includes('<i>10 minutes</i>'))
+})
+
+test('eventuallySendEmailNotification / error', async t => {
+  const result = await eventuallySendEmailNotification({
+    email: 'foo@bar.tld',
+    processing: {
+      step: 'validating',
+      globalError: 'Something went wrong'
+    }
+  })
+
+  const message = result.message.toString()
+
+  t.true(message.includes('Something went wrong'))
+})
+
+/**
+ * Test de la fonction flushOldProjects
+ */
+test.serial('flushOldProjects should delete old projects', async t => {
+  const {redis} = t.context
+
+  // Old project
+  const projectId = '123'
+
+  await redis.rpush('projects', projectId)
+  await redis.hmset(`project:${projectId}:meta`, {
+    id: projectId,
+    status: 'idle',
+    createdAt: '2024-10-12T12:00:00.000Z'
+  })
+
+  // Fresh project
+  const freshProjectId = '456'
+
+  await redis.rpush('projects', freshProjectId)
+  await redis.hmset(`project:${freshProjectId}:meta`, {
+    id: freshProjectId,
+    status: 'idle',
+    createdAt: new Date().toISOString()
+  })
+
+  // Run the function
+  await flushOldProjects({redis})
+
+  const projectList = await redis.smembers('projects')
+  t.deepEqual(projectList, [freshProjectId])
+
+  const projectExists = await redis.exists(`project:${projectId}:meta`)
+  t.is(projectExists, 0)
+
+  const freshProjectExists = await redis.exists(`project:${freshProjectId}:meta`)
+  t.is(freshProjectExists, 1)
 })

@@ -249,26 +249,7 @@ export async function endProcessing(id, error, {redis}) {
     .exec()
 
   const project = await getProject(id, {redis})
-
-  if (!project.email) {
-    return
-  }
-
-  let emailContent
-
-  if (error) {
-    emailContent = formatErrorEmail({error: error.message})
-  } else {
-    const fileName = project.inputFile.name
-    const duration = differenceInMinutes(project.processing.startedAt, finishedAt)
-    emailContent = formatSuccessEmail({fileName, duration})
-  }
-
-  try {
-    await sendMail(emailContent, [project.email])
-  } catch (sendMailError) {
-    logger.error(`Unable to send email: ${sendMailError.message}`)
-  }
+  await eventuallySendEmailNotification(project)
 }
 
 export async function abortProcessing(id, {redis}) {
@@ -356,4 +337,28 @@ export async function subscribeAbortedProcessing({subscriber}) {
 
   await subscriber.subscribe('processing-aborted')
   return emitter
+}
+
+/* Helpers */
+
+export async function eventuallySendEmailNotification(project) {
+  if (!project.email) {
+    return
+  }
+
+  let emailContent
+
+  if (project.processing.globalError) {
+    emailContent = formatErrorEmail({error: project.processing.globalError})
+  } else {
+    const fileName = project.inputFile.name
+    const duration = differenceInMinutes(project.processing.finishedAt, project.processing.startedAt)
+    emailContent = formatSuccessEmail({fileName, duration})
+  }
+
+  try {
+    return await sendMail(emailContent, [project.email])
+  } catch (sendMailError) {
+    logger.error(`Unable to send email: ${sendMailError.message}`)
+  }
 }

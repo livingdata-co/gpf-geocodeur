@@ -62,6 +62,10 @@ export function createStorage(options = {}) {
   }
 
   return {
-    createDownloadStream, uploadFile, deleteFile, getFileSize
+    type: 'fs',
+    createDownloadStream,
+    uploadFile,
+    deleteFile,
+    getFileSize
   }
 }

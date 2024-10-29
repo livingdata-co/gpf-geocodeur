@@ -1,14 +1,17 @@
+import process from 'node:process'
+
 import * as Project from './project.js'
 import * as Community from './community.js'
 import * as Lock from './lock.js'
 
 import redis from '../util/redis.js'
-import storage from './storage/index.js'
+import {createStorageFromEnvironment} from './storage/index.js'
 
-export async function initModel() {
+export async function initModel(options = {}) {
   const methods = {}
-  const redisInstance = redis()
+  const redisInstance = options.redis || redis()
   const redisSubscribeClient = redisInstance.duplicate()
+  const storage = options.storage || await createStorageFromEnvironment(process.env)
 
   for (const [key, value] of Object.entries({...Project, ...Community, ...Lock})) {
     if (typeof value !== 'function') {

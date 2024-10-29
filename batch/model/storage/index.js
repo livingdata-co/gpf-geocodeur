@@ -3,7 +3,7 @@ import process from 'node:process'
 import {createStorage as createS3Storage} from './s3.js'
 import {createStorage as createFSStorage} from './fs.js'
 
-function createStorageFromEnvironment(env) {
+export async function createStorageFromEnvironment(env) {
   const {
     STORAGE_FS_DIR,
     STORAGE_S3_REGION,
@@ -31,7 +31,3 @@ function createStorageFromEnvironment(env) {
 
   throw new Error('No storage configuration found')
 }
-
-const storage = createStorageFromEnvironment(process.env)
-
-export default storage
