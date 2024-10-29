@@ -34,6 +34,7 @@ Pour gagner du temps vous pouvez tout simplement recopier le fichier `.env.sampl
 | `STORAGE_S3_BUCKET_NAME` | Idem | |
 | `STORAGE_S3_ACCESS_KEY` | Idem | |
 | `STORAGE_S3_SECRET_KEY` | Idem | |
+| `GPF_API_URL` | URL de l'API GPF (Entrepôt) à utiliser pour les jetons fournis | `https://data.geopf.fr/api` |
 
 ## Services d'index thématiques (run)
 
@@ -50,6 +51,7 @@ Pour gagner du temps vous pouvez tout simplement recopier le fichier `.env.sampl
 | --- | --- | --- |
 | `REDIS_URL` | Chaîne de connexion vers la base de données Redis persistante | |
 | `WORKERS_CONCURRENCY` | Nombre de géocodages asynchrones lancés par worker | Nombre de CPU |
+| `BATCH_ASYNC_FLUSH_AFTER_N_DAYS` | Nombre de jours de conservation d'un projet de géocodage avant purge | `14` |
 | `SMTP_HOST` | Nom d'hôte du serveur SMTP pour l'envoi des notifications |  |
 | `SMTP_PORT` | Port du serveur SMTP |  |
 | `SMTP_USER` | Utilisateur du serveur SMTP |  |
