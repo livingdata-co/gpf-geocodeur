@@ -52,6 +52,12 @@ Pour gagner du temps vous pouvez tout simplement recopier le fichier `.env.sampl
 | `REDIS_URL` | Chaîne de connexion vers la base de données Redis persistante | |
 | `WORKERS_CONCURRENCY` | Nombre de géocodages asynchrones lancés par worker | Nombre de CPU |
 | `BATCH_ASYNC_FLUSH_AFTER_N_DAYS` | Nombre de jours de conservation d'un projet de géocodage avant purge | `14` |
+| `STORAGE_FS_DIR` | Indique le répertoire à utiliser pour stoquer les fichiers du géocodage en masse (ne pas utiliser en production) | `./storage/` |
+| `STORAGE_S3_ENDPOINT` | Informations de connexion au bucket S3 servant au stockage des fichiers du géocodage en masse | |
+| `STORAGE_S3_REGION` | Idem | |
+| `STORAGE_S3_BUCKET_NAME` | Idem | |
+| `STORAGE_S3_ACCESS_KEY` | Idem | |
+| `STORAGE_S3_SECRET_KEY` | Idem | |
 | `SMTP_HOST` | Nom d'hôte du serveur SMTP pour l'envoi des notifications |  |
 | `SMTP_PORT` | Port du serveur SMTP |  |
 | `SMTP_USER` | Utilisateur du serveur SMTP |  |
