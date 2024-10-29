@@ -195,3 +195,7 @@ data
 tmp
 uploads
 storage
+
+# intellij
+.idea*
+*.iml
