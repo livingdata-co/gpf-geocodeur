@@ -5,7 +5,7 @@ Avant de lancer le service, veuillez vérifier que :
 - Le service a été correctement [installé](installation.md) et [configuré](configuration.md)
 - Vous disposez des [données pré-indexées](indexation.md) dans votre dossier `data`.
 
-Sur 4 terminaux différents, lancez successivement les 3 services d'index thématiques et le service exposant l'API publique :
+Sur 5 terminaux différents, lancez successivement les 3 services d'index thématiques et le service exposant l'API publique :
 
 ```bash
 yarn address:start
@@ -21,4 +21,8 @@ yarn poi:start
 
 ```bash
 yarn api:start
+```
+
+```bash
+yarn worker:start
 ```

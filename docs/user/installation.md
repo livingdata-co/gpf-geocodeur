@@ -59,9 +59,6 @@ pip install -r requirements.txt
 
 ```bash
 yarn install
-
-# ou si vous ne voulez pas les outils de développement Node.js
-yarn install --prod
 ```
 
 Vous pouvez désormais passer à l'étape suivante : [Configuration](configuration.md).
