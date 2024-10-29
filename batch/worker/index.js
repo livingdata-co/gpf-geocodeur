@@ -13,7 +13,7 @@ import {createIndexes} from '../../api/indexes/index.js'
 import {initModel} from '../model/index.js'
 
 import {executeProcessing} from './execute.js'
-import {getConcurrency} from './util.js'
+import {getConcurrency, execIfLockAcquired} from './util.js'
 
 async function main() {
   const indexes = createIndexes(GEOCODE_INDEXES)
@@ -65,14 +65,18 @@ async function main() {
     }
 
     // Restart stalled jobs
-    const stalledProjects = await model.getStalledProjects()
-    await Promise.all(stalledProjects.map(async projectId => {
-      await model.resetProcessing(projectId)
-      await model.askProcessing(projectId)
-    }))
+    await execIfLockAcquired('restart-stalled-projects', 60_000, model, async () => {
+      const stalledProjects = await model.getStalledProjects()
+      await Promise.all(stalledProjects.map(async projectId => {
+        await model.resetProcessing(projectId)
+        await model.askProcessing(projectId)
+      }))
+    })
 
     // Flush old projects
-    await model.flushOldProjects()
+    await execIfLockAcquired('flush-old-projects', 60_000, model, async () => {
+      await model.flushOldProjects()
+    })
   }, 1000)
 }
 
