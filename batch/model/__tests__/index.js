@@ -3,6 +3,7 @@ import {initModel} from '../index.js'
 
 test('initModel', async t => {
   const fakeRedis = {
+    ping: () => Promise.resolve('PONG'),
     duplicate: () => fakeRedis
   }
 

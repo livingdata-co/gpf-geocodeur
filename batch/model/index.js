@@ -13,6 +13,15 @@ export async function initModel(options = {}) {
   const redisSubscribeClient = redisInstance.duplicate()
   const storage = options.storage || await createStorageFromEnvironment(process.env)
 
+  const redisChecks = await Promise.all([
+    redisInstance.ping(),
+    redisSubscribeClient.ping()
+  ])
+
+  if (redisChecks.some(check => check !== 'PONG')) {
+    throw new Error('Redis connection failed')
+  }
+
   for (const [key, value] of Object.entries({...Project, ...Community, ...Lock})) {
     if (typeof value !== 'function') {
       continue
