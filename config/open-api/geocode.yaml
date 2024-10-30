@@ -717,11 +717,31 @@ paths:
           required: true
           schema:
             type: string
+        - name: Content-Length
+          in: header
+          required: true
+          schema:
+            type: integer
+        - name: Content-Disposition
+          in: header
+          required: false
+          schema:
+            type: string
         - name: projectId
           in: path
           required: true
           schema:
             type: string
+      requestBody:
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+              format: binary
+          text/csv:
+            schema:
+              type: string
+              format: binary
       responses:
         '200':
           description: Fichier d'entrée uploadé avec succès
@@ -1522,6 +1542,7 @@ components:
           type: string
         status:
           type: string
+          enum: [idle, waiting, processing, failed, completed]
         createdAt:
           type: string
           format: date-time
@@ -1529,7 +1550,7 @@ components:
           type: string
           format: date-time
         params:
-          type: object
+          $ref: '#/components/schemas/ProjectParams'
         pipeline:
           $ref: '#/components/schemas/Pipeline'
         inputFile:
@@ -1567,6 +1588,9 @@ components:
     Pipeline:
       type: object
       properties:
+        format:
+          type: string
+          enum: [csv]
         formatOptions:
           type: object
         geocodeOptions:
@@ -1576,3 +1600,13 @@ components:
           enum: [csv, geojson]
         outputFormatOptions:
           type: object
+
+    ProjectParams:
+      type: object
+      properties:
+        maxInputFileSize:
+          type: string
+          enum: [50MB, 100MB, 200MB, 500MB, 1GB]
+        concurrency:
+          type: number
+          enum: [1, 2, 4]
