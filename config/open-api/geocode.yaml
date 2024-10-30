@@ -5,17 +5,22 @@ info:
   contact:
     email: contact.geoservices@ign.fr
   version: 2.0.0
+  license:
+    name: Licence ouverte 2.0
+    url: https://www.etalab.gouv.fr/licence-ouverte-open-licence
 servers:
   - url: $API_URL
 tags:
   - name: getCapabilities
     description: Découverte du service
   - name: search
-    description: Géocodage direct
+    description: Géocodage direct (recherche)
   - name: reverse
     description: Géocodage inverse
   - name: batch
-    description: Géocodage par lot
+    description: Géocodage par lot synchrone
+  - name: batch-async
+    description: Géocodage par lot asynchrone
 paths:
   /getCapabilities:
     get:
@@ -605,6 +610,199 @@ paths:
                     type: string
                     description: "Message d'erreur"
                     example: "Erreur lors de la lecture du fichier CSV"
+
+  /async/projects:
+    post:
+      tags:
+        - batch-async
+      summary: Créer un nouveau projet
+      parameters:
+        - name: Authorization
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: X-Community
+          in: header
+          required: false
+          schema:
+            type: string
+      responses:
+        '201':
+          description: Projet créé avec succès
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+
+  /async/projects/{projectId}:
+    get:
+      tags:
+        - batch-async
+      summary: Récupérer un projet par ID
+      parameters:
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+        - name: projectId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Détails du projet
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+    delete:
+      tags:
+        - batch-async
+      summary: Supprimer un projet par ID
+      parameters:
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+        - name: projectId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Projet supprimé avec succès
+
+  /async/projects/{projectId}/pipeline:
+    put:
+      tags:
+        - batch-async
+      summary: Définir le pipeline d'un projet
+      parameters:
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+        - name: projectId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Pipeline'
+      responses:
+        '200':
+          description: Pipeline défini avec succès
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+
+  /async/projects/{projectId}/input-file:
+    put:
+      tags:
+        - batch-async
+      summary: Uploader un fichier d'entrée pour un projet
+      parameters:
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+        - name: projectId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Fichier d'entrée uploadé avec succès
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+
+  /async/projects/{projectId}/input-file/{token}:
+    get:
+      tags:
+        - batch-async
+      summary: Télécharger un fichier source du projet
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Fichier téléchargé avec succès
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+
+  /async/projects/{projectId}/start:
+    post:
+      tags:
+        - batch-async
+      summary: Démarrer le traitement d'un projet
+      parameters:
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+        - name: projectId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '202':
+          description: Traitement du projet démarré avec succès
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+
+  /async/projects/{projectId}/output-file/{token}:
+    get:
+      tags:
+        - batch-async
+      summary: Télécharger un fichier de sortie du projet
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Fichier téléchargé avec succès
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
 
 components:
   schemas:
@@ -1316,3 +1514,65 @@ components:
           - area
           - postal
           - unknown
+
+    Project:
+      type: object
+      properties:
+        id:
+          type: string
+        status:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        params:
+          type: object
+        pipeline:
+          $ref: '#/components/schemas/Pipeline'
+        inputFile:
+          type: object
+        outputFile:
+          type: object
+        processing:
+          $ref: '#/components/schemas/GeocodeProcessing'
+
+    GeocodeProcessing:
+      type: object
+      properties:
+        step:
+          type: string
+        validationProgress:
+          type: object
+        validationError:
+          type: string
+        geocodingProgress:
+          type: object
+        geocodingError:
+          type: string
+        globalError:
+          type: string
+        startedAt:
+          type: string
+          format: date-time
+        finishedAt:
+          type: string
+          format: date-time
+        heartbeat:
+          type: string
+          format: date-time
+
+    Pipeline:
+      type: object
+      properties:
+        formatOptions:
+          type: object
+        geocodeOptions:
+          type: object
+        outputFormat:
+          type: string
+          enum: [csv, geojson]
+        outputFormatOptions:
+          type: object

@@ -3,6 +3,11 @@ info:
   version: 2.0.1
   title: Autocompletion
   description: "Description de l'API du service d'autocompletion de l'IGN"
+  contact:
+    email: contact.geoservices@ign.fr
+  license:
+    name: Licence ouverte 2.0
+    url: https://www.etalab.gouv.fr/licence-ouverte-open-licence
 servers:
   - url: $API_URL/completion
 paths:
