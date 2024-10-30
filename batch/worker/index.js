@@ -3,6 +3,7 @@
 import 'dotenv/config.js'
 
 import process from 'node:process'
+import {writeFile} from 'node:fs/promises'
 
 import pLimit from 'p-limit'
 
@@ -82,6 +83,7 @@ async function main() {
 
 try {
   await main()
+  await writeFile('worker.pid', process.pid.toString())
 } catch (error) {
   logger.error(error)
   process.exit(1)
