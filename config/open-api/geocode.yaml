@@ -62,6 +62,14 @@ paths:
           required: true
           schema:
             type: string
+        - name: autocomplete
+          in: query
+          description: |
+            indique si la recherche doit être effectuée en mode auto-complétion (comportement par défaut).
+          schema:
+            type: string
+            enum: ["1", "0"]
+            default: "1"
         - name: index
           in: query
           description: |
