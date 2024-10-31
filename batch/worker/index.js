@@ -3,8 +3,8 @@
 import 'dotenv/config.js'
 
 import process from 'node:process'
-import {writeFile} from 'node:fs/promises'
 
+import express from 'express'
 import pLimit from 'p-limit'
 
 import {GEOCODE_INDEXES} from '../../lib/config.js'
@@ -83,7 +83,18 @@ async function main() {
 
 try {
   await main()
-  await writeFile('worker.pid', process.pid.toString())
+
+  if (process.env.WORKER_PORT) {
+    const app = express()
+
+    app.get('/ping', (req, res) => {
+      res.send('PONG!')
+    })
+
+    app.listen(process.env.WORKER_PORT, () => {
+      logger.info(`Worker is listening on port ${process.env.WORKER_PORT}`)
+    })
+  }
 } catch (error) {
   logger.error(error)
   process.exit(1)
