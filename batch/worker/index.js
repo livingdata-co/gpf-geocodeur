@@ -92,7 +92,7 @@ try {
     })
 
     app.listen(process.env.WORKER_PORT, () => {
-      logger.info(`Worker is listening on port ${process.env.WORKER_PORT}`)
+      logger.log(`Worker is listening on port ${process.env.WORKER_PORT}`)
     })
   }
 } catch (error) {
