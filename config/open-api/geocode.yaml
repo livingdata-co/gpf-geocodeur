@@ -48,32 +48,33 @@ paths:
       parameters:
         - name: q
           in: query
-          description: "chaîne décrivant la localisation à rechercher<br>
+          description: |
+            chaîne décrivant la localisation à rechercher
 
-
-            Exemples de requêtes:<br>
-            - /search?q=73 Avenue de Paris Saint-Mandé<br>
-            - /search?q=cimetière Vincennes<br>
+            Exemples de requêtes:
+            - /search?q=73 Avenue de Paris Saint-Mandé
+            - /search?q=cimetière Vincennes
             - /search?q=75056104AE0003
 
-            Note:<br>
+            Note:
             L'absence de valeur est autorisée sur le type parcel pour réaliser une recherche structurée.
-            Par exemple: /search?q=&index=parcel&departmentcode=75&municipalitycode=056&section=AV"
+            Par exemple: /search?q=&index=parcel&departmentcode=75&municipalitycode=056&section=AV
           required: true
           schema:
             type: string
         - name: index
           in: query
-          description: "index(es) de recherche :<br>
-            - <b>address</b> pour la recherche par adresse<br>
-            - <b>parcel</b> pour la recherche par parcelle cadastrale<br>
-            - <b>poi</b> pour la recherche par lieu et unité administrative<br>
+          description: |
+            index(es) de recherche :
+            - <b>address</b> pour la recherche par adresse
+            - <b>parcel</b> pour la recherche par parcelle cadastrale
+            - <b>poi</b> pour la recherche par lieu et unité administrative
 
             Il est possible de spécifier plusieurs indexes séparés par une virgule.
 
             Exemples:
             - /search?index=parcel
-            - /search?index=poi,address"
+            - /search?index=poi,address
           required: false
           schema:
             $ref: "#/components/schemas/Index"
@@ -191,10 +192,10 @@ paths:
         - name: searchgeom
           in: query
           required: false
-          description:
-            'Géométrie de recherche. La géométrie est réalisé par intersection géométrique. Si ce paramètre est utilisé seul, c''est que l''on souhaite une recherche sans ordonnancement des résultats (tous les objets intersectant la géométrie de recherche ont un score de 1).<br>
-            Si on veut ordonner les résultats, on peut alors utiliser les paramètres lon et lat pour préciser un point d''ordonnancement. <br>
-            Ce paramètre n''est pas obligatoire pour des raisons de rétro-compatibilité. Si searchgeom n''est pas utilisé alors les paramètres lon et lat doivent l''être et on parle de point de recherche. <br>
+          description: |
+            Géométrie de recherche. La géométrie est réalisé par intersection géométrique. Si ce paramètre est utilisé seul, c''est que l''on souhaite une recherche sans ordonnancement des résultats (tous les objets intersectant la géométrie de recherche ont un score de 1).
+            Si on veut ordonner les résultats, on peut alors utiliser les paramètres lon et lat pour préciser un point d''ordonnancement.
+            Ce paramètre n''est pas obligatoire pour des raisons de rétro-compatibilité. Si searchgeom n''est pas utilisé alors les paramètres lon et lat doivent l''être et on parle de point de recherche.
             Lorsque la recherche est réalisée par intersection géométrique. Les types géométrique autorisés sont :
 
             - Point
@@ -203,21 +204,21 @@ paths:
 
             - Polygon
 
-            - Circle<br>
-            Exemple de géométrie de type Circle :<br>
-            {<br>
-            &nbsp;&nbsp;&nbsp;&nbsp;"type": "Circle",<br>
-            &nbsp;&nbsp;&nbsp;&nbsp;"coordinates": [2.294469, 48.858244],<br>
-            &nbsp;&nbsp;&nbsp;&nbsp;"radius": 100<br>
-            }<br>
-            Pour l''index <b>address</b>, seules les géométries de type ''Polygon'' et ''Circle'' sont autorisées.<br>
-            Le plus grand côté du rectangle d’emprise de la géométrie ne doit pas excéder 1000 mètres.'
+            - Circle
+            Exemple de géométrie de type Circle :
+            {
+            &nbsp;&nbsp;&nbsp;&nbsp;"type": "Circle",
+            &nbsp;&nbsp;&nbsp;&nbsp;"coordinates": [2.294469, 48.858244],
+            &nbsp;&nbsp;&nbsp;&nbsp;"radius": 100
+            }
+            Pour l''index <b>address</b>, seules les géométries de type ''Polygon'' et ''Circle'' sont autorisées.
+            Le plus grand côté du rectangle d’emprise de la géométrie ne doit pas excéder 1000 mètres.
           schema:
             type: string
         - name: lon
           in: query
           description: |
-            Si searchgeom est utilisé, il s'agit de la longitude du point d'ordonnancement. C'est le point à partir duquel est calculée la distance, puis le score permettant l'ordonnancement des résultats. <br>
+            Si searchgeom est utilisé, il s'agit de la longitude du point d'ordonnancement. C'est le point à partir duquel est calculée la distance, puis le score permettant l'ordonnancement des résultats.
             Dans un soucis de rétro-compatibilité, si searchgeom n'est pas utilisé, il s'agit de la longitude du point de recherche. À partir de ce point, un cercle est créé pour effectuer la recherche. En plus, ce sera aussi la longitude du point d'ordonnancement.
           required: false
           schema:
@@ -232,16 +233,17 @@ paths:
             type: number
         - name: index
           in: query
-          description: "index de recherche :<br>
-            - <b>address</b> pour la recherche par adresse<br>
-            - <b>parcel</b> pour la recherche par parcelle cadastrale<br>
-            - <b>poi</b> pour la recherche par lieu et unité administrative<br>
+          description: |
+            index de recherche :
+            - <b>address</b> pour la recherche par adresse
+            - <b>parcel</b> pour la recherche par parcelle cadastrale
+            - <b>poi</b> pour la recherche par lieu et unité administrative
 
             Il est possible de spécifier plusieurs indexes séparés par une virgule.
 
             Exemples:
             - /search?index=parcel
-            - /search?index=poi,address"
+            - /search?index=poi,address
           required: false
           schema:
             $ref: "#/components/schemas/Index"
@@ -346,6 +348,10 @@ paths:
         - search
         - batch
       summary: Géocodage direct en masse d’un fichier CSV
+      description: |
+        Géocodage direct en masse d’un fichier CSV. Les paramètres de la requête permettent de spécifier les colonnes à utiliser pour le géocodage, les index à utiliser, les filtres à appliquer et les colonnes à conserver dans le fichier CSV de sortie.
+
+        Le fichier soumis doit faire une taille maximale de 50 Mo.
       operationId: searchCsv
       requestBody:
         required: true
@@ -364,12 +370,15 @@ paths:
                   type: array
                   items:
                     type: string
-                  description: "Liste des colonnes du fichier CSV à utiliser pour le géocodage"
+                  description: |
+                    Liste des colonnes du fichier CSV à utiliser pour le géocodage. Celles-ci seront concaténées pour former le critère de recherche texte.
+
+                    Si le paramètre n'est pas fourni toutes les colonnes seront concaténées, ce qui est rarement souhaitable.
                 indexes:
                   type: array
                   items:
                     type: string
-                  description: "Liste des index à utiliser pour le géocodage"
+                  description: "Liste des index à utiliser pour le géocodage (parmi address, poi, parcel)"
                 type:
                   type: string
                   description: "Colonne contenant le type d’objet accepté pour le géocodage de la ligne (address)"
@@ -388,11 +397,6 @@ paths:
                 lat:
                   type: string
                   description: "Colonne contenant la latitude du point de recherche"
-                result_columns:
-                  type: array
-                  items:
-                    type: string
-                  description: "Liste des colonnes de type résultat à conserver dans le fichier CSV de sortie"
                 departmentcode:
                   type: string
                   description: "Colonne contenant le code département à utiliser comme filtre (parcel)"
@@ -414,6 +418,14 @@ paths:
                 number:
                   type: string
                   description: "Colonne contenant le numéro de parcelle à utiliser comme filtre (parcel)"
+                result_columns:
+                  type: array
+                  items:
+                    type: string
+                  description: |
+                    Liste des colonnes de type résultat à conserver dans le fichier CSV de sortie.
+
+                    Par défaut toutes les colonnes disponibles sont retournées.
             encoding:
               columns:
                 style: form
@@ -430,50 +442,23 @@ paths:
           content:
             text/csv:
               schema:
-                type: string
-                format: binary
-                description: |
-                  Fichier CSV contenant les lignes géocodées. Les colonnes ajoutées sont :<br>
-                  - latitude<br>
-                  - longitude<br>
-                  - result_label<br>
-                  - result_score<br>
-                  - result_score_next<br>
-                  - result_type (address)<br>
-                  - result_id<br>
-                  - result_housenumber (address)<br>
-                  - result_name (address)<br>
-                  - result_street (address)<br>
-                  - result_postcode (address, poi)<br>
-                  - result_city (address, poi)<br>
-                  - result_context<br>
-                  - result_citycode (address, poi)<br>
-                  - result_oldcitycode (address, poi)<br>
-                  - result_oldcity (address, poi)<br>
-                  - result_district (address, poi)<br>
-                  - result_category (poi)<br>
-                  - result_departmentcode (parcel)<br>
-                  - result_municipalitycode (parcel)<br>
-                  - result_section (parcel)<br>
-                  - result_sheet (parcel)<br>
-                  - result_number (parcel)<br>
-                  - result_oldmunicipalitycode (parcel)<br>
-                  - result_districtcode (parcel)<br>
-                  - result_index : index dans lequel l'objet a été trouvé<br>
-                  - result_status (ok = trouvé, not-found = non trouvé, skipped = ligne ignorée en raison de paramètres manquants ou invalides, error = erreur du serveur lors de la recherche)<br><br>
-                  NB : En cas de colonnes d'origine nommées latitude ou longitude, elles seront écrasées par les valeurs calculées.
+                $ref: "#/components/schemas/GeocodeCsvResponse"
 
         "400":
-          description: "Échec du géocodage suite à une erreur dans la requête"
+          description: "Échec du géocodage suite à une erreur dans la requête ou dans le fichier CSV"
           content:
             application/json:
               schema:
                 type: object
                 properties:
+                  code:
+                    type: number
+                    example: 400
+                    description: Code d'erreur (HTTP)
                   message:
                     type: string
                     description: "Message d'erreur"
-                    example: "Erreur lors de la lecture du fichier CSV"
+                    example: Impossible de lire le fichier CSV
 
   /reverse/csv:
     post:
@@ -481,6 +466,10 @@ paths:
         - reverse
         - batch
       summary: Géocodage inversé en masse d’un fichier CSV
+      description: |
+        Géocodage inversé en masse d’un fichier CSV. Les paramètres de la requête permettent de spécifier les colonnes à utiliser pour le géocodage, les index à utiliser, les filtres à appliquer et les colonnes à conserver dans le fichier CSV de sortie.
+
+        Le fichier soumis doit faire une taille maximale de 50 Mo.
       operationId: reverseCsv
       requestBody:
         required: true
@@ -494,17 +483,12 @@ paths:
                 data:
                   type: string
                   format: binary
-                  description: "Fichier CSV contenant les lignes à géocoder"
-                columns:
-                  type: array
-                  items:
-                    type: string
-                  description: "Liste des colonnes du fichier CSV à utiliser pour le géocodage"
+                  description: "Fichier CSV contenant les données à géocoder"
                 indexes:
                   type: array
                   items:
                     type: string
-                  description: "Liste des index à utiliser pour le géocodage"
+                  description: "Liste des index à utiliser pour le géocodage (parmi address, poi, parcel)"
                 type:
                   type: string
                   description: "Colonne contenant le type d’objet accepté pour le géocodage de la ligne (address)"
@@ -523,11 +507,6 @@ paths:
                 lat:
                   type: string
                   description: "Colonne contenant la latitude du point de recherche"
-                result_columns:
-                  type: array
-                  items:
-                    type: string
-                  description: "Liste des colonnes de type résultat à conserver dans le fichier CSV de sortie"
                 departmentcode:
                   type: string
                   description: "Colonne contenant le code département à utiliser comme filtre (parcel)"
@@ -549,10 +528,15 @@ paths:
                 number:
                   type: string
                   description: "Colonne contenant le numéro de parcelle à utiliser comme filtre (parcel)"
+                result_columns:
+                  type: array
+                  items:
+                    type: string
+                  description: |
+                    Liste des colonnes de type résultat à conserver dans le fichier CSV de sortie.
+
+                    Par défaut toutes les colonnes disponibles sont retournées.
             encoding:
-              columns:
-                style: form
-                explode: true
               result_columns:
                 style: form
                 explode: true
@@ -565,57 +549,37 @@ paths:
           content:
             text/csv:
               schema:
-                type: string
-                format: binary
-                description: |
-                  Fichier CSV contenant les lignes géocodées. Les colonnes ajoutées sont :<br>
-                  - result_label<br>
-                  - result_latitude<br>
-                  - result_longitude<br>
-                  - result_distance<br>
-                  - result_type (address)<br>
-                  - result_id<br>
-                  - result_housenumber (address)<br>
-                  - result_name<br>
-                  - result_street (address)<br>
-                  - result_postcode<br>
-                  - result_city<br>
-                  - result_context<br>
-                  - result_citycode<br>
-                  - result_oldcitycode<br>
-                  - result_oldcity<br>
-                  - result_district<br>
-                  - result_category (poi)<br>
-                  - result_departmentcode (parcel)<br>
-                  - result_municipalitycode (parcel)<br>
-                  - result_section (parcel)<br>
-                  - result_sheet (parcel)<br>
-                  - result_number (parcel)<br>
-                  - result_oldmunicipalitycode (parcel)<br>
-                  - result_districtcode (parcel)<br>
-                  - result_distance (parcel)<br>
-                  - result_score (parcel)<br>
-                  - result_score_next (parcel)<br>
-                  - result_index : index dans lequel l'objet a été trouvé<br>
-                  - result_status (ok = trouvé, not-found = non trouvé, skipped = ligne ignorée en raison de paramètres manquants ou invalides, error = erreur du serveur lors de la recherche)
+                $ref: "#/components/schemas/GeocodeCsvResponse"
 
         "400":
-          description: "Échec du géocodage suite à une erreur dans la requête"
+          description: "Échec du géocodage suite à une erreur dans la requête ou dans le fichier CSV"
           content:
             application/json:
               schema:
                 type: object
                 properties:
+                  code:
+                    type: number
+                    example: 400
+                    description: Code d'erreur (HTTP)
                   message:
                     type: string
                     description: "Message d'erreur"
-                    example: "Erreur lors de la lecture du fichier CSV"
+                    example: Impossible de lire le fichier CSV
 
   /async/projects:
     post:
       tags:
         - batch-async
       summary: Créer un nouveau projet
+      description: |
+        Cette requête permet de créer le projet de géocodage. Elle peut être réalisée de façon anonyme ou avec un jeton Géoplateforme valide.
+
+        Si la requête est authentifiée avec l'en-tête Authorization alors il est possible de renseigner une communauté (Géoplateforme) de rattachement grâce à l'en-tête X-Community. Dans ce cas le projet hérite des quotas attribués à la communauté (taille max de fichier géocodage, niveau de parallélisation du géocodage). Par défaut un projet autorise un fichier de 50 Mo et ne propose pas de parallélisation (concurrency = 1).
+
+        Lorsque le projet est créé avec un utilisateur authentifié, ce dernier recevra la notification de succès ou d'échec sur la boîte courriel renseignée avec son compte.
+
+        À ce stade le projet est retourné avec un jeton qui doit être conservé pour les prochains appels du processus.
       parameters:
         - name: Authorization
           in: header
@@ -634,41 +598,89 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Project'
+        "401":
+          description: Authentification incorrecte
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: number
+                    example: 401
+                    description: Code d'erreur (HTTP)
+                  message:
+                    type: string
+                    description: "Message d'erreur"
+                    example: Invalid token
+        "403":
+          description: Droits insuffisants
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: number
+                    example: 403
+                    description: Code d'erreur (HTTP)
+                  message:
+                    type: string
+                    description: "Message d'erreur"
+                    example: User is not a member of this community
 
   /async/projects/{projectId}:
     get:
       tags:
         - batch-async
-      summary: Récupérer un projet par ID
+      summary: Récupérer les informations
+      description: |
+        Permet la récupération des informations d'un projet :
+        - métadonnées
+        - état et progression du géocodage
+        - fichier source et fichier résultat (notamment le jeton d'accès)
       parameters:
         - name: Authorization
+          description: L'en-tête doit être renseigné sous la forme "Token XXXXXXX".
           in: header
           required: true
           schema:
             type: string
+            format: Token
         - name: projectId
+          description: Identifiant unique du projet
           in: path
           required: true
           schema:
             type: string
       responses:
         '200':
-          description: Détails du projet
+          description: Métadonnées du projet
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Project'
+        '401':
+          description: Non autorisé
+        '404':
+          description: Projet introuvable
+
     delete:
       tags:
         - batch-async
-      summary: Supprimer un projet par ID
+      summary: Supprimer un projet
+      description: |
+        Permet la suppression d'un projet inactif (idle), terminé (completed) ou en erreur (failed).
       parameters:
         - name: Authorization
+          description: L'en-tête doit être renseigné sous la forme "Token XXXXXXX".
           in: header
           required: true
           schema:
             type: string
+            format: Token
         - name: projectId
+          description: Identifiant unique du projet
           in: path
           required: true
           schema:
@@ -676,19 +688,34 @@ paths:
       responses:
         '204':
           description: Projet supprimé avec succès
+        '401':
+          description: Non autorisé
+        '403':
+          description: Action interdite (le projet est en cours de traitement)
+        '404':
+          description: Projet introuvable
 
   /async/projects/{projectId}/pipeline:
     put:
       tags:
         - batch-async
-      summary: Définir le pipeline d'un projet
+      summary: Définir les paramètres du traitement
+      description: |
+        Permet de définir les paramètres de géocodage mais aussi le format de sortie (CSV ou GeoJSON).
+
+        Dans le cas du CSV, les paramètres du fichier d'entrée sont conservés à l'exception de l'encodage qui sera toujours de l'UTF-8.
+
+        Attention : l'adéquation des paramètres de géocodage avec le fichier fourni n'est vérifiée qu'au moment du géocodage.
       parameters:
         - name: Authorization
+          description: L'en-tête doit être renseigné sous la forme "Token XXXXXXX".
           in: header
           required: true
           schema:
             type: string
+            format: Token
         - name: projectId
+          description: Identifiant unique du projet
           in: path
           required: true
           schema:
@@ -705,6 +732,14 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Project'
+        '400':
+          description: Paramètres invalides
+        '401':
+          description: Non autorisé
+        '403':
+          description: Action interdite (le projet est en cours de traitement ou terminé)
+        '404':
+          description: Projet introuvable
 
   /async/projects/{projectId}/input-file:
     put:
@@ -713,12 +748,21 @@ paths:
       summary: Uploader un fichier d'entrée pour un projet
       parameters:
         - name: Authorization
+          description: L'en-tête doit être renseigné sous la forme "Token XXXXXXX".
           in: header
+          required: true
+          schema:
+            type: string
+            format: Token
+        - name: projectId
+          description: Identifiant unique du projet
+          in: path
           required: true
           schema:
             type: string
         - name: Content-Length
           in: header
+          description: La taille du fichier doit-être transmise pour s'assurer de l'intégrité du transfert
           required: true
           schema:
             type: integer
@@ -727,18 +771,9 @@ paths:
           required: false
           schema:
             type: string
-        - name: projectId
-          in: path
-          required: true
-          schema:
-            type: string
       requestBody:
         content:
           application/octet-stream:
-            schema:
-              type: string
-              format: binary
-          text/csv:
             schema:
               type: string
               format: binary
@@ -749,19 +784,101 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Project'
+        '400':
+          description: Fichier invalide (taille excessive ou incorrecte)
+        '401':
+          description: Non autorisé
+        '403':
+          description: Action interdite (le projet est en cours de traitement ou terminé)
+        '404':
+          description: Projet introuvable
+
+  /async/projects/{projectId}/start:
+    post:
+      tags:
+        - batch-async
+      summary: Démander le démarrage du géocodage
+      description: |
+        Permet de signifier à la plateforme que le géocodage est prêt à être effectué. Il faut au préalable que le fichier source ait été soumis, ainsi que les paramètres du traitement.
+
+        L'opération peut être annulée via la requête adéquate.
+      parameters:
+        - name: Authorization
+          description: L'en-tête doit être renseigné sous la forme "Token XXXXXXX".
+          in: header
+          required: true
+          schema:
+            type: string
+            format: Token
+        - name: projectId
+          description: Identifiant unique du projet
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Projet mis en attente de géocodage
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+        '401':
+          description: Non autorisé
+        '403':
+          description: Action interdite (le projet est en cours de traitement ou terminé ou des éléments sont manquants)
+        '404':
+          description: Projet introuvable
+
+  /async/projects/{projectId}/abort:
+    post:
+      tags:
+        - batch-async
+      summary: Annuler un géocodage en attente ou en cours
+      description: |
+        Permet d'annuler un géocodage en attente (waiting) ou en cours (processing). Dans ce cas il retourne à l'état inactif et peut être modifié ou supprimé.
+      parameters:
+        - name: Authorization
+          description: L'en-tête doit être renseigné sous la forme "Token XXXXXXX".
+          in: header
+          required: true
+          schema:
+            type: string
+            format: Token
+        - name: projectId
+          description: Identifiant unique du projet
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Annulation prise en compte
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+        '401':
+          description: Non autorisé
+        '403':
+          description: Action interdite (le projet n'est pas en cours ou en attente)
+        '404':
+          description: Projet introuvable
 
   /async/projects/{projectId}/input-file/{token}:
     get:
       tags:
         - batch-async
-      summary: Télécharger un fichier source du projet
+      summary: Télécharger le fichier source du projet
       parameters:
         - name: projectId
+          description: Identifiant unique du projet
           in: path
           required: true
           schema:
             type: string
         - name: token
+          description: Jeton de sécurité du fichier accessible dans les métadonnées du projet (inputFile.token)
           in: path
           required: true
           schema:
@@ -770,47 +887,28 @@ paths:
         '200':
           description: Fichier téléchargé avec succès
           content:
-            application/octet-stream:
+            text/csv:
+              schema:
+                $ref: "#/components/schemas/GeocodeCsvResponse"
+            application/json:
               schema:
                 type: string
                 format: binary
-
-  /async/projects/{projectId}/start:
-    post:
-      tags:
-        - batch-async
-      summary: Démarrer le traitement d'un projet
-      parameters:
-        - name: Authorization
-          in: header
-          required: true
-          schema:
-            type: string
-        - name: projectId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '202':
-          description: Traitement du projet démarré avec succès
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Project'
 
   /async/projects/{projectId}/output-file/{token}:
     get:
       tags:
         - batch-async
-      summary: Télécharger un fichier de sortie du projet
+      summary: Télécharger le fichier résultat du projet
       parameters:
         - name: projectId
+          description: Identifiant unique du projet
           in: path
           required: true
           schema:
             type: string
         - name: token
+          description: Jeton de sécurité du fichier accessible dans les métadonnées du projet (outputFile.token)
           in: path
           required: true
           schema:
@@ -1559,6 +1657,9 @@ components:
           type: object
         processing:
           $ref: '#/components/schemas/GeocodeProcessing'
+        token:
+          type: string
+          description: Jeton permettant d'interéagir avec le projet. N'est retourné que lors de la création.
 
     GeocodeProcessing:
       type: object
@@ -1588,18 +1689,78 @@ components:
     Pipeline:
       type: object
       properties:
-        format:
-          type: string
-          enum: [csv]
-        formatOptions:
-          type: object
         geocodeOptions:
           type: object
+          properties:
+            operation:
+              type: string
+              description: Opération demandée
+              enum: [search, reverse]
+              default: search
+            indexes:
+              type: array
+              description: Index à utiliser pour le géocodage
+              items:
+                type: string
+                enum: [address, poi, parcel]
+            columns:
+              type: array
+              items:
+                type: string
+              description: |
+                Liste des colonnes du fichier CSV à utiliser pour le géocodage. Celles-ci seront concaténées pour former le critère de recherche texte.
+
+                Si le paramètre n'est pas fourni toutes les colonnes seront concaténées, ce qui est rarement souhaitable.
+            type:
+              type: string
+              description: "Colonne contenant le type d’objet accepté pour le géocodage de la ligne (address)"
+            citycode:
+              type: string
+              description: "Colonne contenant le code INSEE de la commune à utiliser comme filtre (address, poi)"
+            postcode:
+              type: string
+              description: "Colonne contenant le code postal à utiliser comme filtre (address, poi)"
+            category:
+              type: string
+              description: "Colonne contenant la catégorie de POI à utiliser comme filtre (poi)"
+            lon:
+              type: string
+              description: "Colonne contenant la longitude du point de recherche"
+            lat:
+              type: string
+              description: "Colonne contenant la latitude du point de recherche"
+            departmentcode:
+              type: string
+              description: "Colonne contenant le code département à utiliser comme filtre (parcel)"
+            municipalitycode:
+              type: string
+              description: "Colonne contenant le code commune  à utiliser comme filtre (parcel)"
+            oldmunicipalitycode:
+              type: string
+              description: "Colonne contenant l'ancien code commune à utiliser comme filtre (parcel)"
+            districtcode:
+              type: string
+              description: "Colonne contenant le code d'arrondissement à utiliser comme filtre (parcel)"
+            section:
+              type: string
+              description: "Colonne contenant le numéro de section à utiliser comme filtre (parcel)"
+            sheet:
+              type: string
+              description: "Colonne contenant le numéro de feuille à utiliser comme filtre (parcel)"
+            number:
+              type: string
+              description: "Colonne contenant le numéro de parcelle à utiliser comme filtre (parcel)"
+            result_columns:
+              type: array
+              items:
+                type: string
+              description: |
+                Liste des colonnes de type résultat à conserver dans le fichier de sortie.
+
+                Par défaut toutes les colonnes disponibles sont retournées.
         outputFormat:
           type: string
           enum: [csv, geojson]
-        outputFormatOptions:
-          type: object
 
     ProjectParams:
       type: object
@@ -1610,3 +1771,49 @@ components:
         concurrency:
           type: number
           enum: [1, 2, 4]
+
+    GeocodeCsvResponse:
+      type: string
+      format: binary
+      description: |
+        Fichier CSV géocodé. Les lignes d'origine sont préservées.
+
+        Les colonnes issues de l'objet associé lors du géocodage et pouvant être ajoutées sont :
+        - result_label
+        - result_score
+        - result_type (address)
+        - result_id
+        - result_housenumber (address)
+        - result_name (address)
+        - result_street (address)
+        - result_postcode (address, poi)
+        - result_city (address, poi)
+        - result_context
+        - result_citycode (address, poi)
+        - result_oldcitycode (address, poi)
+        - result_oldcity (address, poi)
+        - result_district (address, poi)
+        - result_category (poi)
+        - result_departmentcode (parcel)
+        - result_municipalitycode (parcel)
+        - result_section (parcel)
+        - result_sheet (parcel)
+        - result_number (parcel)
+        - result_oldmunicipalitycode (parcel)
+        - result_districtcode (parcel)
+
+        Les colonnes suivantes sont spécifiques au géocodage direct :
+        - latitude
+        - longitude
+
+        Les colonnes suivantes sont spécifiques au géocodage inversé :
+        - result_latitude
+        - result_longitude
+        - result_distance
+
+        Les colonnes suivantes sont liées au géocodage en masse :
+        - result_score_next : score du résultat suivant le cas échéant
+        - result_index : index dans lequel l'objet a été trouvé
+        - result_status (ok = trouvé, not-found = non trouvé, skipped = ligne ignorée en raison de paramètres manquants ou invalides, error = erreur du serveur lors de la recherche)
+
+        NB : En cas de colonnes d'origine nommées latitude ou longitude et de géocodage direct, elles seront écrasées par les valeurs calculées.

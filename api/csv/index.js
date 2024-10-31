@@ -4,7 +4,6 @@ import {pipeline} from 'node:stream/promises'
 
 import onFinished from 'on-finished'
 import contentDisposition from 'content-disposition'
-import stringify from 'csv-write-stream'
 import iconv from 'iconv-lite'
 import {createCsvReadStream} from '@livingdata/tabular-data-helpers'
 
@@ -15,6 +14,7 @@ import batch from '../operations/batch.js'
 import {computeOutputFilename} from '../../batch/util/filename.js'
 import {createGeocodeStream} from '../../batch/stream/index.js'
 import {extractGeocodeOptions} from '../../batch/options.js'
+import {createWriteStream} from '../../batch/writers/csv.js'
 
 export {parseAndValidate} from './parse.js'
 
@@ -49,7 +49,7 @@ export function csv({operation, indexes}) {
       createReadStream(req.file.path),
       createCsvReadStream({formatOptions: req.formatOptions}),
       createGeocodeStream(geocodeOptions, {indexes, signal, batch}),
-      stringify({separator: req.formatOptions.delimiter, newline: req.formatOptions.linebreak}),
+      createWriteStream(req.formatOptions),
       iconv.encodeStream('utf8'),
       res,
       {signal}

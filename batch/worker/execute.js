@@ -2,6 +2,7 @@ import {Transform} from 'node:stream'
 
 import pumpify from 'pumpify'
 import pLimit from 'p-limit'
+import iconv from 'iconv-lite'
 
 import {validateCsvFromStream, createCsvReadStream, previewCsvFromStream} from '@livingdata/tabular-data-helpers'
 
@@ -42,7 +43,7 @@ export async function executeProcessing(projectId, {signal, model, indexes}) {
     const validationInputStream = await model.getInputFileDownloadStream(projectId)
 
     await new Promise((resolve, reject) => {
-      const validation = validateCsvFromStream(validationInputStream, project.pipeline)
+      const validation = validateCsvFromStream(validationInputStream)
 
       validation
         .on('progress', async progress => {
@@ -76,7 +77,7 @@ export async function executeProcessing(projectId, {signal, model, indexes}) {
 
     const previewInputStream = await model.getInputFileDownloadStream(projectId)
 
-    const {columns} = await previewCsvFromStream(previewInputStream, project.pipeline)
+    const {columns, formatOptions} = await previewCsvFromStream(previewInputStream)
     const {outputFormat, geocodeOptions: rawGeocodeOptions} = project.pipeline
     const geocodeOptions = {
       ...extractGeocodeOptions(
@@ -96,7 +97,7 @@ export async function executeProcessing(projectId, {signal, model, indexes}) {
 
     const fullGeocodeStream = pumpify(
       inputFileStream,
-      createCsvReadStream(project.pipeline),
+      createCsvReadStream({formatOptions}),
       createGeocodeStream(geocodeOptions, {signal, indexes, concurrency, batch}),
       // Transform stream to update the progress
       new Transform({
@@ -114,7 +115,8 @@ export async function executeProcessing(projectId, {signal, model, indexes}) {
           callback()
         }
       }),
-      createWriteStream()
+      createWriteStream(),
+      iconv.encodeStream('utf8')
     )
 
     try {

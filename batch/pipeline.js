@@ -1,7 +1,7 @@
 import createError from 'http-errors'
 import {pick} from 'lodash-es'
 
-const PIPELINE_KEYS = ['format', 'formatOptions', 'geocodeOptions', 'outputFormat', 'outputFormatOptions']
+const PIPELINE_KEYS = ['geocodeOptions', 'outputFormat']
 
 export function validatePipeline(pipeline) {
   const keys = Object.keys(pipeline)

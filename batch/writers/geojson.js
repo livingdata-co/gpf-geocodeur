@@ -8,18 +8,27 @@ const GEOJSON_OPEN = '{"type":"FeatureCollection","features": [\n'
 const GEOJSON_SEP = ',\n'
 const GEOJSON_CLOSE = '\n]}\n'
 
-export function createWriteStream(lon = 'longitude', lat = 'latitude') {
+function createGeometry(row) {
+  if (row.result_status !== 'ok') {
+    return null
+  }
+
+  const lon = row.longitude || row.result_longitude
+  const lat = row.latitude || row.result_latitude
+
+  return lon && lat
+    ? {type: 'Point', coordinates: [lon, lat]}
+    : null
+}
+
+export function createWriteStream() {
   return pumpify.obj(
     new Transform({
       transform(row, enc, cb) {
-        const geometry = row[lon] && row[lat]
-          ? {type: 'Point', coordinates: [Number.parseFloat(row[lon]), Number.parseFloat(row[lat])]}
-          : null
-
         cb(null, {
           type: 'Feature',
-          geometry,
-          properties: omit(row, lon, lat)
+          geometry: createGeometry(row),
+          properties: omit(row, 'latitude', 'longitude', 'result_latitude', 'result_longitude')
         })
       },
 
