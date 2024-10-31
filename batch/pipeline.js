@@ -11,10 +11,6 @@ export function validatePipeline(pipeline) {
     throw createError(400, `Missing key ${missingKey} in pipeline definition`)
   }
 
-  if (pipeline.format !== 'csv') {
-    throw createError(400, `Format not supported: ${pipeline.format}`)
-  }
-
   if (!['csv', 'geojson'].includes(pipeline.outputFormat)) {
     throw createError(400, `Output format not supported: ${pipeline.outputFormat}`)
   }
