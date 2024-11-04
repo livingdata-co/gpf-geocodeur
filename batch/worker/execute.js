@@ -31,6 +31,11 @@ export async function executeProcessing(projectId, {signal, model, indexes}) {
 
     const upLimit = pLimit(1)
 
+    /* Guessing CSV format */
+
+    const previewInputStream = await model.getInputFileDownloadStream(projectId)
+    const {columns, formatOptions} = await previewCsvFromStream(previewInputStream)
+
     /* Validation */
 
     let totalRows = null
@@ -43,7 +48,7 @@ export async function executeProcessing(projectId, {signal, model, indexes}) {
     const validationInputStream = await model.getInputFileDownloadStream(projectId)
 
     await new Promise((resolve, reject) => {
-      const validation = validateCsvFromStream(validationInputStream)
+      const validation = validateCsvFromStream(validationInputStream, {formatOptions})
 
       validation
         .on('progress', async progress => {
@@ -75,9 +80,6 @@ export async function executeProcessing(projectId, {signal, model, indexes}) {
       geocodingProgress: {readRows: 0, totalRows}
     }))
 
-    const previewInputStream = await model.getInputFileDownloadStream(projectId)
-
-    const {columns, formatOptions} = await previewCsvFromStream(previewInputStream)
     const {outputFormat, geocodeOptions: rawGeocodeOptions} = project.pipeline
     const geocodeOptions = {
       ...extractGeocodeOptions(
