@@ -7,7 +7,6 @@ import w from '../../../lib/w.js'
 import readJson from '../../../lib/read-json.js'
 import errorHandler from '../../../lib/error-handler.js'
 import {createRtree} from '../../../lib/spatial-index/rtree.js'
-import {createInstance as createRedisServer} from '../../../lib/addok/redis.js'
 import {createInstance as createLmdbInstance} from '../../../lib/spatial-index/lmdb.js'
 import {batch} from '../../../lib/batch.js'
 
@@ -27,9 +26,8 @@ export async function createRouter() {
     cache: true
   })
   const rtreeIndex = await createRtree(POI_INDEX_RTREE_PATH)
-  const redisServer = await createRedisServer(POI_INDEX_PATH, {crashOnFailure: true})
   const addokCluster = await createCluster({
-    addokRedisUrl: ['unix:' + redisServer.socketPath],
+    redisDataDir: POI_INDEX_PATH,
     addokConfigModule: path.resolve('./indexes/poi/config/addok.conf'),
     requestTimeout: ADDOK_REQUEST_TIMEOUT
   })
