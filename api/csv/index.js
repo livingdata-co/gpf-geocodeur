@@ -26,8 +26,8 @@ export function csv({operation, indexes}) {
     // Register file cleanup routine
     onFinished(res, async () => {
       try {
-        await rm(req.file.path, {force: true})
         ac.abort()
+        await rm(req.file.path, {force: true})
       } catch (error) {
         logger.error(error)
       }
