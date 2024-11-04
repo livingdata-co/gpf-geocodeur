@@ -780,10 +780,10 @@
     "@jridgewell/resolve-uri" "3.1.0"
     "@jridgewell/sourcemap-codec" "1.4.14"
 
-"@livingdata/tabular-data-helpers@^0.0.11":
-  version "0.0.11"
-  resolved "https://registry.yarnpkg.com/@livingdata/tabular-data-helpers/-/tabular-data-helpers-0.0.11.tgz#d6aa5baf8f2cf938839917511a70e51c8853ad8f"
-  integrity sha512-E7kfLo3nJgu3oVRFWqRfXUXmwMsbIbnPnL3k1n6j2E9uGsrjI/XenatRBMsAG+67ZEEUyACe2ROpK8lnIv+4Uw==
+"@livingdata/tabular-data-helpers@^0.0.12":
+  version "0.0.12"
+  resolved "https://registry.yarnpkg.com/@livingdata/tabular-data-helpers/-/tabular-data-helpers-0.0.12.tgz#3effc9f830f531e190e615e196a5ada36229c4fc"
+  integrity sha512-Wiqu1Jcp9pndCP9ZAAUxf90MsoFYhvQ9ux9MXouZ8k9RYRV05JjcdqISxqMThjWH+z/8yz0I6XsQbxz78YLK1A==
   dependencies:
     buffer "^6.0.3"
     chardet "^2.0.0"
