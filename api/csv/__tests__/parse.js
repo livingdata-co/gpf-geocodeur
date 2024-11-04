@@ -32,14 +32,20 @@ test('parseAndValidate / no file provided', async t => {
   }, {message: 'A CSV file must be provided in data field'})
 })
 
-test('parseAndValidate / delimiter error', async t => {
+test('parseAndValidate / no delimiter', async t => {
   const req = {file: {path: 'path/to/csv/delimiter.csv'}}
   const res = {}
   const next = () => {}
 
-  await t.throwsAsync(async () => {
-    await parseAndValidate()(req, res, next)
-  }, {message: 'Errors in CSV file: UndetectableDelimiter'})
+  await parseAndValidate()(req, res, next)
+
+  t.deepEqual(req.columnsInFile, ['column1'])
+  t.deepEqual(req.formatOptions, {
+    delimiter: ',',
+    linebreak: '\n',
+    quoteChar: '"',
+    encoding: 'ISO-8859-15'
+  })
 })
 
 test('parseAndValidate / columns error', async t => {
