@@ -15,10 +15,10 @@ import {validatePipeline} from './pipeline.js'
 import {configure as configurePassport} from './passport.js'
 import {handleToken, authorize} from './auth.js'
 
-export default async function createRouter() {
+export default async function createRouter(options = {}) {
   const app = new express.Router()
 
-  const model = await initModel()
+  const model = await initModel(options)
 
   const usePassport = Boolean(process.env.GPF_AUTHORIZATION_URL)
 
