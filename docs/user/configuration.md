@@ -49,6 +49,10 @@ Pour gagner du temps vous pouvez tout simplement recopier le fichier `.env.sampl
 
 | Nom de la variable | Description | Valeur par défaut |
 | --- | --- | --- |
+| `GEOCODE_INDEXES` | Types d'index à charger | `address,parcel,poi` |
+| `ADDRESS_INDEX_URL` | URL du service d'index `address` | `http://localhost:3001` |
+| `PARCEL_INDEX_URL` | URL du service d'index `parcel` | `http://localhost:3002` |
+| `POI_INDEX_URL` | URL du service d'index `poi` | `http://localhost:3003` |
 | `REDIS_URL` | Chaîne de connexion vers la base de données Redis persistante | |
 | `WORKERS_CONCURRENCY` | Nombre de géocodages asynchrones lancés par worker | Nombre de CPU |
 | `BATCH_ASYNC_FLUSH_AFTER_N_DAYS` | Nombre de jours de conservation d'un projet de géocodage avant purge | `14` |
