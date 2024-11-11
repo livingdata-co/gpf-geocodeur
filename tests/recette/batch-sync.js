@@ -402,7 +402,7 @@ test('basic reverse', async t => {
   t.is(result.result_status, 'ok')
 })
 
-test('reverse - index address', async t => {
+test('address - reverse', async t => {
   const result = await executeSingleRequest('reverse', {
     longitude: '6.168371', latitude: '49.101643'
   }, {
@@ -412,7 +412,7 @@ test('reverse - index address', async t => {
   t.is(result.result_index, 'address')
 })
 
-test('reverse - index poi', async t => {
+test('poi - reverse', async t => {
   const result = await executeSingleRequest('reverse', {
     longitude: '6.168371', latitude: '49.101643'
   }, {
@@ -422,7 +422,7 @@ test('reverse - index poi', async t => {
   t.is(result.result_index, 'poi')
 })
 
-test('reverse - index parcel', async t => {
+test('parcel - reverse', async t => {
   const result = await executeSingleRequest('reverse', {
     longitude: '6.168371', latitude: '49.101643'
   }, {
@@ -432,7 +432,7 @@ test('reverse - index parcel', async t => {
   t.is(result.result_index, 'parcel')
 })
 
-test('reverse - multiple indexes', async t => {
+test('multiple indexes - reverse', async t => {
   const result = await executeSingleRequest('reverse', {
     longitude: '6.168371', latitude: '49.101643'
   }, {
@@ -442,7 +442,7 @@ test('reverse - multiple indexes', async t => {
   t.is(result.result_index, 'address')
 })
 
-test('reverse - multiple indexes - poi / parcel', async t => {
+test('multiple indexes - reverse - poi / parcel', async t => {
   const result = await executeSingleRequest('reverse', {
     longitude: '6.168371', latitude: '49.101643'
   }, {
@@ -452,7 +452,7 @@ test('reverse - multiple indexes - poi / parcel', async t => {
   t.is(result.result_index, 'poi')
 })
 
-test('reverse - parcel index - result_columns', async t => {
+test('parcel - reverse - result_columns', async t => {
   const result = await executeSingleRequest('reverse', {
     longitude: '6.168371', latitude: '49.101643'
   }, {
@@ -464,7 +464,7 @@ test('reverse - parcel index - result_columns', async t => {
   t.true('result_number' in result)
 })
 
-test('reverse - poi index - result_columns', async t => {
+test('poi - reverse - result_columns', async t => {
   const result = await executeSingleRequest('reverse', {
     longitude: '6.168371', latitude: '49.101643'
   }, {
@@ -475,7 +475,7 @@ test('reverse - poi index - result_columns', async t => {
   t.true('result_category' in result)
 })
 
-test('reverse - multiple indexes - more', async t => {
+test('multiple indexes - reverse - more', async t => {
   const inputFile = createBlobFromString('longitude,latitude,category\n6.183678,49.118099,\n6.175475,49.119999,clocher\n6.173412,49.099143,')
   const {parseResult} = await executeRequest(
     {
@@ -566,7 +566,7 @@ test('poi - search - multiple entries', async t => {
   t.is(parseResult.data.length, 2)
 })
 
-test('search - multiple indexes - multiple entries', async t => {
+test('multiple indexes - search - multiple entries', async t => {
   const inputFile = createBlobFromString('numero,voie,city,category,lon,lat,section,number,departmentcode,municipalitycode\n4,rue des Robert,Metz,,,,,,,\n,,metz,mairie,6.173588,49.099124,,,,\n,,,,,,SO,115,57,463')
   const {parseResult} = await executeRequest(
     {
@@ -587,7 +587,7 @@ test('search - multiple indexes - multiple entries', async t => {
   t.is(parseResult.data[2].result_index, 'parcel')
 })
 
-test('search - unknown index', async t => {
+test('multiple indexes - unknown index', async t => {
   const inputFile = createBlobFromString('numero,voie,city\n4,rue des Robert,Metz')
   await t.throwsAsync(
     () => executeRequest(
