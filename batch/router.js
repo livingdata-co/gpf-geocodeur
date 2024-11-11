@@ -57,11 +57,7 @@ export default async function createRouter(options = {}) {
   app.get('/auth/gpf', w(async (req, res) => {
     if (process.env.MAGIC_TOKEN) {
       const redirectUrl = new URL(process.env.SUPERVISION_APP_URL)
-
-      const user = {name: 'Superadmin', isAdmin: true, email: 'superadmin@localhost'}
-      const token = jwt.sign(user, process.env.JWT_SECRET, {expiresIn: '12h'})
-      redirectUrl.searchParams.set('token', token)
-
+      redirectUrl.searchParams.set('token', process.env.MAGIC_TOKEN)
       return res.redirect(redirectUrl.toString())
     }
 

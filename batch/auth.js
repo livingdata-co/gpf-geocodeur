@@ -48,7 +48,13 @@ export function authorize(strategies) {
 
     if (strategy === 'admin') {
       try {
-        jwt.verify(token, process.env.JWT_SECRET)
+        if (process.env.MAGIC_TOKEN && token !== process.env.MAGIC_TOKEN) {
+          throw createError(401, 'Invalid token')
+        }
+
+        if (!process.env.MAGIC_TOKEN) {
+          jwt.verify(token, process.env.JWT_SECRET)
+        }
       } catch {
         throw createError(401, 'Invalid token')
       }
@@ -115,6 +121,15 @@ export const handleToken = w(async (req, res, next) => {
       id: community._id,
       name: community.name
     })
+
+    if (process.env.MAGIC_TOKEN) {
+      await req.model.updateCommunityParams(req.community.id, {
+        maxInputFileSize: '1GB',
+        concurrency: 4
+      })
+
+      req.community = await req.model.getCommunity(req.community.id)
+    }
   }
 
   if (process.env.MAGIC_TOKEN) {
