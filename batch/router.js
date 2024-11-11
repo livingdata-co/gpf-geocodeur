@@ -139,7 +139,7 @@ export default async function createRouter(options = {}) {
     const {params} = req.project
 
     if (params.maxInputFileSize && fileSize > bytes(params.maxInputFileSize)) {
-      throw createError(403, `File too large. Maximum allowed: ${params.maxInputFileSize}`)
+      throw createError(400, `File too large. Maximum allowed: ${params.maxInputFileSize}`)
     }
 
     await model.setInputFile(req.params.projectId, {name: filename, size: fileSize}, req)
