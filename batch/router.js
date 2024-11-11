@@ -58,7 +58,8 @@ export default async function createRouter(options = {}) {
     if (process.env.MAGIC_TOKEN) {
       const redirectUrl = new URL(process.env.SUPERVISION_APP_URL)
 
-      const token = jwt.sign(req.user, process.env.JWT_SECRET, {expiresIn: '12h'})
+      const user = {name: 'Superadmin', isAdmin: true, email: 'superadmin@localhost'}
+      const token = jwt.sign(user, process.env.JWT_SECRET, {expiresIn: '12h'})
       redirectUrl.searchParams.set('token', token)
 
       return res.redirect(redirectUrl.toString())

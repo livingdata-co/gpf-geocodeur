@@ -81,21 +81,25 @@ export const handleToken = w(async (req, res, next) => {
 
   if (process.env.MAGIC_TOKEN) {
     if (token === process.env.MAGIC_TOKEN) {
-      req.community = await req.model.upsertCommunity({
-        id: 'acme',
-        name: 'ACME'
-      })
-
-      return next()
+      userInfo = {
+        communities_member: [ // eslint-disable-line camelcase
+          {
+            community: {
+              _id: 'acme',
+              name: 'ACME'
+            }
+          }
+        ]
+      }
+    } else {
+      throw createError(401, 'Invalid token')
     }
-
-    throw createError(401, 'Invalid token')
-  }
-
-  try {
-    userInfo = await getUserInfo(token)
-  } catch {
-    throw createError(401, 'Invalid token')
+  } else {
+    try {
+      userInfo = await getUserInfo(token)
+    } catch {
+      throw createError(401, 'Invalid token')
+    }
   }
 
   if (communityHeader) {
@@ -113,8 +117,12 @@ export const handleToken = w(async (req, res, next) => {
     })
   }
 
-  const {name, email} = readTokenData(token)
-  req.user = {email, name}
+  if (process.env.MAGIC_TOKEN) {
+    req.user = {name: 'Magic User', email: 'magicuser@localhost'}
+  } else {
+    const {name, email} = readTokenData(token)
+    req.user = {email, name}
+  }
 
   next()
 })
