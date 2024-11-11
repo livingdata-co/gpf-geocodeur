@@ -53,8 +53,11 @@ async function main() {
     processingProjects.set(projectId, {abortController})
 
     process.nextTick(async () => {
-      await executeProcessing(projectId, {signal: abortController.signal, indexes, model})
-      processingProjects.delete(projectId)
+      try {
+        await executeProcessing(projectId, {signal: abortController.signal, indexes, model})
+        processingProjects.delete(projectId)
+      } catch {}
+
       limit(() => getNextJob())
     })
   }

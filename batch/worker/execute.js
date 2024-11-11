@@ -138,6 +138,10 @@ export async function executeProcessing(projectId, {signal, model, indexes}) {
 
     logger.log(`${projectId} | processed successfully`)
   } catch (error) {
+    if (signal.aborted) {
+      return
+    }
+
     await model.endProcessing(projectId, error)
 
     logger.log(`${projectId} | error during processing`)
