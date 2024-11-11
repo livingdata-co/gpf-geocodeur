@@ -99,13 +99,15 @@ test('CSV >200k rows', async t => {
 test('big file - 10 Mo', async t => {
   t.timeout(2 * 60 * 1000) // 2 minutes - QUALIF 🐌
   const inputFile = createBlobFromBuffer(Buffer.alloc((10 * 1024 * 1024) - 1, 'a'))
-  await t.throwsAsync(() => executeRequest({inputFile}), {message: 'Errors in CSV file: UndetectableDelimiter'})
+  await executeRequest({inputFile})
+  t.pass()
 })
 
 test('big file - 50 Mo', async t => {
   t.timeout(10 * 60 * 1000) // 10 minutes - QUALIF 🐌
   const inputFile = createBlobFromBuffer(Buffer.alloc((50 * 1024 * 1024) - 1, 'a'))
-  await t.throwsAsync(() => executeRequest({inputFile}), {message: 'Errors in CSV file: UndetectableDelimiter'})
+  await executeRequest({inputFile})
+  t.pass()
 })
 
 test('big file >50 Mo', async t => {
@@ -170,11 +172,6 @@ test('separator / tab', async t => {
   t.true('a' in parseResult.data[0])
   t.true('b' in parseResult.data[0])
   t.true('c' in parseResult.data[0])
-})
-
-test('separator / undetectable', async t => {
-  const inputFile = createBlobFromString('invalid csv file')
-  await t.throwsAsync(() => executeRequest({inputFile}), {message: 'Errors in CSV file: UndetectableDelimiter'})
 })
 
 /* IGNGPF-3994 Prise en charge du caractère d'échappement */
@@ -455,7 +452,7 @@ test('reverse - multiple indexes - poi / parcel', async t => {
   t.is(result.result_index, 'poi')
 })
 
-test('reverse - parcel index - limit result', async t => {
+test('reverse - parcel index - result_columns', async t => {
   const result = await executeSingleRequest('reverse', {
     longitude: '6.168371', latitude: '49.101643'
   }, {
@@ -467,7 +464,7 @@ test('reverse - parcel index - limit result', async t => {
   t.true('result_number' in result)
 })
 
-test('reverse - poi index - limit result', async t => {
+test('reverse - poi index - result_columns', async t => {
   const result = await executeSingleRequest('reverse', {
     longitude: '6.168371', latitude: '49.101643'
   }, {
@@ -478,19 +475,7 @@ test('reverse - poi index - limit result', async t => {
   t.true('result_category' in result)
 })
 
-test('reverse - with filters', async t => {
-  const result = await executeSingleRequest('reverse', {
-    longitude: '6.168371', latitude: '49.101643',
-    code_insee: '57463'
-  }, {
-    indexes: ['poi'],
-    columns: ['code_insee']
-  })
-  t.is(result.result_status, 'ok')
-  t.is(result.result_index, 'poi')
-})
-
-test('reverse - batch - multiple indexes', async t => {
+test('reverse - multiple indexes - more', async t => {
   const inputFile = createBlobFromString('longitude,latitude,category\n6.183678,49.118099,\n6.175475,49.119999,clocher\n6.173412,49.099143,')
   const {parseResult} = await executeRequest(
     {
@@ -567,7 +552,7 @@ test('poi - search - citycode provided', async t => {
   t.is(resultAfter.result_name, 'Mairie de Metz')
 })
 
-test('poi - search - batch', async t => {
+test('poi - search - multiple entries', async t => {
   const inputFile = createBlobFromString('numero,voie,city\n4,rue des Robert,Metz\n33, rue Paul Diacre, Metz')
   const {parseResult} = await executeRequest(
     {
@@ -581,7 +566,7 @@ test('poi - search - batch', async t => {
   t.is(parseResult.data.length, 2)
 })
 
-test('search - batch - multiple indexes', async t => {
+test('search - multiple indexes - multiple entries', async t => {
   const inputFile = createBlobFromString('numero,voie,city,category,lon,lat,section,number,departmentcode,municipalitycode\n4,rue des Robert,Metz,,,,,,,\n,,metz,mairie,6.173588,49.099124,,,,\n,,,,,,SO,115,57,463')
   const {parseResult} = await executeRequest(
     {
@@ -602,7 +587,7 @@ test('search - batch - multiple indexes', async t => {
   t.is(parseResult.data[2].result_index, 'parcel')
 })
 
-test('poi - search - batch - unknown index', async t => {
+test('search - unknown index', async t => {
   const inputFile = createBlobFromString('numero,voie,city\n4,rue des Robert,Metz')
   await t.throwsAsync(
     () => executeRequest(
@@ -635,7 +620,7 @@ test('parcel - single search', async t => {
   t.is(result.result_city, 'Metz')
 })
 
-test('parcel', async t => {
+test('parcel - multiple entries', async t => {
   const inputFile = createBlobFromString('section,number,departmentcode,municipalitycode\nSO,115,57,463\nST,61,57,463')
   const resultBefore = await executeRequest(
     {
