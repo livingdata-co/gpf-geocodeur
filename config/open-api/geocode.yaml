@@ -1,4 +1,4 @@
-openapi: 3.0.1
+openapi: 3.1.1
 info:
   title: Service de géocodage
   description: API du service de géocodage 2.0 de l'IGN.
@@ -589,16 +589,14 @@ paths:
 
         À ce stade le projet est retourné avec un jeton qui doit être conservé pour les prochains appels du processus.
       parameters:
-        - name: Authorization
-          in: header
-          required: false
-          schema:
-            type: string
         - name: X-Community
           in: header
           required: false
           schema:
             type: string
+      security:
+        - {}
+        - BearerAuth: []
       responses:
         '201':
           description: Projet créé avec succès
@@ -648,19 +646,14 @@ paths:
         - état et progression du géocodage
         - fichier source et fichier résultat (notamment le jeton d'accès)
       parameters:
-        - name: Authorization
-          description: L'en-tête doit être renseigné sous la forme "Token XXXXXXX".
-          in: header
-          required: true
-          schema:
-            type: string
-            format: Token
         - name: projectId
           description: Identifiant unique du projet
           in: path
           required: true
           schema:
             type: string
+      security:
+        - ProjectAuth: []
       responses:
         '200':
           description: Métadonnées du projet
@@ -680,19 +673,14 @@ paths:
       description: |
         Permet la suppression d'un projet inactif (idle), terminé (completed) ou en erreur (failed).
       parameters:
-        - name: Authorization
-          description: L'en-tête doit être renseigné sous la forme "Token XXXXXXX".
-          in: header
-          required: true
-          schema:
-            type: string
-            format: Token
         - name: projectId
           description: Identifiant unique du projet
           in: path
           required: true
           schema:
             type: string
+      security:
+        - ProjectAuth: []
       responses:
         '204':
           description: Projet supprimé avec succès
@@ -715,19 +703,14 @@ paths:
 
         Attention : l'adéquation des paramètres de géocodage avec le fichier fourni n'est vérifiée qu'au moment du géocodage.
       parameters:
-        - name: Authorization
-          description: L'en-tête doit être renseigné sous la forme "Token XXXXXXX".
-          in: header
-          required: true
-          schema:
-            type: string
-            format: Token
         - name: projectId
           description: Identifiant unique du projet
           in: path
           required: true
           schema:
             type: string
+      security:
+        - ProjectAuth: []
       requestBody:
         content:
           application/json:
@@ -755,13 +738,6 @@ paths:
         - batch-async
       summary: Uploader un fichier d'entrée pour un projet
       parameters:
-        - name: Authorization
-          description: L'en-tête doit être renseigné sous la forme "Token XXXXXXX".
-          in: header
-          required: true
-          schema:
-            type: string
-            format: Token
         - name: projectId
           description: Identifiant unique du projet
           in: path
@@ -779,6 +755,8 @@ paths:
           required: false
           schema:
             type: string
+      security:
+        - ProjectAuth: []
       requestBody:
         content:
           application/octet-stream:
@@ -811,19 +789,14 @@ paths:
 
         L'opération peut être annulée via la requête adéquate.
       parameters:
-        - name: Authorization
-          description: L'en-tête doit être renseigné sous la forme "Token XXXXXXX".
-          in: header
-          required: true
-          schema:
-            type: string
-            format: Token
         - name: projectId
           description: Identifiant unique du projet
           in: path
           required: true
           schema:
             type: string
+      security:
+        - ProjectAuth: []
       responses:
         '200':
           description: Projet mis en attente de géocodage
@@ -846,19 +819,14 @@ paths:
       description: |
         Permet d'annuler un géocodage en attente (waiting) ou en cours (processing). Dans ce cas il retourne à l'état inactif et peut être modifié ou supprimé.
       parameters:
-        - name: Authorization
-          description: L'en-tête doit être renseigné sous la forme "Token XXXXXXX".
-          in: header
-          required: true
-          schema:
-            type: string
-            format: Token
         - name: projectId
           description: Identifiant unique du projet
           in: path
           required: true
           schema:
             type: string
+      security:
+        - ProjectAuth: []
       responses:
         '200':
           description: Annulation prise en compte
@@ -931,6 +899,17 @@ paths:
                 format: binary
 
 components:
+  securitySchemes:
+    ProjectAuth:
+      type: apiKey
+      name: Authorization
+      in: header
+      description: Token XXXXXX
+    BearerAuth:
+      type: apiKey
+      name: Authorization
+      in: header
+      description: Bearer XXXXXX
   schemas:
     Getcapabilities:
       type: "object"
