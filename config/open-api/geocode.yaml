@@ -752,7 +752,7 @@ paths:
             type: integer
         - name: Content-Disposition
           in: header
-          required: false
+          required: true
           schema:
             type: string
       security:
