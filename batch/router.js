@@ -121,15 +121,11 @@ export default async function createRouter(options = {}) {
   }))
 
   app.put('/projects/:projectId/input-file', authorize(['project']), w(async (req, res) => {
-    if (!req.get('Content-Disposition') || !req.get('Content-Disposition').includes('filename')) {
-      throw createError(400, 'Filename must be provided through Content-Disposition')
-    }
-
     if (!req.get('Content-Length')) {
       throw createError(400, 'File size must be provided through Content-Length')
     }
 
-    const {parameters: {filename}} = contentDisposition.parse(req.get('Content-Disposition'))
+    const {parameters: {filename}} = contentDisposition.parse(req.get('Content-Disposition') || 'inline')
     const fileSize = Number.parseInt(req.get('Content-Length'), 10)
 
     const {params} = req.project
@@ -138,7 +134,7 @@ export default async function createRouter(options = {}) {
       throw createError(400, `File too large. Maximum allowed: ${params.maxInputFileSize}`)
     }
 
-    await model.setInputFile(req.params.projectId, {name: filename, size: fileSize}, req)
+    await model.setInputFile(req.params.projectId, {name: filename || 'input.csv', size: fileSize}, req)
     const project = await model.getProject(req.params.projectId)
     res.send(project)
   }))

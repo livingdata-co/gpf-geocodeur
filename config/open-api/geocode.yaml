@@ -752,7 +752,9 @@ paths:
             type: integer
         - name: Content-Disposition
           in: header
-          required: true
+          description: |
+            Le nom du fichier à géocoder peut être transmis pour faciliter le suivi. Le fichier résultat reprendra en partie ce nom. Par défaut le fichier sera nommé input.csv.
+          required: false
           schema:
             type: string
       security:

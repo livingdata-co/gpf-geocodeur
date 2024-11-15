@@ -251,7 +251,7 @@ test('search / delete project / forbidden', async t => {
   }
 
   await setPipeline(id, token, pipeline)
-  await setInputFile(id, token, file, 'foo.csv')
+  await setInputFile(id, token, file)
 
   await startProcessing(id, token)
 
@@ -318,7 +318,7 @@ async function executeRequest(t, inputFile, pipeline, options = {}) {
 
     const {id, token} = await createProject(t)
 
-    await setInputFile(id, token, inputFile, 'foo.csv')
+    await setInputFile(id, token, inputFile, {fileName: 'foo.csv', fileSize: inputFile.length})
     await setPipeline(id, token, pipeline)
 
     const startedProject = await startProcessing(id, token)
@@ -429,13 +429,28 @@ async function getProject(id, token) {
   )
 }
 
-async function setInputFile(id, token, inputFile, inputFileName) {
+async function setInputFile(id, token, inputFile, {fileName, fileSize} = {}) {
+  const headers = {Authorization: `Token ${token}`}
+
+  if (fileName) {
+    headers['Content-Disposition'] = `attachment; filename=${fileName}`
+  }
+
   return handleError(
     got.put(`${RECETTE_API_URL}/async/projects/${id}/input-file`, {
       body: inputFile,
-      headers: {
-        Authorization: `Token ${token}`,
-        'Content-Disposition': `attachment; filename="${inputFileName}"`
+      headers,
+      hooks: {
+        // Hook to prevent Got from setting Content-Length header automatically
+        beforeRequest: [
+          options => {
+            if (fileSize) {
+              options.headers['content-length'] = fileSize
+            } else {
+              delete options.headers['content-length']
+            }
+          }
+        ]
       }
     }).json()
   )
