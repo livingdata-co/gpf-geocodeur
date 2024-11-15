@@ -121,9 +121,11 @@ export async function setInputFile(id, {name, size}, inputStream, {redis, storag
     })
   }
 
+  const fileSize = await storage.getFileSize(objectKey)
+
   await redis.pipeline()
     .hset(`project:${id}:meta`, prepareObject({
-      inputFile: {name, size, token: nanoid(24)},
+      inputFile: {name: name || 'input.csv', size: fileSize, token: nanoid(24)},
       updatedAt: new Date()
     }))
     .set(`project:${id}:input-obj-key`, objectKey)

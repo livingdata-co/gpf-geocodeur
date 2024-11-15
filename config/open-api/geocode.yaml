@@ -746,8 +746,8 @@ paths:
             type: string
         - name: Content-Length
           in: header
-          description: La taille du fichier doit-être transmise pour s'assurer de l'intégrité du transfert
-          required: true
+          description: La taille du fichier peut être transmise pour s'assurer du transfert complet du fichier.
+          required: false
           schema:
             type: integer
         - name: Content-Disposition

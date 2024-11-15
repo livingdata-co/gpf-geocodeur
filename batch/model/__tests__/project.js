@@ -328,6 +328,10 @@ test.serial('setInputFile should store input file metadata in Redis', async t =>
   const storage = {
     async uploadFile() {
       return 'foo'
+    },
+
+    async getFileSize() {
+      return 5000
     }
   }
 
@@ -337,6 +341,41 @@ test.serial('setInputFile should store input file metadata in Redis', async t =>
   t.deepEqual(Object.keys(JSON.parse(inputFile)).sort(), ['name', 'size', 'token'])
 
   t.is(await redis.get(`project:${projectId}:input-obj-key`), 'foo')
+})
+
+test.serial('setInputFile must work even if the file size and the file name are not provided', async t => {
+  const {redis} = t.context
+  const projectId = '123'
+  const inputFileData = {}
+
+  const metadata = {
+    id: projectId,
+    status: 'idle'
+  }
+
+  await redis.hmset(`project:${projectId}:meta`, metadata)
+
+  const dataStream = new PassThrough()
+  dataStream.write('file content here')
+  dataStream.end()
+
+  const storage = {
+    async uploadFile() {
+      return 'foo'
+    },
+
+    async getFileSize() {
+      return 5000
+    }
+  }
+
+  await setInputFile(projectId, inputFileData, dataStream, {redis, storage})
+
+  const {inputFile} = await redis.hgetall(`project:${projectId}:meta`)
+  const inputFileObj = JSON.parse(inputFile)
+  t.deepEqual(Object.keys(inputFileObj).sort(), ['name', 'size', 'token'])
+  t.is(inputFileObj.size, 5000)
+  t.is(inputFileObj.name, 'input.csv')
 })
 
 /**
