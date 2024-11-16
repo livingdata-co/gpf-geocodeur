@@ -81,13 +81,11 @@ export async function executeProcessing(projectId, {signal, model, indexes}) {
     }))
 
     const {outputFormat, geocodeOptions: rawGeocodeOptions} = project.pipeline
-    const geocodeOptions = {
-      ...extractGeocodeOptions(
-        rawGeocodeOptions,
-        {columnsInFile: columns}
-      ),
-      operation: rawGeocodeOptions.operation === 'search' ? 'search' : 'reverse'
-    }
+
+    const geocodeOptions = extractGeocodeOptions(
+      rawGeocodeOptions,
+      {columnsInFile: columns}
+    )
 
     const inputFileName = project.inputFile.name
     const outputFileName = computeOutputFilename(inputFileName || 'result', outputFormat)

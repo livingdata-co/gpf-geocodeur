@@ -1,14 +1,14 @@
 /* eslint-disable camelcase */
 import test from 'ava'
 
-import {extractGeocodeOptions, extractIndexes, ensureArray} from '../options.js'
+import {extractGeocodeOptions, extractIndexes, ensureArray, extractOperation, extractFilter} from '../options.js'
 
 test('extractGeocodeOptions / geocode options', t => {
   const body = {
-    columns: ['col1', 'col2'],
-    citycode: '75001',
-    postcode: '75001',
-    type: 'address',
+    columns: ['numero', 'voie', 'code_postal', 'ville'],
+    citycode: 'citycode',
+    postcode: 'code_postal',
+    type: 'type',
     lon: 'longitude',
     lat: 'latitude',
     category: 'category',
@@ -19,16 +19,17 @@ test('extractGeocodeOptions / geocode options', t => {
     section: 'section',
     sheet: 'sheet',
     number: 'number',
+    extraneous: 'extraneous',
     result_columns: ['result_col1', 'result_col2']
   }
 
-  const columnsInFile = ['col1', 'col2', 'col3']
+  const columnsInFile = ['numero', 'voie', 'type', 'citycode', 'code_postal', 'ville', 'longitude', 'latitude', 'category', 'departmentcode', 'municipalitycode', 'oldmunicipalitycode', 'districtcode', 'section', 'sheet', 'number']
 
   const expected = {
-    columns: ['col1', 'col2'],
-    citycode: '75001',
-    postcode: '75001',
-    type: 'address',
+    columns: ['numero', 'voie', 'code_postal', 'ville'],
+    citycode: 'citycode',
+    postcode: 'code_postal',
+    type: 'type',
     lon: 'longitude',
     lat: 'latitude',
     category: 'category',
@@ -40,7 +41,8 @@ test('extractGeocodeOptions / geocode options', t => {
     sheet: 'sheet',
     number: 'number',
     resultColumns: ['result_col1', 'result_col2'],
-    indexes: ['address']
+    indexes: ['address'],
+    operation: 'search'
   }
 
   const actual = extractGeocodeOptions(body, {columnsInFile})
@@ -64,7 +66,8 @@ test('extractGeocodeOptions / default columns', t => {
 
   t.deepEqual(result, {
     columns: ['col1', 'col2', 'col3'],
-    indexes: ['address']
+    indexes: ['address'],
+    operation: 'search'
   })
 })
 
@@ -84,4 +87,19 @@ test('ensureArray', t => {
   t.deepEqual(ensureArray(['value']), ['value'])
   t.deepEqual(ensureArray(null), [])
   t.deepEqual(ensureArray(undefined), [])
+})
+
+test('extractOperation', t => {
+  t.is(extractOperation('search'), 'search')
+  t.is(extractOperation('reverse'), 'reverse')
+  t.is(extractOperation(), 'search')
+  t.throws(() => extractOperation('unknown'), {message: 'Unsupported operation: unknown'})
+})
+
+test('extractFilter', t => {
+  t.is(extractFilter({}, 'citycode', ['citycode']), undefined)
+  t.is(extractFilter({citycode: 'citycode'}, 'citycode', ['citycode']), 'citycode')
+  t.throws(() => extractFilter({citycode: 'unknown'}, 'citycode', ['citycode']), {message: 'Unknown column name for citycode'})
+  t.throws(() => extractFilter({citycode: 123}, 'citycode', ['citycode']), {message: 'Invalid citycode value'})
+  t.throws(() => extractFilter({citycode: 'citycode'}, 'citycode', ['unknown']), {message: 'Unknown column name for citycode'})
 })

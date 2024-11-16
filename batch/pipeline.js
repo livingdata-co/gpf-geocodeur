@@ -1,19 +1,28 @@
 import createError from 'http-errors'
-import {pick} from 'lodash-es'
 
-const PIPELINE_KEYS = ['geocodeOptions', 'outputFormat']
+import {extractGeocodeOptions} from './options.js'
+
+export function validateOutputFormat(outputFormat) {
+  if (!outputFormat) {
+    return 'csv'
+  }
+
+  if (!['csv', 'geojson'].includes(outputFormat)) {
+    throw createError(400, `outputFormat not supported: ${outputFormat}`)
+  }
+
+  return outputFormat
+}
 
 export function validatePipeline(pipeline) {
-  const keys = Object.keys(pipeline)
-  const missingKey = PIPELINE_KEYS.find(key => !keys.includes(key) || !pipeline[key])
+  const outputFormat = validateOutputFormat(pipeline.outputFormat)
 
-  if (missingKey) {
-    throw createError(400, `Missing key ${missingKey} in pipeline definition`)
+  if (!pipeline.geocodeOptions || typeof pipeline.geocodeOptions !== 'object') {
+    throw createError(400, 'Missing or invalid geocodeOptions')
   }
 
-  if (!['csv', 'geojson'].includes(pipeline.outputFormat)) {
-    throw createError(400, `Output format not supported: ${pipeline.outputFormat}`)
+  return {
+    geocodeOptions: extractGeocodeOptions(pipeline.geocodeOptions),
+    outputFormat
   }
-
-  return pick(pipeline, PIPELINE_KEYS)
 }

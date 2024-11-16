@@ -1,4 +1,5 @@
 import createHttpError from 'http-errors'
+import {pickBy} from 'lodash-es'
 
 import {GEOCODE_INDEXES} from '../lib/config.js'
 
@@ -31,69 +32,65 @@ export function extractIndexes(indexesValue) {
   return [...new Set(indexesValue)]
 }
 
-export function extractGeocodeOptions(body, {columnsInFile}) {
+export function extractOperation(operation) {
+  if (!operation) {
+    return 'search'
+  }
+
+  if (operation === 'search' || operation === 'reverse') {
+    return operation
+  }
+
+  throw createHttpError(400, 'Unsupported operation: ' + operation)
+}
+
+export function extractFilter(options, filterName, columnsInFile) {
+  const columnName = options[filterName]
+
+  if (columnName && typeof columnName !== 'string') {
+    throw createHttpError(400, `Invalid ${filterName} value`)
+  }
+
+  if (columnsInFile && columnName && !columnsInFile.includes(columnName)) {
+    throw createHttpError(400, `Unknown column name for ${filterName}`)
+  }
+
+  return columnName
+}
+
+const FILTERS = [
+  'citycode',
+  'postcode',
+  'type',
+  'category',
+  'departmentcode',
+  'municipalitycode',
+  'oldmunicipalitycode',
+  'districtcode',
+  'section',
+  'sheet',
+  'number',
+  'lon',
+  'lat'
+]
+
+export function extractGeocodeOptions(body, {columnsInFile} = {}) {
   const geocodeOptions = {}
 
   if (body.columns) {
     geocodeOptions.columns = ensureArray(body.columns)
 
-    if (geocodeOptions.columns.some(c => !columnsInFile.includes(c))) {
+    if (columnsInFile && geocodeOptions.columns.some(c => !columnsInFile.includes(c))) {
       throw createHttpError(400, 'At least one given column name is unknown')
     }
   } else {
-    geocodeOptions.columns = columnsInFile
+    geocodeOptions.columns = columnsInFile || undefined
   }
 
-  if (body.citycode) {
-    geocodeOptions.citycode = body.citycode
-  }
+  geocodeOptions.operation = extractOperation(body.operation)
 
-  if (body.postcode) {
-    geocodeOptions.postcode = body.postcode
-  }
-
-  if (body.type) {
-    geocodeOptions.type = body.type
-  }
-
-  if (body.category) {
-    geocodeOptions.category = body.category
-  }
-
-  if (body.departmentcode) {
-    geocodeOptions.departmentcode = body.departmentcode
-  }
-
-  if (body.municipalitycode) {
-    geocodeOptions.municipalitycode = body.municipalitycode
-  }
-
-  if (body.oldmunicipalitycode) {
-    geocodeOptions.oldmunicipalitycode = body.oldmunicipalitycode
-  }
-
-  if (body.districtcode) {
-    geocodeOptions.districtcode = body.districtcode
-  }
-
-  if (body.section) {
-    geocodeOptions.section = body.section
-  }
-
-  if (body.sheet) {
-    geocodeOptions.sheet = body.sheet
-  }
-
-  if (body.number) {
-    geocodeOptions.number = body.number
-  }
-
-  if (body.lon) {
-    geocodeOptions.lon = body.lon
-  }
-
-  if (body.lat) {
-    geocodeOptions.lat = body.lat
+  for (const filterName of FILTERS) {
+    geocodeOptions[filterName] = extractFilter(body, filterName, columnsInFile)
   }
 
   if (body.result_columns) {
@@ -102,5 +99,5 @@ export function extractGeocodeOptions(body, {columnsInFile}) {
 
   geocodeOptions.indexes = extractIndexes(body.indexes)
 
-  return geocodeOptions
+  return pickBy(geocodeOptions, value => value !== undefined)
 }

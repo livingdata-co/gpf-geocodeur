@@ -33,10 +33,10 @@ export function csv({operation, indexes}) {
       }
     })
 
-    const geocodeOptions = {
-      ...extractGeocodeOptions(req.body, {columnsInFile: req.columnsInFile}),
-      operation
-    }
+    const geocodeOptions = extractGeocodeOptions(
+      {...req.body, operation},
+      {columnsInFile: req.columnsInFile}
+    )
 
     const filename = computeOutputFilename(req.file.originalname)
 
