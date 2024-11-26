@@ -149,7 +149,7 @@ export default async function createRouter(options = {}) {
   app.post('/projects/:projectId/start', authorize(['project']), w(async (req, res) => {
     await model.askProcessing(req.params.projectId)
     const project = await model.getProject(req.params.projectId)
-    res.status(202).send(project)
+    res.send(project)
   }))
 
   app.get('/projects/:projectId/input-file/:token', w(async (req, res) => {
