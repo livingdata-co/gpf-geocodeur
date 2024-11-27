@@ -4,6 +4,7 @@ import createError from 'http-errors'
 import jwt from 'jsonwebtoken'
 
 import w from '../lib/w.js'
+import logger from '../lib/logger.js'
 
 import {getUserInfo, readTokenData} from './util/gpf.js'
 
@@ -103,7 +104,9 @@ export const handleToken = w(async (req, res, next) => {
   } else {
     try {
       userInfo = await getUserInfo(token)
-    } catch {
+    } catch (error) {
+      logger.log('Provided token is not working')
+      logger.log(error)
       throw createError(401, 'Invalid token')
     }
   }
