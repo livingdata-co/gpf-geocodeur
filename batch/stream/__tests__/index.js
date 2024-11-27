@@ -108,7 +108,7 @@ test('createGeocodeStream / search', async t => {
   const geocodeOptions = {
     operation: 'search',
     columns: ['column1'],
-    resultColumns: ['result_status', 'result_error', 'result_result1'],
+    result_columns: ['result_status', 'result_error', 'result_result1'],
     indexes: ['address']
   }
   const resultsById = {
@@ -125,7 +125,7 @@ test('createGeocodeStream / skipped', async t => {
   const geocodeOptions = {
     operation: 'search',
     columns: ['column1'],
-    resultColumns: ['result_status', 'result_error', 'result_result1'],
+    result_columns: ['result_status', 'result_error', 'result_result1'],
     indexes: ['address']
   }
   const resultsById = {
@@ -142,7 +142,7 @@ test('createGeocodeStream / batch error', async t => {
   const geocodeOptions = {
     operation: 'search',
     columns: ['column1'],
-    resultColumns: ['result_status', 'result_error', 'result_result1', 'result_error'],
+    result_columns: ['result_status', 'result_error', 'result_result1', 'result_error'],
     indexes: ['address']
   }
 

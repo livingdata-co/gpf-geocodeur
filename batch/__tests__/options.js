@@ -40,7 +40,7 @@ test('extractGeocodeOptions / geocode options', t => {
     section: 'section',
     sheet: 'sheet',
     number: 'number',
-    resultColumns: ['result_col1', 'result_col2'],
+    result_columns: ['result_col1', 'result_col2'],
     indexes: ['address'],
     operation: 'search'
   }

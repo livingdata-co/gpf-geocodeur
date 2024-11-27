@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import createHttpError from 'http-errors'
 import {pickBy} from 'lodash-es'
 
@@ -94,7 +95,7 @@ export function extractGeocodeOptions(body, {columnsInFile} = {}) {
   }
 
   if (body.result_columns) {
-    geocodeOptions.resultColumns = ensureArray(body.result_columns)
+    geocodeOptions.result_columns = ensureArray(body.result_columns)
   }
 
   geocodeOptions.indexes = extractIndexes(body.indexes)

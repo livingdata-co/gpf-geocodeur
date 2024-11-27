@@ -28,14 +28,14 @@ export function createGeocodeStream(geocodeOptions, options = {}) {
 
       return items.map((item, i) => {
         const resultItem = preparedRequests[i] ? batchResults.shift() : {status: 'skipped', result: {}}
-        return expandItemWithResult(item, resultItem, emptyResultItem, geocodeOptions.resultColumns)
+        return expandItemWithResult(item, resultItem, emptyResultItem, geocodeOptions.result_columns)
       })
     } catch (error) {
       logger.error(error)
 
       return items.map(item => {
         const resultItem = {status: 'error', result: {}}
-        return expandItemWithResult(item, resultItem, emptyResultItem, geocodeOptions.resultColumns)
+        return expandItemWithResult(item, resultItem, emptyResultItem, geocodeOptions.result_columns)
       })
     }
   }
