@@ -8,7 +8,7 @@ import {validateStructuredSearchParams} from '../../../lib/parcel/structured-sea
 
 import {getNomCommune} from './cog.js'
 
-const SEARCH_MAX_DISTANCE_IN_KM = 2
+const SEARCH_MAX_DISTANCE_IN_METERS = 2000
 const SEARCH_MAX_ITERATIONS = 10_000
 
 export function checkConfig({rtreeIndex, db}) {
@@ -116,7 +116,7 @@ export function geoSearch(params, options) {
     const matches = featureMatches(feature, null, filters)
     const distance = computeDistance(feature, center)
 
-    if (matches && distance <= SEARCH_MAX_DISTANCE_IN_KM) {
+    if (matches && distance <= SEARCH_MAX_DISTANCE_IN_METERS) {
       const resultFeature = formatResult(feature, {center, returntruegeometry, distanceCache: distance})
       matchingFeatures.push(resultFeature)
     }
@@ -124,7 +124,7 @@ export function geoSearch(params, options) {
     // Stop iterating if we have reached limit, max distance or SEARCH_MAX_ITERATIONS
     return iterations === SEARCH_MAX_ITERATIONS
       || matchingFeatures.length === limit
-      || distance > SEARCH_MAX_DISTANCE_IN_KM
+      || distance > SEARCH_MAX_DISTANCE_IN_METERS
   })
 
   return sortAndPickResults(
