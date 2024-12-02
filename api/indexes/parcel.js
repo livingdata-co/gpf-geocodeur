@@ -5,18 +5,27 @@ import {createClient} from '../../lib/indexes/client.js'
 
 const {PARCEL_INDEX_URL} = process.env
 
-const FILTERS = [
-  'departmentcode',
-  'municipalitycode',
-  'oldmunicipalitycode',
-  'districtcode',
-  'section',
-  'sheet',
-  'number'
-]
+const FILTERS_WITH_PADDING = {
+  departmentcode: 2,
+  municipalitycode: 3,
+  oldmunicipalitycode: 3,
+  districtcode: 3,
+  section: 2,
+  sheet: 2,
+  number: 4
+}
+
+const FILTERS = Object.keys(FILTERS_WITH_PADDING)
 
 export function prepareRequest(params) {
   const filters = pick(params, FILTERS)
+
+  for (const [filter, padding] of Object.entries(FILTERS_WITH_PADDING)) {
+    if (filters[filter] !== undefined) {
+      filters[filter] = filters[filter].padStart(padding, '0')
+    }
+  }
+
   const center = params.lon !== undefined && params.lat !== undefined
     ? [params.lon, params.lat]
     : undefined
