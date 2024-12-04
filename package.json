@@ -56,6 +56,7 @@
     "gdal-async": "^3.9.0",
     "geobuf": "^3.0.2",
     "got": "^14.4.1",
+    "hpagent": "^1.2.0",
     "http-errors": "^2.0.0",
     "iconv-lite": "^0.6.3",
     "ioredis": "^5.4.1",
@@ -121,7 +122,9 @@
   "ava": {
     "environmentVariables": {
       "NODE_ENV": "test",
-      "GPF_API_URL": "https://gpf-api"
+      "GPF_API_URL": "https://gpf-api",
+      "HTTP_PROXY": "",
+      "HTTPS_PROXY": ""
     }
   },
   "engines": {
