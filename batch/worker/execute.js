@@ -115,7 +115,7 @@ export async function executeProcessing(projectId, {signal, model, indexes}) {
           callback()
         }
       }),
-      createWriteStream(),
+      createWriteStream(formatOptions),
       iconv.encodeStream('utf8')
     )
 
