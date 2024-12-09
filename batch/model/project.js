@@ -228,7 +228,7 @@ export async function updateProcessing(id, changes, {redis}) {
 }
 
 export async function resetProcessing(id, {redis, storage}) {
-  await ensureProjectStatus(id, ['processing', 'waiting'], {redis})
+  await ensureProjectStatus(id, ['processing', 'waiting', 'failed', 'completed'], {redis})
 
   await deleteOutputFile(id, {redis, storage})
 
