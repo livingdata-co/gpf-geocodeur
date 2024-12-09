@@ -113,6 +113,12 @@ export default async function createRouter(options = {}) {
     res.send(project)
   }))
 
+  app.post('/projects/:projectId/reset', authorize(['project', 'admin']), w(async (req, res) => {
+    await model.resetProcessing(req.params.projectId)
+    const project = await model.getProject(req.params.projectId)
+    res.send(project)
+  }))
+
   app.put('/projects/:projectId/pipeline', authorize(['project']), express.json(), w(async (req, res) => {
     const pipeline = validatePipeline(req.body)
     await model.setPipeline(req.params.projectId, pipeline)
