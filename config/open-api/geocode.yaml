@@ -843,6 +843,36 @@ paths:
         '404':
           description: Projet introuvable
 
+  /async/projects/{projectId}/reset:
+    post:
+      tags:
+        - batch-async
+      summary: Ré-initialise un géocodage terminé ou en erreur
+      description: |
+        Permet de ré-initialiser un géocodage terminé (completed) ou en erreur (failed). Dans ce cas il retourne à l'état inactif et peut être modifié ou supprimé.
+      parameters:
+        - name: projectId
+          description: Identifiant unique du projet
+          in: path
+          required: true
+          schema:
+            type: string
+      security:
+        - ProjectAuth: []
+      responses:
+        '200':
+          description: Ré-initialisation prise en compte
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+        '401':
+          description: Non autorisé
+        '403':
+          description: Action interdite (le projet n'est pas terminé ou en erreur)
+        '404':
+          description: Projet introuvable
+
   /async/projects/{projectId}/input-file/{token}:
     get:
       tags:
