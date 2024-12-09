@@ -159,6 +159,21 @@ export async function setOutputFile(id, filename, inputStream, {redis, storage})
     .exec()
 }
 
+export async function deleteOutputFile(id, {redis, storage}) {
+  const objectKey = await redis.get(`project:${id}:output-obj-key`)
+
+  if (objectKey) {
+    storage.deleteFile(objectKey).catch(error => {
+      logger.error(`Unable to delete object ${objectKey} from storage: ${error.message}`)
+    })
+  }
+
+  await redis.pipeline()
+    .hdel(`project:${id}:meta`, 'outputFile')
+    .del(`project:${id}:output-obj-key`)
+    .exec()
+}
+
 export async function getOutputFileDownloadStream(id, {redis, storage}) {
   const objectKey = await redis.get(`project:${id}:output-obj-key`)
   return storage.createDownloadStream(objectKey)
@@ -212,8 +227,10 @@ export async function updateProcessing(id, changes, {redis}) {
   await redis.hset(`project:${id}:processing`, prepareObject({...changes, heartbeat: new Date()}))
 }
 
-export async function resetProcessing(id, {redis}) {
+export async function resetProcessing(id, {redis, storage}) {
   await ensureProjectStatus(id, ['processing', 'waiting'], {redis})
+
+  await deleteOutputFile(id, {redis, storage})
 
   await redis
     .pipeline()
