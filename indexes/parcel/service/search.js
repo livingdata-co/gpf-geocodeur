@@ -41,7 +41,7 @@ export function buildSearchPattern({departmentcode, municipalitycode, oldmunicip
 
   let citycode
 
-  if (districtcode) {
+  if (districtcode && districtcode !== '000') {
     citycode = `${departmentcode}${districtcode}`
   } else if (departmentcode === '75' && municipalitycode === '056') {
     citycode = '75***'
