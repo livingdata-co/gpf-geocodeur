@@ -1,7 +1,7 @@
 # CHANGELOG
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
+## [4.0.10] - 2024-12-10
 
 ## [4.0.9] - 2024-12-04
 
@@ -23,7 +23,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 
 ## [4.0.0] - 2024-10-29
 
-[Unreleased]: https://gitlab.gpf-tech.ign.fr/geoplateforme/geocodage/geocodeur/-/compare/v4.0.9...main
+[4.0.10]: https://gitlab.gpf-tech.ign.fr/geoplateforme/geocodage/geocodeur/-/compare/v4.0.9...v4.0.10
 [4.0.9]: https://gitlab.gpf-tech.ign.fr/geoplateforme/geocodage/geocodeur/-/compare/v4.0.8...v4.0.9
 [4.0.8]: https://gitlab.gpf-tech.ign.fr/geoplateforme/geocodage/geocodeur/-/compare/v4.0.7...v4.0.8
 [4.0.7]: https://gitlab.gpf-tech.ign.fr/geoplateforme/geocodage/geocodeur/-/compare/v4.0.6...v4.0.7
