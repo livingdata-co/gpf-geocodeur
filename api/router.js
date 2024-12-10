@@ -141,6 +141,10 @@ export default async function createRouter(options = {}) {
     res.sendStatus(404)
   })
 
+  router.get('/demo', (req, res) => {
+    res.sendFile(path.join(process.cwd(), 'api', 'index.html'));
+  })
+
   router.use(errorHandler)
 
   return router

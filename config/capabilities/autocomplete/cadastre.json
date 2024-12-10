@@ -1,0 +1,93 @@
+{
+  "id": "Cadastre",
+  "description": "Centroides des parcelles cadastrales",
+  "fields": [
+    {
+      "name": "poiType",
+      "description": "Le type du lieu",
+      "type": "string",
+      "queryable": false,
+      "filter": true
+    },
+    {
+      "name": "classification",
+      "description": "La classification",
+      "type": "integer",
+      "queryable": false,
+      "filter": false
+    },
+    {
+      "name": "fulltext",
+      "description": "La dénomination complète (nom+code postal+nom commune)",
+      "type": "string",
+      "queryable": false,
+      "filter": false
+    },
+    {
+      "name": "city",
+      "description": "Le nom de la commune",
+      "type": "string",
+      "queryable": false,
+      "filter": false
+    },
+    {
+      "name": "zipcode",
+      "description": "Le code postal de la commune",
+      "type": "string",
+      "queryable": false,
+      "filter": false
+    },
+    {
+      "name": "zipcodes",
+      "description": "Les codes postaux des communes",
+      "type": "string",
+      "queryable": false,
+      "filter": true
+    },
+    {
+      "name": "street",
+      "description": "Le nom du POI",
+      "type": "string",
+      "queryable": false,
+      "filter": false
+    },
+    {
+      "name": "kind",
+      "description": "Le type du POI",
+      "type": "string",
+      "queryable": false,
+      "filter": false
+    },
+    {
+      "name": "country",
+      "description": "Le type du localisant proposé",
+      "type": "string",
+      "queryable": false,
+      "filter": false,
+      "values": [
+        "PositionOfInterest"
+      ]
+    },
+    {
+      "name": "metropole",
+      "description": "Le POI se trouve-t-il en France métropolitaine ?",
+      "type": "boolean",
+      "queryable": false,
+      "filter": true
+    },
+    {
+      "name": "importance",
+      "description": "Le poids",
+      "type": "float",
+      "queryable": false,
+      "filter": false
+    },
+    {
+      "name": "names",
+      "description": "Les noms du POI",
+      "type": "string",
+      "queryable": false,
+      "filter": false
+    }
+  ]
+}

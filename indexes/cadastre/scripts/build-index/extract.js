@@ -21,6 +21,10 @@ export function asFeature(poiEntry) {
   else{
     geometry = JSON.parse(poiEntry.truegeometry);
   }
+  // On s'assure que le name commence par LOT 
+  if(!properties.name.startsWith('LOT ')){
+    properties.name = 'LOT ' + properties.name;
+  }
 
   return {
     type: 'Feature',

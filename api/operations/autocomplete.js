@@ -33,7 +33,8 @@ export default async function autocomplete(params, options = {}) {
 
 const AUTOCOMPLETE_INDEXES = {
   StreetAddress: 'address',
-  PositionOfInterest: 'poi'
+  PositionOfInterest: 'poi',
+  Cadastre: 'cadastre'
 }
 
 export function getCenterFromCoordinates(params) {
@@ -123,11 +124,9 @@ export function formatResult(resultFeature) {
       ...result,
       country: 'StreetAddress',
       city: properties.city,
-      oldcity: properties.oldcity || '',
       kind: properties.type,
       zipcode: properties.postcode,
       street: properties.street,
-      metropole: properties.citycode ? properties.citycode.slice(0, 2) < '97' : undefined,
       fulltext: computeFulltext(properties),
       classification: 7
     }
@@ -141,7 +140,22 @@ export function formatResult(resultFeature) {
       city: computePoiCity(properties.city),
       zipcode: properties.postcode?.[0],
       zipcodes: properties.postcode,
-      metropole: properties.citycode ? properties.citycode.slice(0, 2) < '97' : undefined,
+      poiType: properties.category,
+      street: properties.category.includes('administratif') || properties.category.includes('commune') ? computePoiCity(properties.city) : properties.toponym,
+      kind: properties.category[0] || '',
+      fulltext: computeFulltext(properties),
+      classification: properties.classification
+    }
+  }
+
+  if (properties._type === 'cadastre') {
+    return {
+      ...result,
+      country: 'Cadastre',
+      names: properties?.name,
+      city: computePoiCity(properties.city),
+      zipcode: properties.postcode?.[0],
+      zipcodes: properties.postcode,
       poiType: properties.category,
       street: properties.category.includes('administratif') || properties.category.includes('commune') ? computePoiCity(properties.city) : properties.toponym,
       kind: properties.category[0] || '',

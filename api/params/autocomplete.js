@@ -107,8 +107,8 @@ export const AUTOCOMPLETE = {
   type: {
     type: 'string',
     array: true,
-    allowedValues: ['PositionOfInterest', 'StreetAddress'],
-    defaultValue: ['PositionOfInterest', 'StreetAddress'],
+    allowedValues: ['PositionOfInterest', 'StreetAddress', 'Cadastre'],
+    defaultValue: ['PositionOfInterest', 'StreetAddress', 'Cadastre'],
     description: 'le type de localisant recherché, il est possible de spécifier plusieurs types séparés par une virgule',
     example: 'PositionOfInterest'
   },

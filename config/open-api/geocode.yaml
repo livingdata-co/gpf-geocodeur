@@ -1,7 +1,7 @@
-openapi: 3.1.1
+openapi: 3.0.1
 info:
   title: Service de géocodage
-  description: API du service de géocodage 2.0 de l'IGN.
+  description: API du service de géocodage 2.0 de Nouvelle-Calédonie.
   contact:
     email: contact.geoservices@ign.fr
   version: 2.0.0
@@ -14,11 +14,11 @@ tags:
   - name: getCapabilities
     description: Découverte du service
   - name: search
-    description: Géocodage direct (recherche)
+    description: Géocodage direct
   - name: reverse
     description: Géocodage inverse
   - name: batch
-    description: Géocodage par lot synchrone
+    description: Géocodage par lot
   - name: batch-async
     description: Géocodage par lot asynchrone
 paths:
@@ -48,17 +48,12 @@ paths:
       parameters:
         - name: q
           in: query
-          description: |
-            chaîne décrivant la localisation à rechercher
+          description: "chaîne décrivant la localisation à rechercher<br>
 
-            Exemples de requêtes:
-            - /search?q=73 Avenue de Paris Saint-Mandé
-            - /search?q=cimetière Vincennes
-            - /search?q=75056104AE0003
-
-            Note:
-            L'absence de valeur est autorisée sur le type parcel pour réaliser une recherche structurée.
-            Par exemple: /search?q=&index=parcel&departmentcode=75&municipalitycode=056&section=AV
+            Exemples de requêtes:<br>
+            - /search?q=45 route despointes<br>
+            - /search?q=cimetière nouméa<br>
+            - /search?q=lot 45 gouaro"
           required: true
           schema:
             type: string
@@ -72,17 +67,16 @@ paths:
             default: "1"
         - name: index
           in: query
-          description: |
-            index(es) de recherche :
-            - <b>address</b> pour la recherche par adresse
-            - <b>parcel</b> pour la recherche par parcelle cadastrale
-            - <b>poi</b> pour la recherche par lieu et unité administrative
+          description: "index(es) de recherche :<br>
+            - <b>address</b> pour la recherche par adresse<br>
+            - <b>cadastre</b> pour la recherche par centroide de parcelle cadastrale<br>
+            - <b>poi</b> pour la recherche par lieu et unité administrative<br>
 
             Il est possible de spécifier plusieurs indexes séparés par une virgule.
 
             Exemples:
-            - /search?index=parcel
-            - /search?index=poi,address
+            - /search?index=cadastre
+            - /search?index=poi,address"
           required: false
           schema:
             $ref: "#/components/schemas/Index"
@@ -200,10 +194,10 @@ paths:
         - name: searchgeom
           in: query
           required: false
-          description: |
-            Géométrie de recherche. La géométrie est réalisé par intersection géométrique. Si ce paramètre est utilisé seul, c''est que l''on souhaite une recherche sans ordonnancement des résultats (tous les objets intersectant la géométrie de recherche ont un score de 1).
-            Si on veut ordonner les résultats, on peut alors utiliser les paramètres lon et lat pour préciser un point d''ordonnancement.
-            Ce paramètre n''est pas obligatoire pour des raisons de rétro-compatibilité. Si searchgeom n''est pas utilisé alors les paramètres lon et lat doivent l''être et on parle de point de recherche.
+          description:
+            'Géométrie de recherche. La géométrie est réalisé par intersection géométrique. Si ce paramètre est utilisé seul, c''est que l''on souhaite une recherche sans ordonnancement des résultats (tous les objets intersectant la géométrie de recherche ont un score de 1).<br>
+            Si on veut ordonner les résultats, on peut alors utiliser les paramètres lon et lat pour préciser un point d''ordonnancement. <br>
+            Ce paramètre n''est pas obligatoire pour des raisons de rétro-compatibilité. Si searchgeom n''est pas utilisé alors les paramètres lon et lat doivent l''être et on parle de point de recherche. <br>
             Lorsque la recherche est réalisée par intersection géométrique. Les types géométrique autorisés sont :
 
             - Point
@@ -212,21 +206,21 @@ paths:
 
             - Polygon
 
-            - Circle
-            Exemple de géométrie de type Circle :
-            {
-            &nbsp;&nbsp;&nbsp;&nbsp;"type": "Circle",
-            &nbsp;&nbsp;&nbsp;&nbsp;"coordinates": [2.294469, 48.858244],
-            &nbsp;&nbsp;&nbsp;&nbsp;"radius": 100
-            }
-            Pour l''index <b>address</b>, seules les géométries de type ''Polygon'' et ''Circle'' sont autorisées.
-            Le plus grand côté du rectangle d’emprise de la géométrie ne doit pas excéder 1000 mètres.
+            - Circle<br>
+            Exemple de géométrie de type Circle :<br>
+            {<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;"type": "Circle",<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;"coordinates": [2.294469, 48.858244],<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;"radius": 100<br>
+            }<br>
+            Pour l''index <b>address</b>, seules les géométries de type ''Polygon'' et ''Circle'' sont autorisées.<br>
+            Le plus grand côté du rectangle d’emprise de la géométrie ne doit pas excéder 1000 mètres.'
           schema:
             type: string
         - name: lon
           in: query
           description: |
-            Si searchgeom est utilisé, il s'agit de la longitude du point d'ordonnancement. C'est le point à partir duquel est calculée la distance, puis le score permettant l'ordonnancement des résultats.
+            Si searchgeom est utilisé, il s'agit de la longitude du point d'ordonnancement. C'est le point à partir duquel est calculée la distance, puis le score permettant l'ordonnancement des résultats. <br>
             Dans un soucis de rétro-compatibilité, si searchgeom n'est pas utilisé, il s'agit de la longitude du point de recherche. À partir de ce point, un cercle est créé pour effectuer la recherche. En plus, ce sera aussi la longitude du point d'ordonnancement.
           required: false
           schema:
@@ -241,17 +235,16 @@ paths:
             type: number
         - name: index
           in: query
-          description: |
-            index de recherche :
-            - <b>address</b> pour la recherche par adresse
-            - <b>parcel</b> pour la recherche par parcelle cadastrale
-            - <b>poi</b> pour la recherche par lieu et unité administrative
+          description: "index de recherche :<br>
+            - <b>address</b> pour la recherche par adresse<br>
+            - <b>cadastre</b> pour la recherche de centroide de parcelle cadastrale<br>
+            - <b>poi</b> pour la recherche par lieu et unité administrative<br>
 
             Il est possible de spécifier plusieurs indexes séparés par une virgule.
 
             Exemples:
             - /search?index=parcel
-            - /search?index=poi,address
+            - /search?index=poi,address"
           required: false
           schema:
             $ref: "#/components/schemas/Index"
@@ -378,15 +371,12 @@ paths:
                   type: array
                   items:
                     type: string
-                  description: |
-                    Liste des colonnes du fichier CSV à utiliser pour le géocodage. Celles-ci seront concaténées pour former le critère de recherche texte.
-
-                    Si le paramètre n'est pas fourni toutes les colonnes seront concaténées, ce qui est rarement souhaitable.
+                  description: "Liste des colonnes du fichier CSV à utiliser pour le géocodage"
                 indexes:
                   type: array
                   items:
                     type: string
-                  description: "Liste des index à utiliser pour le géocodage (parmi address, poi, parcel)"
+                  description: "Liste des index à utiliser pour le géocodage (parmi address, poi, cadastre)"
                 type:
                   type: string
                   description: "Colonne contenant le type d’objet accepté pour le géocodage de la ligne (address)"
@@ -496,7 +486,7 @@ paths:
                   type: array
                   items:
                     type: string
-                  description: "Liste des index à utiliser pour le géocodage (parmi address, poi, parcel)"
+                  description: "Liste des index à utiliser pour le géocodage (parmi address, poi, cadastre)"
                 type:
                   type: string
                   description: "Colonne contenant le type d’objet accepté pour le géocodage de la ligne (address)"
@@ -573,8 +563,7 @@ paths:
                   message:
                     type: string
                     description: "Message d'erreur"
-                    example: Impossible de lire le fichier CSV
-
+                    example: "Impossible de lire le fichier CSV"
   /async/projects:
     post:
       tags:
@@ -1623,7 +1612,7 @@ components:
       enum:
         - address
         - poi
-        - parcel
+        - cadastre
       default: address
 
     HouseNumberInfos:

@@ -1,0 +1,37 @@
+version : '0.1'
+services:
+  api:
+    build: .
+    command: yarn api:start
+    ports:
+      - "3000:3000"
+    environment:
+      GEOCODE_INDEXES: address,cadastre,poi
+      ADDRESS_INDEX_URL: http://address:3000
+      POI_INDEX_URL: http://poi:3000
+      CAD_INDEX_URL: http://cadastre:3000
+      REDIS_URL: redis://redis:6379
+      STORAGE_FS_DIR: /app/storage/
+      MAGIC_TOKEN: "12345"
+    volumes:
+      - shared-storage:/app/storage
+  redis:
+    image: redis:7-alpine
+  address:
+    build: .
+    command: bash -c "yarn address:download-index && yarn address:start"
+    environment:
+      ADDRESS_ARCHIVE_URL: https://magisdemo.s3.ap-southeast-2.amazonaws.com/dinum-adressage/address.tgz
+  poi:
+    build: .
+    command: bash -c "yarn poi:download-index && yarn poi:start"
+    environment:
+      POI_ARCHIVE_URL: https://magisdemo.s3.ap-southeast-2.amazonaws.com/dinum-adressage/poi.tgz
+  cadastre:
+    build: .
+    command: bash -c "yarn cadastre:download-index && yarn cadastre:start"
+    environment:
+      CAD_ARCHIVE_URL: https://magisdemo.s3.ap-southeast-2.amazonaws.com/dinum-adressage/cadastre.tgz
+
+volumes:
+  shared-storage:

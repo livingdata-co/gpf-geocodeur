@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NC Géocodeur - démo</title>
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+
+    <!-- Load Esri Leaflet from CDN -->
+    <script src="https://unpkg.com/esri-leaflet@3.0.10/dist/esri-leaflet.js"></script>
+    <!-- Load Esri Leaflet Vector from CDN -->
+    <script src="https://unpkg.com/esri-leaflet-vector@4.2.5/dist/esri-leaflet-vector.js" crossorigin=""></script>
+    
+
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+        }
+        #map {
+            flex: 1;
+        }
+        #params {
+            width: 350px;
+            height: 100%;
+            overflow-y: auto;
+        }
+        th, td{
+            padding: 4px !important;
+        }
+    </style>
+</head>
+<body>
+    <form class="d-flex h-100" id="form">
+        <!-- Map container -->
+        <div id="map"></div>
+        <div id="result-list" class="list-group position-relative overflow-auto" style="max-height: 200px;"></div>
+
+        <!-- Parameters form -->
+        <div id="params" class="p-3 bg-light">
+            <div class="mb-3">
+                <label for="text" class="form-label">Rechercher une adresse :</label>
+                <input type="text" id="text" class="form-control" placeholder="Adresse, Cadastre, POI" list="search-data" />
+                <datalist id="search-data"></datalist>
+            </div>
+            <fieldset class="mb-3">
+                <legend>Types de recherche :</legend>
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" name="types" value="address" checked>
+                    <label class="form-check-label">Adresses (address)</label>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" name="types" value="poi">
+                    <label class="form-check-label">POI</label>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" name="types" value="cadastre">
+                    <label class="form-check-label">Cadastre (centroide des parcelles)</label>
+                </div>
+            </fieldset>
+            <div class="form-check mb-3">
+                <input type="checkbox" class="form-check-input" id="lonlat" name="lonlat" value="lonlat">
+                <label class="form-check-label">Favoriser les résultats proches du centre</label>
+            </div>
+            <input type="submit" class="btn btn-primary w-100 mb-2" value="Rechercher" />
+             <!-- Error Alert -->
+             <div id="error-alert" class="alert alert-danger d-none" role="alert"></div>
+            <hr />
+            <button id="reversebtn" class="btn btn-secondary w-100 mb-3" >Recherche inverse</button>
+            <p>NB : la recherche inverse est faite en respectant les types et sur le centre de la carte</p>
+            <span id="center-coordinates" class="text-muted">Centre de la carte : Chargement...</span>
+            <hr />
+            <div class="mb-3">
+                <label for="api" class="form-label">API URL</label>
+                <input type="url" id="api" class="form-control" placeholder="API URL" value="http://localhost:3000/" />
+            </div>
+            <div class="mb-3">
+                <label for="limit" class="form-label">Nombre max de résultats</label>
+                <input type="number" id="limit" class="form-control" placeholder="Nb max de résultats" min="1" max="20" step="1" />
+            </div>
+            <hr />
+            <a href="#" id="openapi" class="btn btn-info w-100 text-white" target="_blank">Documentation OpenAPI</a>
+        </div>
+    </form>
+
+    <!-- App JS -->
+    <script>
+        let api_url = document.getElementById('api').value;
+
+        const lonlat_checkbox = document.getElementById("lonlat");
+        const limit_input = document.getElementById("limit");
+        const errorAlert = document.getElementById('error-alert');
+        const form = document.getElementById('form');
+        const text_input = document.getElementById('text');
+        const datalist = document.getElementById('search-data');
+        
+        const showError = (message) => {
+            errorAlert.textContent = message;
+            errorAlert.classList.remove('d-none');
+        };
+
+        const ALL_INDEXES = ["address", "poi", "cadastre"];
+        const AUTOCOMPLETE_INDEXES = {
+            StreetAddress: 'address',
+            PositionOfInterest: 'poi',
+            Cadastre: 'cadastre'
+        }
+
+        const getAutocompleteTypes = () => {
+            const indexes = getTypes();
+            let types = [];
+            for(let t in AUTOCOMPLETE_INDEXES){
+                const idx = AUTOCOMPLETE_INDEXES[t];
+                if(indexes.indexOf(idx) != -1){
+                    types.push(t);
+                }
+            }
+            return types;
+        }
+
+        const updateCenterCoordinates = () => {
+            const center = map.getCenter();
+            document.getElementById('center-coordinates').innerText = `Centre de la carte : Lat: ${center.lat.toFixed(5)}, Lng: ${center.lng.toFixed(5)}`;
+        };
+
+        // Initialize Leaflet map
+        const map = L.map('map', { center: [-22.25661, 166.45386], zoom: 13 });
+        L.esri.Vector.vectorTileLayer("https://tiles.arcgis.com/tiles/TZcrgU6CIbqWt9Qv/arcgis/rest/services/fond_carto_web_fl/VectorTileServer").addTo(map);
+        /*L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);*/
+        map.on('moveend', updateCenterCoordinates);
+
+
+        let geojsonLayer;
+        const debounceDelay = 300;
+        let debounceTimer;
+
+        const hideError = () => {
+            const errorAlert = document.getElementById('error-alert');
+            errorAlert.classList.add('d-none');
+        };
+
+        const _api = async (endpoint, params) => {
+            let url = api_url + endpoint;
+            if (params) url += "?" + new URLSearchParams(params);
+            const response = await fetch(url);
+            if (!response.ok) throw new Error('API Error');
+            return response.json();
+        };
+
+        const showResults = (geojsonData) => {
+            if (geojsonLayer) map.removeLayer(geojsonLayer);
+            if (!geojsonData || geojsonData.features.length === 0) {
+                showError("Aucun résultat trouvé.");
+                return;
+            }
+            hideError();
+            geojsonLayer = L.geoJSON(geojsonData, {
+                onEachFeature: (feature, layer) => {
+                    let popupContent = `
+                        <div class="card">
+                            <div class="card-header bg-primary text-white">
+                                Informations
+                            </div>
+                            <div class="card-body">
+                                <table class="table table-striped table-bordered">
+                                    <tbody>
+                                        ${Object.entries(feature.properties)
+                                            .map(([key, value]) => `
+                                                <tr>
+                                                    <th>${key}</th>
+                                                    <td>${value}</td>
+                                                </tr>
+                                            `)
+                                            .join('')}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    `;
+                    layer.bindPopup(popupContent);
+                }
+            }).addTo(map);
+
+            if(geojsonData.features.length > 1) {   
+                console.log("bounds !", geojsonLayer.getBounds());
+                map.fitBounds(geojsonLayer.getBounds());
+            }
+            else if(geojsonData.features.length == 1){
+                //map.setZoomAround(L.point(geojsonData.features[0].geometry.coordinates));
+                const coords = geojsonData.features[0].geometry.coordinates;
+                map.panTo({lat: coords[1], lng:coords[0]});
+            }
+        };
+
+        const launchSearch = async () => {
+            const text = document.getElementById('text').value.trim().split("---")[0].trim();
+            if (!text) return;
+            try {
+                const center = map.getCenter();
+                const data = await _api("search", {
+                    q: text,
+                    index: getTypes().join(","),
+                    ...(lonlat_checkbox.checked && { lon: center.lng, lat: center.lat }),
+                    limit: limit_input.value || 5
+                });
+                showResults(data);
+            } catch (error) {
+                showError("Erreur lors de la recherche : " + error.message);
+                console.warn(error)
+            }
+        };
+        
+        
+        form.addEventListener("submit", evt => {
+            evt.preventDefault();
+            launchSearch();
+            return false;
+        });
+
+
+        const setApi = (url) => {
+            const before = api_url;
+            if(!url.endsWith("/")){
+                url += "/";
+            }
+            api_url = url;
+            _api("getCapabilities").then(res => {
+                hideError();
+                document.getElementById('api').value = url;
+            }).catch(error => {
+                showError("L'api n'est pas accessible : " + api_url);
+                console.warn(error)
+                api_url = before;
+            })
+        }
+
+
+        document.getElementById('api').addEventListener("change", evt => {
+            setApi(document.getElementById('api').value)
+        })
+        document.getElementById('openapi').addEventListener("click", evt => {
+            document.getElementById('openapi').href = api_url + "openapi";
+        });
+        document.getElementById('reversebtn').addEventListener("click", evt => {
+            evt.preventDefault();
+            launchReverse();
+            return false;
+        });
+        
+        if(window.location.href.indexOf("/demo") != -1){
+            setApi(window.location.href.split("demo")[0]);
+        }
+
+        const launchReverse = async () => {
+            const center = map.getCenter();
+            try {
+                const data = await _api("reverse", {
+                    lon: center.lng,
+                    lat: center.lat,
+                    index: getTypes().join(","),
+                    limit: limit_input.value || 5
+                });
+                showResults(data);
+            } catch (error) {
+                showError("Erreur lors de la recherche inverse : " + error.message);
+                console.warn(error)
+            }
+        };
+
+        const getTypes = () => {
+            return Array.from(document.querySelectorAll("input[name='types']:checked")).map(el => el.value);
+        };
+
+        const autocomplete = async(text, types, options) => {
+            let params = {
+                text,
+                //index: types.join(",")
+                type: types.join(",") || "StreetAddress"
+            }
+            if(!options){
+                options = {};
+            }
+            return _api("completion", { ...options, ...params });
+        }
+
+        const launchAutocomplete = async (evt) => {
+            // Si entrée on lance la recherche
+            if(evt.keyCode === 13){
+                launchSearch();
+                return;
+            }
+
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(async () => {
+                const value = text_input.value.trim();
+                if (value.length < 3) return;
+
+                let options = {};
+                if(lonlat_checkbox.checked){
+                    const center = map.getCenter();
+                    options.lon = center.lng;
+                    options.lat = center.lat;
+                }
+                if(limit_input.value){
+                    options.limit = parseInt(limit_input.value);
+                }
+
+                try {
+                    const data = await autocomplete(value, getAutocompleteTypes(), options);
+                    // const data = await autocomplete(value, getTypes(), options);
+                    const results = data.results;
+                    console.log("Autocomplete propositions :", results);
+                    
+                    // Loop through the API response and add options to the datalist
+                    datalist.innerHTML = '';
+                    results.forEach(res => {
+                        const option = document.createElement('option');
+                        option.value = res.fulltext + " --- " + value;  // Use the common name of the country
+                        datalist.appendChild(option);
+                    });
+                    hideError();
+                } catch (error) {
+                    showError("Erreur lors de l'autocomplétion : " + error.message);
+                    console.warn(error);
+                }
+            }, debounceDelay);
+        }
+
+        text_input.addEventListener("input", launchAutocomplete);
+    </script>
+</body>
+</html>

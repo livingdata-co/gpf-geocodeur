@@ -50,10 +50,10 @@ export const PARAMS = {
     type: 'string',
     array: true,
     required: false,
-    allowedValues: ['address', 'poi', 'parcel'],
+    allowedValues: ['address', 'poi', 'cadastre'],
     defaultValue: ['address'],
     description: 'index de recherche',
-    example: 'address,parcel,poi'
+    example: 'address,poi,cadastre'
   },
 
   searchgeom: {

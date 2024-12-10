@@ -2,7 +2,7 @@ openapi: "3.0.0"
 info:
   version: 2.0.1
   title: Autocompletion
-  description: "Description de l'API du service d'autocompletion de l'IGN"
+  description: "Description de l'API du service d'autocompletion de Nouvelle-Calédonie"
   contact:
     email: contact.geoservices@ign.fr
   license:
@@ -41,14 +41,14 @@ paths:
           required: true
           schema:
             type: string
-          example: "2, avenue pasteur saint m"
+          example: "45, route despo"
         - name: terr
           in: query
           description: Une limitation de la zone de recherche de localisants. Une liste peut être fournie en séparant les valeurs par des virgules.
           required: false
           schema:
             type: string
-          example: "DOMTOM,METROPOLE,75,75013"
+          example: "98818"
         - name: poiType
           in: query
           description: |
@@ -76,9 +76,11 @@ paths:
               [
                 "PositionOfInterest",
                 "StreetAddress",
+                "Cadastre",
                 "PositionOfInterest,StreetAddress",
+                "PositionOfInterest,StreetAddress,Cadastre"
               ]
-            default: "PositionOfInterest,StreetAddress"
+            default: "PositionOfInterest,StreetAddress,Cadastre"
           example: ""
         - name: maximumResponses
           in: query
@@ -254,6 +256,7 @@ components:
             oneOf:
               - $ref: "#/components/schemas/Address"
               - $ref: "#/components/schemas/Poi"
+              - $ref: "#/components/schemas/Cadastre"
     Address:
       type: object
       required:
@@ -294,6 +297,57 @@ components:
         metropole:
           type: boolean
     Poi:
+      type: object
+      required:
+        - country
+        - city
+        - x
+        - y
+        - zipcode
+        - zipcodes
+        - poiType
+        - street
+        - classification
+        - kind
+        - fulltext
+        - metropole
+      properties:
+        country:
+          type: string
+        city:
+          type: string
+        x:
+          type: number
+          format: float
+        y:
+          type: number
+          format: float
+        zipcode:
+          type: string
+          minLength: 5
+          maxLength: 5
+        zipcodes:
+          type: array
+          items:
+            type: string
+            minLength: 5
+            maxLength: 5
+        poiType:
+          type: array
+          items:
+            type: string
+        street:
+          type: string
+        classification:
+          type: integer
+          format: int32
+        kind:
+          type: string
+        fulltext:
+          type: string
+        metropole:
+          type: boolean
+    Cadastre:
       type: object
       required:
         - country

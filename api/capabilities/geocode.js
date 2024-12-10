@@ -18,13 +18,14 @@ export default async function computeGeocodeCapabilities() {
   const addressCapabilities = await readJson('./config/capabilities/geocode/address.json')
   const parcelCapabilities = await readJson('./config/capabilities/geocode/parcel.json')
   const poiCapabilities = await readJson('./config/capabilities/geocode/poi.json')
+  const cadastreCapabilities = await readJson('./config/capabilities/geocode/cadastre.json')
   const categories = await getCategories()
 
   poiCapabilities.fields[0].values = categories
 
   capabilities.operations[0].parameters = searchParameters
   capabilities.operations[1].parameters = reverseParameters
-  capabilities.indexes = [addressCapabilities, poiCapabilities, parcelCapabilities]
+  capabilities.indexes = [addressCapabilities, poiCapabilities, /*parcelCapabilities,*/ cadastreCapabilities]
 
   _capabilities = capabilities
   _capabilitiesDate = Date.now()

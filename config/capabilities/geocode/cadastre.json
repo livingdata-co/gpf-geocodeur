@@ -1,0 +1,55 @@
+{
+  "id": "cadastre",
+  "description": "Centroïdes des parcelles cadastrales",
+  "fields": [
+    {
+      "name": "category",
+      "description": "le type du lieu",
+      "type": "string",
+      "queryable": true,
+      "filter": true
+    },
+    {
+      "name": "toponyme",
+      "description": "le toponyme",
+      "type": "string",
+      "queryable": true,
+      "filter": false
+    },
+    {
+      "name": "postcode",
+      "description": "le code postal",
+      "type": "string",
+      "queryable": true,
+      "filter": true
+    },
+    {
+      "name": "citycode",
+      "description": "le code insee",
+      "type": "string",
+      "queryable": true,
+      "filter": true
+    },
+    {
+      "name": "city",
+      "description": "le nom de commune",
+      "type": "string",
+      "queryable": false,
+      "filter": false
+    },
+    {
+      "name": "extrafields",
+      "description": "champs supplémentaires formatés au format JSON. Contient notamment la valeur 'cleabs' qui est l’identifiant unique dans la BD TOPO.",
+      "type": "string",
+      "queryable": false,
+      "filter": false
+    },
+    {
+      "name": "truegeometry",
+      "description": "la géometrie réelle",
+      "type": "string",
+      "queryable": false,
+      "filter": false
+    }
+  ]
+}
