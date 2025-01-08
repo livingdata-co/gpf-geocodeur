@@ -6,7 +6,6 @@ test('createEmptyResultItem - search operation - address index', t => {
   const indexes = ['address']
   const operation = 'search'
   const expected = {
-    result_index: '',
     latitude: '',
     longitude: '',
     result_label: '',
@@ -24,9 +23,6 @@ test('createEmptyResultItem - search operation - address index', t => {
     result_oldcitycode: '',
     result_oldcity: '',
     result_district: '',
-    result_importance: '',
-    result_x: '',
-    result_y: '',
     result_status: ''
   }
   t.deepEqual(createEmptyResultItem(indexes, operation), expected)
@@ -58,7 +54,6 @@ test('createEmptyResultItem - reverse operation - address index', t => {
   const indexes = ['address']
   const operation = 'reverse'
   const expected = {
-    result_index: '',
     result_latitude: '',
     result_longitude: '',
     result_distance: '',
@@ -75,9 +70,6 @@ test('createEmptyResultItem - reverse operation - address index', t => {
     result_oldcitycode: '',
     result_oldcity: '',
     result_district: '',
-    result_importance: '',
-    result_x: '',
-    result_y: '',
     result_status: ''
   }
   t.deepEqual(createEmptyResultItem(indexes, operation), expected)
@@ -96,6 +88,7 @@ test('createEmptyResultItem - reverse operation - poi index', t => {
     result_city: '',
     result_classification: '',
     result_territory: '',
+    result_distance: '',
     result_score: '',
     result_score_next: '',
     result_latitude: '',
@@ -260,7 +253,7 @@ test('createEmptyResultItem - search operation - address & poi & parcel indexes'
 
 test('convertResultItem - address index', t => {
   const resultItem = {
-    status: 'OK',
+    status: 'ok',
     index: 'address',
     result: {
       lat: '40.7128',
@@ -277,7 +270,7 @@ test('convertResultItem - address index', t => {
     result_label: 'New York',
     result_type: 'city',
     result_id: '123',
-    result_status: 'OK',
+    result_status: 'ok',
     latitude: '40.7128',
     longitude: '-74.0060'
   }
@@ -286,7 +279,7 @@ test('convertResultItem - address index', t => {
 
 test('convertResultItem - poi index', t => {
   const resultItem = {
-    status: 'OK',
+    status: 'ok',
     index: 'poi',
     result: {
       lat: '40.7128',
@@ -303,7 +296,7 @@ test('convertResultItem - poi index', t => {
     result_label: 'New York',
     result_type: 'city',
     result_id: '123',
-    result_status: 'OK',
+    result_status: 'ok',
     latitude: '40.7128',
     longitude: '-74.0060'
   }
@@ -313,7 +306,7 @@ test('convertResultItem - poi index', t => {
 test('expandItemWithResult - with resultColumns', t => {
   const item = {someInputKey: 'someInputValue'}
   const resultItem = {
-    status: 'OK',
+    status: 'ok',
     index: 'address',
     result: {
       lat: '40.7128',
@@ -338,7 +331,7 @@ test('expandItemWithResult - with resultColumns', t => {
 test('expandItemWithResult - with resultColumns - index poi', t => {
   const item = {someInputKey: 'someInputValue'}
   const resultItem = {
-    status: 'OK',
+    status: 'ok',
     index: 'poi',
     result: {
       lat: '40.7128',
@@ -363,7 +356,7 @@ test('expandItemWithResult - with resultColumns - index poi', t => {
 test('expandItemWithResult - with resultColumns - index parcel', t => {
   const item = {someInputKey: 'someInputValue'}
   const resultItem = {
-    status: 'OK',
+    status: 'ok',
     index: 'parcel',
     result: {
       lat: '40.7128',
@@ -388,8 +381,7 @@ test('expandItemWithResult - with resultColumns - index parcel', t => {
 test('expandItemWithResult - without resultColumns', t => {
   const item = {someKey: 'someValue'}
   const resultItem = {
-    status: 'OK',
-    index: 'address',
+    status: 'ok',
     result: {
       lat: '40.7128',
       lon: '-74.0060',
@@ -401,7 +393,24 @@ test('expandItemWithResult - without resultColumns', t => {
   const emptyResultItem = createEmptyResultItem(['address'], 'search')
   const expected = {
     someKey: 'someValue',
-    ...convertResultItem(resultItem, emptyResultItem)
+    latitude: '40.7128',
+    longitude: '-74.0060',
+    result_label: 'New York',
+    result_type: 'city',
+    result_id: '123',
+    result_status: 'ok',
+    result_city: '',
+    result_citycode: '',
+    result_context: '',
+    result_district: '',
+    result_housenumber: '',
+    result_name: '',
+    result_oldcity: '',
+    result_oldcitycode: '',
+    result_postcode: '',
+    result_street: '',
+    result_score: '',
+    result_score_next: ''
   }
   t.deepEqual(expandItemWithResult(item, resultItem, emptyResultItem), expected)
 })
