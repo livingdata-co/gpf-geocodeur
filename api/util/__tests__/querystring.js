@@ -1,5 +1,5 @@
 import test from 'ava'
-import {normalizeQuery, ensureSingleValue} from '../querystring.js'
+import {normalizeQuery, ensureSingleValue, isArrayOfStrings} from '../querystring.js'
 
 test('ensureSingleValue', t => {
   t.is(ensureSingleValue(['foo', 'bar', 'baz']), 'baz')
@@ -9,6 +9,7 @@ test('ensureSingleValue', t => {
 
 test('normalizeQuery', t => {
   t.deepEqual(normalizeQuery({
+    mixed: {foo: 'bar'},
     FOO: ['a', 'b', 'c'],
     Bar: '1',
     ' plop ': ['X', 'Y']
@@ -17,4 +18,10 @@ test('normalizeQuery', t => {
     Bar: '1',
     plop: 'Y'
   })
+})
+
+test('isArrayOfStrings', t => {
+  t.true(isArrayOfStrings(['foo', 'bar', 'baz']))
+  t.false(isArrayOfStrings(['foo', 'bar', 1]))
+  t.false(isArrayOfStrings('foo'))
 })
