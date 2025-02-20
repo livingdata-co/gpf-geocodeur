@@ -61,7 +61,7 @@ export function formatErrorEmail(data) {
   const {error} = data
 
   return {
-    subject: 'Envoi de votre jeton d’authentification',
+    subject: 'Votre géocodage a échoué',
     html: bodyTemplate({error})
   }
 }
