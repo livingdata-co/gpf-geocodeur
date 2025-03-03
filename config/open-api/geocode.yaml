@@ -59,7 +59,7 @@ paths:
             Note:
             L'absence de valeur est autorisée sur le type parcel pour réaliser une recherche structurée.
             Par exemple: /search?q=&index=parcel&departmentcode=75&municipalitycode=056&section=AV
-          required: true
+          required: false
           schema:
             type: string
         - name: autocomplete
