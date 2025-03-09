@@ -88,7 +88,10 @@ paths:
             $ref: "#/components/schemas/Index"
         - name: limit
           in: query
-          description: nombre maximum de candidats retournés (entre 1 et 20)
+          description: |
+            Nombre maximum de résultats retournés.
+            La valeur ne peut pas dépasser 50.
+            Dans le cas où returntruegeometry est activé, la valeur est automatiquement ramenée à 20.
           schema:
             type: integer
             default: 10
@@ -257,7 +260,10 @@ paths:
             $ref: "#/components/schemas/Index"
         - name: limit
           in: query
-          description: "nombre maximum de candidats retournés (entre 1 et 20)"
+          description: |
+            Nombre maximum de résultats retournés.
+            La valeur ne peut pas dépasser 50.
+            Dans le cas où returntruegeometry est activé, la valeur est automatiquement ramenée à 20.
           schema:
             type: integer
             default: 10

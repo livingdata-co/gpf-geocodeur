@@ -104,7 +104,7 @@ test('search / invalid query parameters', async t => {
 
   t.is(response.status, 400)
   t.is(response.body.message, 'Failed parsing query')
-  t.deepEqual(response.body.detail, ['limit: must be an integer between 1 and 20'])
+  t.deepEqual(response.body.detail, ['limit: must be an integer between 1 and 50'])
 })
 
 test('search / server error', async t => {

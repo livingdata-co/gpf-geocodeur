@@ -82,8 +82,8 @@ export const PARAMS = {
     type: 'integer',
     defaultValue: 10,
     validate(v) {
-      if (v < 1 || v > 20) {
-        throw new Error('must be an integer between 1 and 20')
+      if (v < 1 || v > 50) {
+        throw new Error('must be an integer between 1 and 50')
       }
     },
     description: 'nombre maximum de candidats retournés',
@@ -327,6 +327,10 @@ export function extractSearchParams(query) {
     }
   }
 
+  if (parsedParams.returntruegeometry) {
+    parsedParams.limit = Math.min(parsedParams.limit, 20)
+  }
+
   return parsedParams
 }
 
@@ -366,6 +370,10 @@ export function extractReverseParams(query) {
     }
 
     parsedParams.citycode = matchingCities.map(c => c.code)
+  }
+
+  if (parsedParams.returntruegeometry) {
+    parsedParams.limit = Math.min(parsedParams.limit, 20)
   }
 
   return parsedParams

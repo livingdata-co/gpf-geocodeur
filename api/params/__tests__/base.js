@@ -140,7 +140,7 @@ test('extractParam / limit', t => {
   t.is(validateLimit(''), 10)
 
   for (const limit of ['0', '-1', '101']) {
-    t.throws(() => validateLimit(limit), {message: 'limit: must be an integer between 1 and 20'})
+    t.throws(() => validateLimit(limit), {message: 'limit: must be an integer between 1 and 50'})
   }
 
   for (const limit of ['0.5', 'foo']) {
