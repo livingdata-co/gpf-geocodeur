@@ -45,6 +45,7 @@ const STREET_FIELDS = [
   'context',
   'importance',
   'id',
+  'banId',
   'lon',
   'lat',
   'x',
@@ -60,6 +61,7 @@ const MUNICIPALITY_FIELDS = [
   'context',
   'importance',
   'id',
+  'banId',
   'lon',
   'lat',
   'x',
@@ -80,6 +82,7 @@ const HN_STREET_FIELDS = [
 const HN_FIELDS = [
   'housenumber',
   'id',
+  'banId',
   'lon',
   'lat',
   'x',
