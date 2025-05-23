@@ -11,7 +11,6 @@ L'utilisation du géocodeur sous Windows n'a pas été testée. L'utilisation de
 Pour faire fonctionner le géocodeur vous devez disposer des logiciels suivants installés :
 
 - [Node.js](https://nodejs.org) LTS 20.9+
-- [Yarn Classic](https://classic.yarnpkg.com)
 - [Python](https://www.python.org) 3.10
 - [Redis](https://redis.io) 7.x
 
