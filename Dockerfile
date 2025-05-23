@@ -11,7 +11,7 @@ COPY requirements.txt ./
 RUN pip install --user -r requirements.txt
 
 # Stage 2
-FROM --platform=linux/amd64 redis:7.0 AS redis
+FROM --platform=linux/amd64 redis:7 AS redis
 
 # Stage 3
 FROM --platform=linux/amd64 9555v10x.gra7.container-registry.ovh.net/gpf-dockerhub/nikolaik/python-nodejs:python3.10-nodejs20-slim
@@ -27,15 +27,16 @@ RUN apt-get update && \
     chmod +x /usr/bin/yq && \
     rm -rf /var/lib/apt/lists/*
 
+COPY package.json package-lock.json ./
 RUN npm ci --omit dev
 
 COPY . .
 
 ENV PATH=/root/.local/bin:$PATH
-ENV NODE_ENV production
-ENV TMP_PATH /tmp
-ENV DATA_PATH /data
-ENV PORT 3000
+ENV NODE_ENV=production
+ENV TMP_PATH=/tmp
+ENV DATA_PATH=/data
+ENV PORT=3000
 
 EXPOSE 3000
 
