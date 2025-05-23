@@ -7,7 +7,7 @@ Le code source de ce dépôt suit les conventions [XO](https://github.com/xojs/x
 Pour tester la conformité du code, exécutez la commande suivante :
 
 ```bash
-yarn lint
+npm run lint
 ```
 
 ## Tests
@@ -17,11 +17,11 @@ Les tests unitaires sont localisés au plus près du code, dans des répertoires
 Pour lancer les tests unitaires, exécutez la commande suivante :
 
 ```bash
-yarn test
+npm run test
 ```
 
 Pour lancer les tests et produire des rapports de couverture de code au format LCOV et HTML, exécutez la commande suivante :
 
 ```bash
-yarn test-lcov
+npm run test-lcov
 ```

@@ -58,7 +58,7 @@ pip install -r requirements.txt
 ## Installer les dépendances Node.js
 
 ```bash
-yarn install
+npm install
 ```
 
 Vous pouvez désormais passer à l'étape suivante : [Configuration](configuration.md).

@@ -8,21 +8,21 @@ Avant de lancer le service, veuillez vérifier que :
 Sur 5 terminaux différents, lancez successivement les 3 services d'index thématiques et le service exposant l'API publique :
 
 ```bash
-yarn address:start
+npm run address:start
 ```
 
 ```bash
-yarn parcel:start
+npm run parcel:start
 ```
 
 ```bash
-yarn poi:start
+npm run poi:start
 ```
 
 ```bash
-yarn api:start
+npm run api:start
 ```
 
 ```bash
-yarn worker:start
+npm run worker:start
 ```
