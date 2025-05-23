@@ -13,8 +13,7 @@ test.before(() => {
       'columns.csv': 'column1,column2\nvalue1,value2,value3',
       'delimiter.csv': 'column1\nvalue1',
       'too-many-rows.csv': 'column1,column2\nvalue1,value2\nvalue1,value2\nvalue1,value2\nvalue1,value2'
-    },
-    node_modules: mockFs.load('node_modules') // eslint-disable-line camelcase
+    }
   })
 })
 

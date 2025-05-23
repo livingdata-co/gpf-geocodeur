@@ -1,7 +1,7 @@
 /* eslint camelcase: off */
 import path from 'node:path'
 import test from 'ava'
-import mock from 'mock-fs'
+import mockFs from 'mock-fs'
 import {asFeature, extractFeatures} from '../extract.js'
 
 test.before(() => {
@@ -20,14 +20,14 @@ test.before(() => {
     }
   ]
 
-  mock({
+  mockFs({
     'poi.ndjson': entries.map(e => JSON.stringify(e)).join('\n'),
-    node_modules: mock.load(path.resolve('./node_modules')) // Fix for lazy evaluation of async_iterator.js in readable-stream
+    'node_modules/readable-stream': mockFs.load(path.resolve('node_modules/readable-stream')) // Required because of async_iterator.js lazy loading
   })
 })
 
 test.after(() => {
-  mock.restore()
+  mockFs.restore()
 })
 
 test('asFeature', t => {
