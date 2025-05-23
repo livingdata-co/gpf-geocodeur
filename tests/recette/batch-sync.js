@@ -2,7 +2,7 @@
 import 'dotenv/config.js'
 
 import process from 'node:process'
-import {Blob} from 'node:buffer' // eslint-disable-line n/no-unsupported-features/node-builtins
+import {Blob} from 'node:buffer'
 
 import test from 'ava'
 import Papa from 'papaparse'

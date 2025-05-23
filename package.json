@@ -116,7 +116,8 @@
       "unicorn/prefer-event-target": "off",
       "import/no-unassigned-import": "off",
       "import/order": "off",
-      "object-curly-newline": "off"
+      "object-curly-newline": "off",
+      "promise/prefer-await-to-then": "off"
     }
   },
   "ava": {
