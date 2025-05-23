@@ -47,7 +47,7 @@
     "date-fns": "^4.1.0",
     "date-time": "^4.0.0",
     "dotenv": "^16.5.0",
-    "execa": "^8.0.1",
+    "execa": "^9.5.3",
     "express": "^4.21.2",
     "fast-glob": "^3.3.2",
     "flatbush": "^4.4.0",
