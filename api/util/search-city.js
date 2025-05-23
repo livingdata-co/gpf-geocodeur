@@ -1,6 +1,7 @@
 import {deburr, chain} from 'lodash-es'
 import Flexsearch from 'flexsearch'
-import computeDistance from 'natural/lib/natural/distance/jaro-winkler_distance.js'
+
+import computeDistance from '../../vendor/jaro-winkler-distance.cjs'
 import {getCommunes} from '../../lib/cog.js'
 
 const SEARCH_CITY_MIN_SCORE = 0.85
