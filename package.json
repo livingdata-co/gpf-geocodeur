@@ -48,7 +48,7 @@
     "date-time": "^4.0.0",
     "dotenv": "^16.5.0",
     "execa": "^8.0.1",
-    "express": "^4.19.2",
+    "express": "^4.21.2",
     "fast-glob": "^3.3.2",
     "flatbush": "^4.4.0",
     "flexsearch": "^0.7.31",
