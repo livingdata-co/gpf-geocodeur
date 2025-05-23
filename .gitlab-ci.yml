@@ -20,18 +20,16 @@ cache:
 
 lint:
   before_script:
-    - corepack disable && npm install -g yarn
-    - yarn --frozen-lockfile
+    - npm ci
   script:
-    - yarn lint
+    - npm run lint
 
 test:
   before_script:
     - apt-get update && apt-get install -y p7zip-full
-    - corepack disable && npm install -g yarn
-    - yarn --frozen-lockfile
+    - npm ci
   script:
-    - yarn test-lcov
+    - npm run test-lcov
   artifacts:
     paths:
       - coverage/lcov.info
@@ -39,18 +37,16 @@ test:
 
 test:recette:
   before_script:
-    - corepack disable && npm install -g yarn
-    - yarn --frozen-lockfile
+    - npm ci
   script:
-    - yarn test-recette
+    - npm run test-recette
   when: manual
 
 test:recette-batch:
   before_script:
-    - corepack disable && npm install -g yarn
-    - yarn --frozen-lockfile
+    - npm ci
   script:
-    - yarn test-recette-batch
+    - npm run test-recette-batch
   when: manual
 
 pages:

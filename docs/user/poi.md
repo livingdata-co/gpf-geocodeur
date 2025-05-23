@@ -2,7 +2,7 @@
 
 Ce dépôt contient un script permettant de générer des POI prêts à indexer à partir de la BD TOPO.
 
-Ce script est exécuté via la commande `yarn poi:build-from-bdtopo` tel qu'indiqué dans la [procédure de production des index thématiques](indexation.md).
+Ce script est exécuté via la commande `npm run poi:build-from-bdtopo` tel qu'indiqué dans la [procédure de production des index thématiques](indexation.md).
 
 Les règles d'extraction des POI sont définies dans le fichier [mapping.js](/indexes/poi/scripts/build-from-bdtopo/mapping.js).
 

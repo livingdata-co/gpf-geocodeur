@@ -29,7 +29,7 @@ BAN_ADDOK_URL=https://adresse.data.gouv.fr/data/ban/adresses/latest/addok/adress
 La production de l'index se fait à l'aide de la commande suivante :
 
 ```bash
-yarn address:build-index
+npm run address:build-index
 ```
 
 Sur une machine moyenne satisfaisant aux exigences techniques présentées sur la page [Architecture](../architecture.md) l'opération dure environ **30 minutes** et génère des fichiers pesant environ **9 Go**.
@@ -47,7 +47,7 @@ PARCELLAIRE_EXPRESS_URL=https://gpf-ign-data.s3.sbg.io.cloud.ovh.net/parcellaire
 La production de l'index se fait à l'aide de la commande suivante :
 
 ```bash
-yarn parcel:build-index
+npm run parcel:build-index
 ```
 
 Sur une machine moyenne satisfaisant aux exigences techniques présentées sur la page [Architecture](../architecture.md) l'opération dure environ **7 heures** et génère des fichiers pesant environ **40 Go**.
@@ -68,8 +68,8 @@ BDTOPO_URL=https://gpf-ign-data.s3.sbg.io.cloud.ovh.net/bdtopo/BDTOPO_3-3_TOUSTH
 La production de l'index se fait à l'aide des commandes suivantes :
 
 ```bash
-yarn poi:build-from-bdtopo # environ 2 heures
-yarn poi:build-index # environ 20 minutes
+npm run poi:build-from-bdtopo # environ 2 heures
+npm run poi:build-index # environ 20 minutes
 ```
 
 Sur une machine moyenne satisfaisant aux exigences techniques présentées sur la page [Architecture](../architecture.md) l'opération dure environ **3 heures** et génère des fichiers pesant environ **10 Go**.
@@ -84,9 +84,9 @@ Les objets créés par le processus de publication ont la forme suivante : `{pre
 Exemple : `sample-57-index-address-2023-07-25-22-11-29.tar.gz`
 
 ```bash
-yarn address:publish-index
-yarn poi:publish-index
-yarn parcel:publish-index
+npm run address:publish-index
+npm run poi:publish-index
+npm run parcel:publish-index
 ```
 
 L'opération prend quelques minutes en raison de la compression `gzip` et du temps de transfert (variable selon l'infrastructure S3 utilisée et votre localisation).
@@ -100,7 +100,7 @@ Ces informations sont communiquées par le fournisseur ou en cohérence avec l'�
 Les commandes à utiliser ensuite sont les suivantes (pour chaque thématique) :
 
 ```bash
-yarn address:download-index
-yarn poi:download-index
-yarn parcel:download-index
+npm run address:download-index
+npm run poi:download-index
+npm run parcel:download-index
 ```
