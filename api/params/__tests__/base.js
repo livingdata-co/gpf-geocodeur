@@ -24,7 +24,7 @@ test('validateSearchgeom', t => {
 
   t.throws(() => validateSearchgeom({type: 'foo', coordinates: [2.1, 48.5]}), {message: 'geometry type (foo) not allowed'})
   t.throws(() => validateSearchgeom({coordinates: [2.1, 48.5]}), {message: 'geometry object must have a \'type\' property'})
-  t.throws(() => validateSearchgeom({type: 'Point'}), {message: 'geometry not valid: "coordinates" member required'})
+  t.throws(() => validateSearchgeom({type: 'Point'}), {message: 'geometry not valid: This GeoJSON object requires a coordinates member but it is missing.'})
 
   t.throws(
     () => validateSearchgeom({type: 'Circle', coordinates: [2.1, 48.5]}),
@@ -38,13 +38,13 @@ test('validateSearchgeom', t => {
     ['foo', 48.8],
     [2.3, 49.8],
     [2.3, 50.8]
-  ]}), {message: 'geometry not valid: each element in a position must be a number'})
+  ]}), {message: 'geometry not valid: Each element in a position must be a number.'})
 })
 
 test('validateSearchgeom / wrong structure', t => {
   t.throws(
     () => validateSearchgeom({type: 'Point', coordinates: [48.5]}),
-    {message: 'geometry not valid: position must have 2 or more elements'})
+    {message: 'geometry not valid: A position should have 2 or 3 elements - found 1.'})
 
   t.throws(
     () => validateSearchgeom({type: 'Circle', coordinates: [48.5], radius: 100}),
@@ -52,15 +52,15 @@ test('validateSearchgeom / wrong structure', t => {
 
   t.throws(
     () => validateSearchgeom({type: 'LineString', coordinates: [2.1]}),
-    {message: 'geometry not valid: a line needs to have two or more coordinates to be valid'})
+    {message: 'geometry not valid: Expected to find a position here, found another type.'})
 
   t.throws(
     () => validateSearchgeom({type: 'LineString', coordinates: [2.1, 48.5]}),
-    {message: 'geometry not valid: position should be an array, is a number instead'})
+    {message: 'geometry not valid: Expected to find a position here, found another type.'})
 
   t.throws(
     () => validateSearchgeom({type: 'Polygon', coordinates: [2.1, 48.5]}),
-    {message: 'geometry not valid: a number was found where a coordinate array should have been found: this needs to be nested more deeply'})
+    {message: 'geometry not valid: Expected to find an array of positions here.'})
 
   t.throws(
     () => validateSearchgeom({type: 'Polygon', coordinates: [
@@ -69,7 +69,7 @@ test('validateSearchgeom / wrong structure', t => {
         [4.3, 49.8]
       ]
     ]}),
-    {message: 'geometry not valid: a LinearRing of coordinates needs to have four or more positions'})
+    {message: 'geometry not valid: Expected to find four or more positions here.'})
 
   t.throws(
     () => validateSearchgeom({type: 'Polygon', coordinates: [
@@ -84,7 +84,7 @@ test('validateSearchgeom / wrong structure', t => {
         [3.2, 49.2]
       ]
     ]}),
-    {message: 'geometry not valid: a LinearRing of coordinates needs to have four or more positions'})
+    {message: 'geometry not valid: Expected to find four or more positions here.'})
 })
 
 test('validateSearchgeom / geometry too large', t => {

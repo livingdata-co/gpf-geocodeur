@@ -1,5 +1,5 @@
 import createError from 'http-errors'
-import {hint} from '@mapbox/geojsonhint'
+import {check} from '@placemarkio/check-geojson'
 import computeBbox from '@turf/bbox'
 
 import {validateStructuredSearchParams} from '../../lib/parcel/structured-search.js'
@@ -32,10 +32,10 @@ export function validateSearchgeom(searchgeom) {
     return validateCircle(searchgeom, SEARCHGEOM_BBOX_MAX_LENGTH / 2)
   }
 
-  const errors = hint(searchgeom)
-
-  if (errors.length > 0) {
-    throw createError(400, `geometry not valid: ${errors[0].message}`)
+  try {
+    check(JSON.stringify(searchgeom))
+  } catch (error) {
+    throw createError(400, `geometry not valid: ${error.issues[0].message}`)
   }
 
   const bbox = computeBbox(searchgeom)
