@@ -53,7 +53,7 @@
     "fast-glob": "^3.3.2",
     "flatbush": "^4.4.0",
     "flexsearch": "^0.7.31",
-    "gdal-async": "^3.9.0",
+    "gdal-async": "^3.11.0",
     "geobuf": "^3.0.2",
     "got": "^14.4.1",
     "hpagent": "^1.2.0",
